@@ -22,6 +22,9 @@ if(process==TVar::ZZ_4l ){
     npart_.npart=4;
     nqcdjets_.nqcdjets=0;
 
+    vsymfact_.vsymfact=1.0;                                                                                                               
+    interference_.interference=false;
+
     nwz_.nwz=0;
     bveg1_mcfm_.ndim=10;
     masses_mcfm_.mb=0;
@@ -172,8 +175,8 @@ double SumMatrixElementPDF(TVar::Process process, mcfm_event_type* mcfm_event,do
   if( process==TVar::ZZ_4l)      qqb_zz_  (p4[0],msq[0]);
   
   double msqjk=0;
-  for(int ii=0;ii<11;ii++){
-    for(int jj=0;jj<11;jj++){
+  for(int ii=0;ii<nmsq;ii++){
+    for(int jj=0;jj<nmsq;jj++){
       
       //2-D matrix is reversed in fortran
       // msq[ parton2 ] [ parton1 ]

@@ -63,6 +63,14 @@ extern "C" {
  } npart_;
 
  extern struct{
+ 	 double vsymfact;
+ } vsymfact_;
+
+ extern struct{
+ 	 bool interference;
+ } interference_;
+
+ extern struct{
         double cutoff;
  } cutoff_;
 
