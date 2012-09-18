@@ -22,8 +22,6 @@ ClassImp(TEvtProb)
     // Constructors and Destructor
     //-----------------------------------------------------------------------------
 TEvtProb::TEvtProb() {
-  //  _matrixElement = TVar::MCFM;
-  //  TMatrixElement::inst()->SetMatrixElement(_matrixElement);
   mcfm_init_();
 }
 
