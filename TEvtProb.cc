@@ -31,8 +31,8 @@ TEvtProb::~TEvtProb() {}
 // Directly calculate the ZZ->4l differential cross-section 
 // WARNING: in development
 // 
-void TEvtProb::XsecCalc(TVar::Process proc, const hzz4l_event_type &hzz4l_event,
-			  double Xsec, double XsecErr, TVar::VerbosityLevel verbosity){
+double TEvtProb::XsecCalc(TVar::Process proc, const hzz4l_event_type &hzz4l_event,
+			  TVar::VerbosityLevel verbosity){
 
     //Initialize Process
     SetProcess(proc);
@@ -88,15 +88,16 @@ void TEvtProb::XsecCalc(TVar::Process proc, const hzz4l_event_type &hzz4l_event,
     
     flux=fbGeV2/(mcfm_event.p[0].Energy()*mcfm_event.p[1].Energy())	/(4*W);
     dXsec=msqjk*flux;
-    Xsec = dXsec;    
     
     if (verbosity >= TVar::DEBUG)
       {
-	cout <<" TEvtProb::XsecCalc(): dXsec=" << Xsec
+	cout <<" TEvtProb::XsecCalc(): dXsec=" << dXsec
 	     <<" Msq="<<msqjk 
 	     <<" flux="<<flux 
 	     <<endl;
       }
+
+    return dXsec;
 
 }
 

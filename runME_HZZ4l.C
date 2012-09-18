@@ -141,13 +141,10 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     
     // ==== Begin the differential cross-section calculation
     TVar::Process Proc = TVar::ZZ_4l;
-    double Xsec = 0.;
-    double XsecErr = 0.;
-    Xcal2.XsecCalc(Proc,hzz4l_event, Xsec, XsecErr, verbosity);
+    double Xsec = Xcal2.XsecCalc(Proc,hzz4l_event,verbosity);
     
     // fill in the differential cross-section and errors
     dXsecList = Xsec;  
-    dXsecErrList = XsecErr;
     
     evt_tree->Fill();
     

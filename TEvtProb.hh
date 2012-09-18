@@ -56,9 +56,9 @@ public:
   //----------------------
   void SetProcess(TVar::Process tmp) { _process = tmp; }
   void SetMatrixElement(TVar::MatrixElement tmp){ _matrixElement = tmp; }
-  void XsecCalc(TVar::Process proc,
+  double XsecCalc(TVar::Process proc,
 		         const hzz4l_event_type &hzz4l_event,
-			 double Xsec, double XsecErr, TVar::VerbosityLevel verbosity);
+			 TVar::VerbosityLevel verbosity);
   ClassDef(TEvtProb,0);
 };
 
