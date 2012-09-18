@@ -12,7 +12,7 @@
 
 #include "TEvtProb.hh"
 #include "TVar.hh"
-#include "TMatrixElement.hh"
+
 
 ClassImp(TEvtProb)
 
@@ -22,8 +22,8 @@ ClassImp(TEvtProb)
     // Constructors and Destructor
     //-----------------------------------------------------------------------------
 TEvtProb::TEvtProb() {
-  _matrixElement = TVar::MCFM;
-  TMatrixElement::inst()->SetMatrixElement(_matrixElement);
+  //  _matrixElement = TVar::MCFM;
+  //  TMatrixElement::inst()->SetMatrixElement(_matrixElement);
   mcfm_init_();
 }
 

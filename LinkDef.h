@@ -1,6 +1,5 @@
 #include "TEvtProb.hh"
 #include "TMCFM.hh"
-#include "TMatrixElement.hh"
 #include "TUtil.hh"
 #include "TVar.hh"
 
@@ -15,7 +14,6 @@
 
 #pragma link C++  class  TVar;
 #pragma link C++  class  TEvtProb;
-#pragma link C++  class  TMatrixElement;
 #pragma link C++  function SumMatrixElementPDF;
 
 
