@@ -1,0 +1,43 @@
+This package provides the caculation of the differential cross-sections for 
+ZZ->4l final state for the ee/mm currently. 
+
+To run the scripts you need to follow the instructions as below:
+
+1. Check out and complile code in CMSSW area, current code tested only on CMSSW_4_2_3
+
+cmsrel CMSSW_4_2_3
+cd CMSSW_4_2_3/src/
+cmsenv
+cvs co -d HZZ4lME UserCode/YGao/HZZ4lME
+cd HZZ4lME/
+cp /afs/cern.ch/user/y/yygao/public/libmcfm.so .
+make
+
+** Note this pre-made libmcfm.so is extracted from the MCFM62 version by doing this,
+1). Get and install the MCFM package
+wget http://mcfm.fnal.gov/mcfm-6.2.tar.gz
+tar -zxf mcfm-6.2.tar.gz
+cd MCFM
+./Install
+2). Edit the compiler flags for both g++ and f90 in the makefile
+The PIC flag must be added to allow the shared library to be built
+The following lines are identical to those in the default makefile, except for the addition of the PIC flag
+FFLAGS  = -fno-automatic -fno-f2c -O0 -g -fPIC -I$(INCPATH) -Iobj
+F90FLAGS = -fno-automatic -fno-f2c -O2 -g -fPIC -I$(INCPATH) -Iobj -Jobj
+3) compile the library
+make
+cd obj
+g++ -Wl,-soname,libmcfm.so -shared -o libmcfm.so *.o 
+
+
+2. Run the script based on the 
+
+lxplus.cern.ch:~whitbeck/public/LO_data_BKG_eemm.root 
+lxplus.cern.ch:~whitbeck/public/LO_data_SIG_eemm.root 
+
+root -l
+.L runME_HZZ4l.C++
+runME_HZZ4l("./","LO_data_BKG_eemm.root","./",1000000,0)
+
+3. The output is the same file with _ME.root, it contains the branch called "dXsec" which is the 
+event-by-event differential cross-section
