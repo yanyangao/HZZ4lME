@@ -41,11 +41,17 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   TTree* evt_tree=(TTree*) ch->CloneTree(0, "fast");
   
   // Declare the matrix element related variables to be added to the existing ntuples
-  double dXsecList;
-  double dXsecErrList;
+  double dXsec_ZZ = 0.;
+  double dXsecErr_ZZ = 0.;
+
+  double dXsec_HZZ = 0.;
+  double dXsecErr_HZZ = 0.;
   
-  evt_tree->Branch("dXsec"      ,&dXsecList           ,"dXsec/D");
-  evt_tree->Branch("dXsecErr"   ,&dXsecErrList        ,"dXsecErr/D");
+  evt_tree->Branch("dXsec_ZZ"      ,&dXsec_ZZ           ,"dXsec_ZZ/D");
+  evt_tree->Branch("dXsecErr_ZZ"   ,&dXsecErr_ZZ        ,"dXsecErr_ZZ/D");
+
+  evt_tree->Branch("dXsec_HZZ"      ,&dXsec_HZZ           ,"dXsec_HZZ/D");
+  evt_tree->Branch("dXsecErr_HZZ"   ,&dXsecErr_HZZ        ,"dXsecErr_HZZ/D");
   
   // Initialize the branches to use to calculate the differential cross-sections
   Double_t EL1_ = 0.;
@@ -93,6 +99,8 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   // Create the instance of TEvtProb to calculate the differential cross-section
   TEvtProb Xcal2;  
   Xcal2.SetMatrixElement(TVar::MCFM);
+  Xcal2.SetHiggsMass(125.);
+  
   hzz4l_event_type hzz4l_event;
   //==========================================
   // Loop All Events
@@ -103,11 +111,17 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   if (verbosity >= TVar::INFO) printf("Total number of events = %d\n", Ntot);
   
   for(int ievt = 0; ievt < Ntot; ievt++){
-    if (verbosity >= TVar::INFO && (ievt % 5 == 0)) 
+    if (verbosity >= TVar::INFO && (ievt % 1000 == 0)) 
       std::cout << "Doing Event: " << ievt << std::endl;
     
-    dXsecList = 0.;
-    dXsecErrList = 0.;
+    // 
+    // initialise the differential cross-sections
+    // 
+    dXsec_ZZ = 0.;
+    dXsecErr_ZZ = 0.;
+
+    dXsec_HZZ = 0.;
+    dXsecErr_HZZ = 0.;
     
     ch->GetEntry(ievt);           
     
@@ -140,11 +154,8 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     // finish loading event information
     
     // ==== Begin the differential cross-section calculation
-    TVar::Process Proc = TVar::ZZ_4l;
-    double Xsec = Xcal2.XsecCalc(Proc,hzz4l_event,verbosity);
-    
-    // fill in the differential cross-section and errors
-    dXsecList = Xsec;  
+    dXsec_ZZ = Xcal2.XsecCalc(TVar::ZZ_4l,hzz4l_event,verbosity);
+    dXsec_HZZ = Xcal2.XsecCalc(TVar::HZZ_4l,hzz4l_event,verbosity);
     
     evt_tree->Fill();
     
