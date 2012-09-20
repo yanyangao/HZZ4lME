@@ -25,5 +25,6 @@ TString DbnEventLepSelName(int i);
 void My_choose(TVar::Process process);
 bool My_smalls(double s[][12], int npart);
 double SumMatrixElementPDF(TVar::Process procees, mcfm_event_type* mcfm_event,double flavor_msq[][11],double* flux);
+double HiggsWidth(double mass);
 
 #endif
