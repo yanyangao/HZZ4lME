@@ -12,8 +12,8 @@
 using namespace std;
 
 void My_choose(TVar::Process process){
- //ZZ_4l
-
+ 
+//ZZ_4l
 if(process==TVar::ZZ_4l ){ 
  
     //81 '  f(p1)+f(p2) --> Z^0(-->mu^-(p3)+mu^+(p4)) + Z^0(-->e^-(p5)+e^+(p6))'
@@ -42,7 +42,30 @@ if(process==TVar::ZZ_4l ){
     zcouple_.q2=-1.;
     zcouple_.l2=zcouple_.le;
     zcouple_.r2=zcouple_.re;
- }  
+ }  else if ( process == TVar::HZZ_4l) {
+
+  //  114 '  f(p1)+f(p2) --> H(--> Z^0(mu^-(p3)+mu^+(p4)) + Z^0(e^-(p5)+e^+(p6))' 'N'
+     npart_.npart=4;
+     nqcdjets_.nqcdjets=0;
+     vsymfact_.vsymfact=1.0;                                                                                                               
+     interference_.interference=false;
+     nwz_.nwz=0;
+     bveg1_mcfm_.ndim=10;
+     breit_.n2=1;
+     breit_.n3=1;
+     breit_.mass2 =masses_mcfm_.zmass;
+     breit_.width2=masses_mcfm_.zwidth;
+     breit_.mass3 =masses_mcfm_.zmass;
+     breit_.width3=masses_mcfm_.zwidth;
+     
+     zcouple_.q1=-1.;
+     zcouple_.l1=zcouple_.le;
+     zcouple_.r1=zcouple_.re;
+     
+     zcouple_.q2=-1.;
+     zcouple_.l2=zcouple_.le;
+     zcouple_.r2=zcouple_.re;
+ } 
  else{
      std::cerr <<"[My_choose]: Can't identify Process: " << process <<endl;
  } 
@@ -173,6 +196,7 @@ double SumMatrixElementPDF(TVar::Process process, mcfm_event_type* mcfm_event,do
   fdist_ (&density_.ih2, &xx[1], &scale_.scale, fx2); //P-=> W-->e-nu
   
   if( process==TVar::ZZ_4l)      qqb_zz_  (p4[0],msq[0]);
+  if( process==TVar::HZZ_4l)     qqb_hzz_ (p4[0],msq[0]);
   
   double msqjk=0;
   for(int ii=0;ii<nmsq;ii++){
@@ -180,7 +204,8 @@ double SumMatrixElementPDF(TVar::Process process, mcfm_event_type* mcfm_event,do
       
       //2-D matrix is reversed in fortran
       // msq[ parton2 ] [ parton1 ]
-      flavor_msq[jj][ii] = fx1[ii]*fx2[jj]*msq[jj][ii];
+      // flavor_msq[jj][ii] = fx1[ii]*fx2[jj]*msq[jj][ii];
+      flavor_msq[jj][ii] = msq[jj][ii];
       msqjk+=flavor_msq[jj][ii];
     }//ii
   }//jj
@@ -196,3 +221,12 @@ double SumMatrixElementPDF(TVar::Process process, mcfm_event_type* mcfm_event,do
   
 }
 
+double HiggsWidth(double mass){
+
+     double width=0.004;
+     if (mass==125.) width=0.41650E-02; // obtained by running MCFM standalone
+     
+ return width;
+
+
+}
