@@ -24,6 +24,7 @@ public:
   };
   enum Process{
     ZZ_4l    =0,
+    HZZ_4l   =1,
     Null
   };
   //---------------------------------
@@ -32,6 +33,8 @@ public:
   static TString ProcessName(int temp){ 
     if(temp==TVar::ZZ_4l   ) 
       return TString("ZZ_4l");
+    else if(temp==TVar::HZZ_4l   ) 
+      return TString("HZZ_4l");
     else 
       return TString("UnKnown");
   };
