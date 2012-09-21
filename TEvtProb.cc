@@ -109,7 +109,7 @@ double TEvtProb::XsecCalc(TVar::Process proc, const hzz4l_event_type &hzz4l_even
 // an interface defined in TMCFM.hh
 void TEvtProb::SetHiggsMass(double mass){
     masses_mcfm_.hmass=mass;
-    masses_mcfm_.hwidth=myCSW_->HiggsWidth(13, mass);
+    masses_mcfm_.hwidth=myCSW_->HiggsWidth(0, mass);
 }
 
 
