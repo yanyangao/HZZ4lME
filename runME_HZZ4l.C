@@ -99,8 +99,6 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   // Create the instance of TEvtProb to calculate the differential cross-section
   TEvtProb Xcal2;  
   Xcal2.SetMatrixElement(TVar::MCFM);
-  Xcal2.SetHiggsMass(125.);
-  
   hzz4l_event_type hzz4l_event;
   //==========================================
   // Loop All Events
@@ -132,6 +130,7 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     
     double z1mass = (hzz4l_event.p[0]+hzz4l_event.p[1]).M();
     double z2mass = (hzz4l_event.p[1]+hzz4l_event.p[2]).M();
+    double zzmass = (hzz4l_event.p[0]+hzz4l_event.p[1]+hzz4l_event.p[2]+hzz4l_event.p[3]).M();
 
     // if ( TMath::Abs(z1mass - 91.1876) > 15. || TMath::Abs(z2mass - 91.1875) > 15. ) continue;
     
@@ -143,17 +142,19 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
 	     pXL1_, pYL1_, pZL1_, pXL2_, pYL2_, pZL2_); 
       printf("lep3 p3 = (%4.4f, %4.4f, %4.4f)  lep4 p3 = (%4.4f, %4.4f, %4.4f)\n",
 	     pXL3_, pYL3_, pZL3_, pXL4_, pYL4_, pZL4_); 
-      std::cout << "ZZ system (pX, pY, pZ, pZ) = ( " 
+      std::cout << "ZZ system (pX, pY, pZ, E, mass) = ( " 
 		<< (hzz4l_event.p[0]+hzz4l_event.p[1]+hzz4l_event.p[2]+hzz4l_event.p[3]).Px() << ", "
 		<< (hzz4l_event.p[0]+hzz4l_event.p[1]+hzz4l_event.p[2]+hzz4l_event.p[3]).Py() << ", "
 		<< (hzz4l_event.p[0]+hzz4l_event.p[1]+hzz4l_event.p[2]+hzz4l_event.p[3]).Pz() << ", "
-		<< (hzz4l_event.p[0]+hzz4l_event.p[1]+hzz4l_event.p[2]+hzz4l_event.p[3]).Energy() << ")\n";
+		<< (hzz4l_event.p[0]+hzz4l_event.p[1]+hzz4l_event.p[2]+hzz4l_event.p[3]).Energy()  << ", "
+		<< zzmass << ")\n";
       std::cout << "Z1 mass = " << z1mass << "\tz2mass = " << z2mass << "\n";
       cout << "=========================================================\n";
     } 
     // finish loading event information
     
     // ==== Begin the differential cross-section calculation
+    Xcal2.SetHiggsMass(zzmass);
     dXsec_ZZ = Xcal2.XsecCalc(TVar::ZZ_4l,hzz4l_event,verbosity);
     dXsec_HZZ = Xcal2.XsecCalc(TVar::HZZ_4l,hzz4l_event,verbosity);
     
