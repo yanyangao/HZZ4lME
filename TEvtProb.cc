@@ -23,9 +23,12 @@ ClassImp(TEvtProb)
     //-----------------------------------------------------------------------------
 TEvtProb::TEvtProb() {
   mcfm_init_();
+  myCSW_ = new HiggsCSandWidth();
 }
 
-TEvtProb::~TEvtProb() {}
+TEvtProb::~TEvtProb() {
+    delete myCSW_;
+}
 
 //
 // Directly calculate the ZZ->4l differential cross-section 
@@ -100,4 +103,13 @@ double TEvtProb::XsecCalc(TVar::Process proc, const hzz4l_event_type &hzz4l_even
     return dXsec;
 
 }
+
+// this appears to be some kind of 
+// way of setting MCFM parameters through
+// an interface defined in TMCFM.hh
+void TEvtProb::SetHiggsMass(double mass){
+    masses_mcfm_.hmass=mass;
+    masses_mcfm_.hwidth=myCSW_->HiggsWidth(13, mass);
+}
+
 

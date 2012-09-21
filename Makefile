@@ -15,7 +15,7 @@ RM  = /bin/rm
 ifdef CMSSW_VERSION
 	ROOFITINCLUDE = $(shell scramv1 tool info roofitcore | grep INCLUDE | sed 's/^INCLUDE=/-I/')
 endif
-INCLUDE = -I$(CMSROOT) $(ROOFITINCLUDE) 
+INCLUDE = -I$(CMSROOT) $(ROOFITINCLUDE) -I../Higgs/Higgs_CS_and_Width/include/ 
 CFLAGS = -Wall -Wno-unused-function -g -O2 -fPIC $(shell root-config --cflags) $(INCLUDE) $(EXTRACFLAGS)
 
 LINKER = g++
@@ -30,17 +30,15 @@ endif
 endif
 
 
-SOURCES = $(wildcard *.cc)  $(wildcard foam/*.cc)  
+SOURCES = $(wildcard *.cc)  $(wildcard foam/*.cc) ../Higgs/Higgs_CS_and_Width/src/HiggsCSandWidth.cc
 OBJECTS = $(SOURCES:.cc=.o) LinkDef_out.o
 LIB = libME.so
 
-
-LIBS = $(LIB)
+LIBS = $(LIB) 
 
 .PHONY: all help compile clean cms2env
 
 libs:	$(LIBS)
-
 
 $(LIB):	$(OBJECTS) 
 	$(QUIET) echo "Linking $(LIB)"; \

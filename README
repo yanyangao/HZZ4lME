@@ -9,6 +9,8 @@ cmsrel CMSSW_4_2_3
 cd CMSSW_4_2_3/src/
 cmsenv
 cvs co -d HZZ4lME UserCode/YGao/HZZ4lME
+cvs co -d Higgs/Higgs_CS_and_Width UserCode/Snowball/Higgs/Higgs_CS_and_Width
+cp -r Higgs/Higgs_CS_and_Width/txtFiles .
 cd HZZ4lME/
 cp /afs/cern.ch/user/y/yygao/public/libmcfm.so .
 make

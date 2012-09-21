@@ -31,7 +31,7 @@
 #include "TMCFM.hh"
 #include "TVar.hh"
 #include "TUtil.hh"
-
+#include "HiggsCSandWidth.h"
 
 //----------------------------------------
 // Class TEvtProb
@@ -44,6 +44,7 @@ public:
   //--------------------
   TVar::Process _process;
   TVar::MatrixElement _matrixElement;
+  HiggsCSandWidth *myCSW_;
   
   //---------------------------------------------------------------------------
   // Constructors and Destructor
@@ -62,10 +63,8 @@ public:
   // this appears to be some kind of 
   // way of setting MCFM parameters through
   // an interface defined in TMCFM.hh
-  void SetHiggsMass(double mass){
-    masses_mcfm_.hmass=mass;
-    masses_mcfm_.hwidth=HiggsWidth(mass);
-  }
+  void SetHiggsMass(double mass);
+
   ClassDef(TEvtProb,0);
 };
 
