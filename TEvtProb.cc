@@ -92,7 +92,9 @@ double TEvtProb::XsecCalc(TVar::Process proc, const hzz4l_event_type &hzz4l_even
     if(msqjk<=0){ mcfm_event.pswt=0; }
     
     flux=fbGeV2/(mcfm_event.p[0].Energy()*mcfm_event.p[1].Energy())	/(4*W);
-    dXsec=msqjk*flux;
+    //    dXsec=msqjk*flux;
+    dXsec=msqjk;
+
     
     if (verbosity >= TVar::DEBUG)
       {
