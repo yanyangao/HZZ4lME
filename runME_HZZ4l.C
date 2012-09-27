@@ -129,7 +129,7 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     hzz4l_event.p[3].SetXYZM(pXL4_, pYL4_, pZL4_, 0.);
     
     double z1mass = (hzz4l_event.p[0]+hzz4l_event.p[1]).M();
-    double z2mass = (hzz4l_event.p[1]+hzz4l_event.p[2]).M();
+    double z2mass = (hzz4l_event.p[2]+hzz4l_event.p[3]).M();
     double zzmass = (hzz4l_event.p[0]+hzz4l_event.p[1]+hzz4l_event.p[2]+hzz4l_event.p[3]).M();
 
     // if ( TMath::Abs(z1mass - 91.1876) > 15. || TMath::Abs(z2mass - 91.1875) > 15. ) continue;
