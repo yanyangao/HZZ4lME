@@ -143,7 +143,7 @@ bool My_smalls(double s[][12],int npart){
 // 2. PartonEnergy Fraction minimum<x0,x1<1
 // 3. number of final state particle is defined
 //
-double SumMatrixElementPDF(TVar::Process process, mcfm_event_type* mcfm_event,double flavor_msq[][nmsq],double* flux){
+double SumMatrixElementPDF(TVar::Process process, mcfm_event_type* mcfm_event,double flavor_msq[nmsq][nmsq],double* flux){
 
   int NPart=npart_.npart+2;
   double p4[4][12];
@@ -221,11 +221,14 @@ double SumMatrixElementPDF(TVar::Process process, mcfm_event_type* mcfm_event,do
       //      flavor_msq[jj][ii] = fx1[ii]*fx2[jj]*msq[jj][ii];
 
       flavor_msq[jj][ii] = msq[jj][ii];
-
+      cout<<jj<<ii<<"="<<msq[jj][ii]<<"  ";
       msqjk+=flavor_msq[jj][ii];
     }//ii
+    cout<<"\n";
   }//jj
-  
+
+  if( process==TVar::ZZ_4l) msqjk=msq[3][7]+msq[7][3];
+
   (*flux)=fbGeV2/(8*xx[0]*xx[1]*EBEAM*EBEAM);
   
   if(msqjk != msqjk || flux!=flux ){
