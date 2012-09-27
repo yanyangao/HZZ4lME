@@ -222,10 +222,10 @@ double SumMatrixElementPDF(TVar::Process process, mcfm_event_type* mcfm_event,do
       //      flavor_msq[jj][ii] = fx1[ii]*fx2[jj]*msq[jj][ii];
 
       flavor_msq[jj][ii] = msq[jj][ii];
-      cout<<jj<<ii<<"="<<msq[jj][ii]<<"  ";
+      //      cout<<jj<<ii<<"="<<msq[jj][ii]<<"  ";
       msqjk+=flavor_msq[jj][ii];
     }//ii
-    cout<<"\n";
+    //    cout<<"\n";
   }//jj
 
   if( process==TVar::ZZ_4l) msqjk=msq[3][7]+msq[7][3];
