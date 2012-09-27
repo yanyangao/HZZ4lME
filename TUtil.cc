@@ -11,6 +11,17 @@
 
 using namespace std;
 
+void SetEwkCoupligParameters(){
+  
+  ewinput_.Gf_inp=1.16639E-05;
+  ewinput_.aemmz_inp=7.81751E-03;
+  ewinput_.wmass_inp=79.956049884402844;
+  ewinput_.zmass_inp=91.1876;
+  ewinput_.xw_inp=0.23116864;
+
+}
+
+
 void My_choose(TVar::Process process){
  
 //ZZ_4l
@@ -23,13 +34,15 @@ if(process==TVar::ZZ_4l ){
     nqcdjets_.nqcdjets=0;
 
     vsymfact_.vsymfact=1.0;                                                                                                               
-    interference_.interference=true;
+    interference_.interference=false;
 
     nwz_.nwz=0;
     bveg1_mcfm_.ndim=10;
     masses_mcfm_.mb=0;
     breit_.n2=1;
     breit_.n3=1;
+
+       
     breit_.mass2=masses_mcfm_.zmass;
     breit_.width2=masses_mcfm_.zwidth;
     breit_.mass3=masses_mcfm_.zmass;
@@ -73,7 +86,7 @@ if(process==TVar::ZZ_4l ){
 
 bool My_masscuts(double s[][12],TVar::Process process){
 
- double minZmassSqr=1*1;
+ double minZmassSqr=10*10;
 
  if(process==TVar::ZZ_4l){
    if(s[2][3]< minZmassSqr) return true;
@@ -189,6 +202,7 @@ double SumMatrixElementPDF(TVar::Process process, mcfm_event_type* mcfm_event,do
   //remove events has small invariant mass
   if(My_masscuts(s,process)) return 0.0;
   if(My_smalls(s,npart_.npart)) return 0.0;
+  
   
   //Calculate Pdf
   //Always pass address through fortran function

@@ -23,7 +23,9 @@ ClassImp(TEvtProb)
     //-----------------------------------------------------------------------------
 TEvtProb::TEvtProb() {
   mcfm_init_();
-  myCSW_ = new HiggsCSandWidth();
+  SetEwkCoupligParameters();
+  coupling_();
+  myCSW_ = new HiggsCSandWidth("../txtFiles");
 }
 
 TEvtProb::~TEvtProb() {

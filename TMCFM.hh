@@ -58,6 +58,7 @@ extern "C" {
    double xmin;
  } xmin_;
 
+
  extern struct{
  	 int npart;
  } npart_;
@@ -73,6 +74,12 @@ extern "C" {
  extern struct{
         double cutoff;
  } cutoff_;
+
+
+ extern struct{
+   double Gf_inp,aemmz_inp,xw_inp,wmass_inp,zmass_inp;
+ } ewinput_;
+
 
 
  extern   struct {
@@ -106,6 +113,7 @@ extern "C" {
   extern  struct {
     double taumin;
   } taumin_;
+ 
   extern  struct {
     double sqrts;
   } energy_;
@@ -120,6 +128,7 @@ extern "C" {
   #define mcfm_init_ mcfm_init_
   void   mcfm_init_();
   void   chooser_();
+  void   coupling_();
   
   //mcfm/src/Need/boost.F
   void boost_mcfm_(double* mass,double* p1,double* p_in,double* p_out);
