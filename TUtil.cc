@@ -29,8 +29,9 @@ if(process==TVar::ZZ_4l ){
  
     //81 '  f(p1)+f(p2) --> Z^0(-->mu^-(p3)+mu^+(p4)) + Z^0(-->e^-(p5)+e^+(p6))'
     //86 '  f(p1)+f(p2) --> Z^0(-->e^-(p5)+e^+(p6))+Z^0(-->mu^-(p3)+mu^+(p4)) (NO GAMMA*)'
-
+  
     nproc_.nproc=81;
+    /*
     npart_.npart=4;
     nqcdjets_.nqcdjets=0;
 
@@ -54,12 +55,14 @@ if(process==TVar::ZZ_4l ){
 
     zcouple_.q2=-1.0;
     zcouple_.l2=zcouple_.le;
-    zcouple_.r2=zcouple_.re;
+    zcouple_.r2=zcouple_.re;*/
+    chooser_();
 
  }  else if ( process == TVar::HZZ_4l) {
 
   //  114 '  f(p1)+f(p2) --> H(--> Z^0(mu^-(p3)+mu^+(p4)) + Z^0(e^-(p5)+e^+(p6))' 'N'
      nproc_.nproc=114;
+    /*
      npart_.npart=4;
      nqcdjets_.nqcdjets=0;
 
@@ -78,7 +81,8 @@ if(process==TVar::ZZ_4l ){
      zcouple_.r1=zcouple_.re;
      
      zcouple_.l2=zcouple_.le;
-     zcouple_.r2=zcouple_.re;
+     zcouple_.r2=zcouple_.re;*/
+     chooser_();
  } 
  else{
      std::cerr <<"[My_choose]: Can't identify Process: " << process <<endl;
