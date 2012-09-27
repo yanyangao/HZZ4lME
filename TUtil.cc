@@ -30,6 +30,7 @@ if(process==TVar::ZZ_4l ){
     //81 '  f(p1)+f(p2) --> Z^0(-->mu^-(p3)+mu^+(p4)) + Z^0(-->e^-(p5)+e^+(p6))'
     //86 '  f(p1)+f(p2) --> Z^0(-->e^-(p5)+e^+(p6))+Z^0(-->mu^-(p3)+mu^+(p4)) (NO GAMMA*)'
 
+    nproc_.nproc=81;
     npart_.npart=4;
     nqcdjets_.nqcdjets=0;
 
@@ -42,23 +43,23 @@ if(process==TVar::ZZ_4l ){
     breit_.n2=1;
     breit_.n3=1;
 
-       
     breit_.mass2=masses_mcfm_.zmass;
     breit_.width2=masses_mcfm_.zwidth;
     breit_.mass3=masses_mcfm_.zmass;
     breit_.width3=masses_mcfm_.zwidth;
 
-    zcouple_.q1=-1.;
+    zcouple_.q1=-1.0;
     zcouple_.l1=zcouple_.le;
     zcouple_.r1=zcouple_.re;
 
-    zcouple_.q2=-1.;
+    zcouple_.q2=-1.0;
     zcouple_.l2=zcouple_.le;
     zcouple_.r2=zcouple_.re;
 
  }  else if ( process == TVar::HZZ_4l) {
 
   //  114 '  f(p1)+f(p2) --> H(--> Z^0(mu^-(p3)+mu^+(p4)) + Z^0(e^-(p5)+e^+(p6))' 'N'
+     nproc_.nproc=114;
      npart_.npart=4;
      nqcdjets_.nqcdjets=0;
 
