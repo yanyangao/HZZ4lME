@@ -233,7 +233,7 @@ double SumMatrixElementPDF(TVar::Process process, mcfm_event_type* mcfm_event,do
   }//jj
 
   if( process==TVar::ZZ_4l) msqjk=msq[3][7]+msq[7][3];
-
+  
   (*flux)=fbGeV2/(8*xx[0]*xx[1]*EBEAM*EBEAM);
   
   if(msqjk != msqjk || flux!=flux ){
@@ -254,3 +254,56 @@ double HiggsWidth(double mass){
 
 
 }
+
+//
+// Test code from Markus to calculate the HZZ cross-section
+// 
+double TestModHiggsMatEl(mcfm_event_type* mcfm_event )
+{
+// input unit = GeV/100 such that 125GeV is 1.25 in the code
+  double MReso = 125.0/100.0;
+  double GaReso= 0.1/100.0;
+  double p4[6][4];
+  double MatElSq;
+  int MYIDUP[4];
+
+  int NPart = 6; 
+  // p(i,0:3) = (E(i),px(i),py(i),pz(i))
+  // i=0,1: glu1,glu2 (outgoing convention)
+  // i=2,3: correspond to MY_IDUP(1),MY_IDUP(0)
+  // i=4,5: correspond to MY_IDUP(3),MY_IDUP(2)
+  for(int ipar=0;ipar<2;ipar++){   
+    if(mcfm_event->p[ipar].Energy()>0){
+      p4[ipar][0] = -mcfm_event->p[ipar].Energy();
+      p4[ipar][1] = -mcfm_event->p[ipar].Px();
+      p4[ipar][2] = -mcfm_event->p[ipar].Py();
+      p4[ipar][3] = -mcfm_event->p[ipar].Pz();
+    }
+  }
+  //initialize decayed particles
+  for(int ipar=2;ipar<NPart;ipar++){
+    p4[ipar][0] = mcfm_event->p[ipar].Energy();
+    p4[ipar][1] = mcfm_event->p[ipar].Px();
+    p4[ipar][2] = mcfm_event->p[ipar].Py();
+    p4[ipar][3] = mcfm_event->p[ipar].Pz();
+  }
+  
+  // particle ID: +7=e+,  -7=e-,  +8=mu+,  -8=mu-
+  MYIDUP[0]=+7;
+  MYIDUP[1]=-7;
+  MYIDUP[2]=+7;
+  MYIDUP[3]=-7;
+  __modhiggs_MOD_evalamp_gg_h_vv(p4, &MReso,  &GaReso, MYIDUP, &MatElSq);
+
+  /*
+    printf("\n ");
+    for ( int i=0; i<NPart;i++) {
+    std::cout << "p["<<i<<"] (E, Px, Py, Pz) = (" << p4[i][0] << ", " << p4[i][1] << ", " << p4[i][2] << ", " << p4[i][3] << ")\n";
+    }
+    printf("Matr.el. squared: %20.17e \n ",MatElSq);
+  */
+ return MatElSq;
+
+}
+
+

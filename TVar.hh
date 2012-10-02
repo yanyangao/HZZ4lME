@@ -20,7 +20,8 @@ public:
   };
   enum MatrixElement{
     MCFM,
-    MadGraph
+    MadGraph,
+    JHUGen
   };
   enum Process{
     ZZ_4l    =0,
