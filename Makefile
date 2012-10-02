@@ -72,7 +72,7 @@ LinkDef_out.cxx: LinkDef.h
 
 clean:   
 	$(QUIET) rm -v -f \
-	processed_data.* *.list \
+	modhiggs.mod \
 	*.o *.d libME.so LinkDef_out* *_C.so; echo "Done"
 
 
