@@ -98,7 +98,6 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
 
   // Create the instance of TEvtProb to calculate the differential cross-section
   TEvtProb Xcal2;  
-  Xcal2.SetMatrixElement(TVar::MCFM);
   hzz4l_event_type hzz4l_event;
   //==========================================
   // Loop All Events
@@ -155,7 +154,12 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     
     // ==== Begin the differential cross-section calculation
     Xcal2.SetHiggsMass(zzmass);
+    
+    // calculate the ZZ using MCFM
+    Xcal2.SetMatrixElement(TVar::MCFM);
     dXsec_ZZ = Xcal2.XsecCalc(TVar::ZZ_4l,hzz4l_event,verbosity);
+    // Use the one from Markus
+    // Xcal2.SetMatrixElement(TVar::JHUGen);
     dXsec_HZZ = Xcal2.XsecCalc(TVar::HZZ_4l,hzz4l_event,verbosity);
     
     evt_tree->Fill();
