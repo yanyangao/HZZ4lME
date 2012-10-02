@@ -46,6 +46,8 @@ public:
   TVar::Process _process;
   TVar::MatrixElement _matrixElement;
   HiggsCSandWidth *myCSW_;
+  double _hmass;
+  double _hwidth;
   
   //---------------------------------------------------------------------------
   // Constructors and Destructor

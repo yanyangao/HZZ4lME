@@ -90,7 +90,7 @@ double TEvtProb::XsecCalc(TVar::Process proc, const hzz4l_event_type &hzz4l_even
     if ( _matrixElement == TVar::MCFM ) 
       msqjk = SumMatrixElementPDF(proc, &mcfm_event, flavor_msq, &flux);
     if ( _matrixElement == TVar::JHUGen )
-      msqjk = TestModHiggsMatEl(&mcfm_event);
+      msqjk = TestModHiggsMatEl(&mcfm_event, _hmass, _hwidth);
     if(msqjk<=0){ mcfm_event.pswt=0; }
     
     flux=fbGeV2/(mcfm_event.p[0].Energy()*mcfm_event.p[1].Energy())	/(4*W);
@@ -116,4 +116,6 @@ double TEvtProb::XsecCalc(TVar::Process proc, const hzz4l_event_type &hzz4l_even
 void TEvtProb::SetHiggsMass(double mass){
     masses_mcfm_.hmass=mass;
     masses_mcfm_.hwidth=myCSW_->HiggsWidth(0, mass);
+    _hmass = mass;
+    _hwidth = myCSW_->HiggsWidth(0, mass);
 }

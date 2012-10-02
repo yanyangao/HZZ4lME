@@ -27,7 +27,7 @@ void SetEwkCoupligParameters();
 bool My_smalls(double s[][12], int npart);
 double SumMatrixElementPDF(TVar::Process procees, mcfm_event_type* mcfm_event,double flavor_msq[][11],double* flux);
 double HiggsWidth(double mass);
-double TestModHiggsMatEl( mcfm_event_type* mcfm_event);
+double TestModHiggsMatEl( mcfm_event_type* mcfm_event, double MReso, double GaReso);
 
 
 #endif
