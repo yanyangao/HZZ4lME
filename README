@@ -41,5 +41,14 @@ root -l
 .L runME_HZZ4l.C++
 runME_HZZ4l("./","LO_data_BKG_eemm.root","./",1000000,0)
 
-3. The output is the same file with _ME.root, it contains the branch called "dXsec" which is the 
+3. The output is the same file with _ME.root, it contains 6 branches starting with "dXsec" which are the 
 event-by-event differential cross-section
+
+OBJ: TLeafD	dXsec_ZZ	dXsec_ZZ : 0 at: 0xf1d36e0
+OBJ: TLeafD	dXsecErr_ZZ	dXsecErr_ZZ : 0 at: 0xf1d3c70
+OBJ: TLeafD	dXsec_HZZ	dXsec_HZZ : 0 at: 0xf1d4200
+OBJ: TLeafD	dXsecErr_HZZ	dXsecErr_HZZ : 0 at: 0xf1d4790
+OBJ: TLeafD	dXsec_HZZ_JHU	dXsec_HZZ_JHU : 0 at: 0xf1d4d20
+OBJ: TLeafD	dXsecErr_HZZ_JHU	dXsecErr_HZZ_JHU : 0 at: 0xf1d52d0
+
+The ones with _JHU is calcualted based on the JHUGen based Matrix element code. 
