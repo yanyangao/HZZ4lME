@@ -32,6 +32,7 @@
 #include "TVar.hh"
 #include "TUtil.hh"
 #include "HiggsCSandWidth.h"
+#include "TModHiggsMatEl.hh"
 
 //----------------------------------------
 // Class TEvtProb
@@ -64,6 +65,10 @@ public:
   // way of setting MCFM parameters through
   // an interface defined in TMCFM.hh
   void SetHiggsMass(double mass);
+
+  // test matrix element calculator
+  // provided by Markus Schulze
+  void TestModHiggsMatEl();
 
   ClassDef(TEvtProb,0);
 };

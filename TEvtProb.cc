@@ -116,4 +116,63 @@ void TEvtProb::SetHiggsMass(double mass){
     masses_mcfm_.hwidth=myCSW_->HiggsWidth(0, mass);
 }
 
+void TEvtProb::TestModHiggsMatEl()
+{
+// input unit = GeV/100 such that 125GeV is 1.25 in the code
+  double MReso = 125.0/100.0;
+  double GaReso= 0.1/100.0;
+  double P[6][4];
+  double MatElSq;
+  int MYIDUP[4];
+
+// particle ID: +7=e+,  -7=e-,  +8=mu+,  -8=mu-
+  MYIDUP[0]=+7;
+  MYIDUP[1]=-7;
+  MYIDUP[2]=+7;
+  MYIDUP[3]=-7;
+
+// p(i,0:3) = (E(i),px(i),py(i),pz(i))
+// i=0,1: glu1,glu2 (outgoing convention)
+// i=2,3: correspond to MY_IDUP(1),MY_IDUP(0)
+// i=4,5: correspond to MY_IDUP(3),MY_IDUP(2)
+  P[0][0]=-0.1210830252829298;
+  P[0][1]=0.0;
+  P[0][2]=0.0;
+  P[0][3]=-0.1210830252829298;
+
+  P[1][0]=-3.2260921717742228;
+  P[1][1]=0.0;
+  P[1][2]=0.0;
+  P[1][3]=3.2260921717742228;
+
+  P[2][0]=2.3786499379469044;
+  P[2][1]=0.4825158868534503;
+  P[2][2]=0.1249853079677575;
+  P[2][3]=-2.3258401963636808;
+
+  P[3][0]=0.5705642134010264;
+  P[3][1]=-0.3042379113840483;
+  P[3][2]=-0.0252235463240039;
+  P[3][3]=-0.4820234305523382;
+
+  P[4][0]=0.1627239095197414;
+  P[4][1]=-0.0193830498689781;
+  P[4][2]=0.0081768728141093;
+  P[4][3]=-0.1613583182180193;
+
+  P[5][0]=0.2352371361894799;
+  P[5][1]=-0.1588949256004239;
+  P[5][2]=-0.1079386344578630;
+  P[5][3]=-0.1357872013572543;
+
+
+  __modhiggs_MOD_evalamp_gg_h_vv(P, &MReso,  &GaReso, MYIDUP, &MatElSq);
+
+ printf("\n ");
+ printf("Matr.el. squared: %20.17e \n ",MatElSq);
+ printf("result should be: %20.17e \n ",0.0112810555699413);
+ printf("ratio: %20.17e \n ",MatElSq/0.0112810555699413);
+
+}
+
 

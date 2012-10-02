@@ -1,0 +1,118 @@
+real(8),  parameter :: GeV=1d0/100d0
+real(8),  parameter :: M_Z     = 91.1876d0 *GeV      ! Z boson mass (PDG-2011)
+real(8),  parameter :: Ga_Z    = 2.4952d0  *GeV      ! Z boson width(PDG-2011)
+real(8),  parameter :: M_W     = 80.399d0  *GeV      ! W boson mass (PDG-2011)
+real(8),  parameter :: Ga_W    = 2.085d0   *GeV      ! W boson width(PDG-2011)
+! ! ! real(8),  parameter :: M_Reso  = 125d0     *GeV      ! X resonance mass (spin 0, spin 1, spin 2)
+! ! ! real(8),  parameter :: Ga_Reso = 0.1d0     *GeV      ! X resonance width
+real(8),  parameter :: Lambda  = 1000d0    *GeV      ! Lambda coupling enters in two places
+                                                            ! overal scale for x-section and in power suppressed
+                                                            ! operators/formfactors (former r).
+
+real(8),  parameter :: m_tau = 1.8d0  *GeV           ! tau lepton mass
+
+real(8),  parameter :: alpha_QED = 1d0/128.0d0       ! el.magn. coupling
+real(8),  parameter :: sitW = dsqrt(0.23119d0)       ! sin(Theta_Weinberg) (PDG-2008)
+
+!-- parameters that define on-shell spin 0 coupling to SM fields, see note
+   logical,  parameter :: generate_as = .false.
+   complex(8),  parameter :: ahg1 = (1.0d0,0d0)
+   complex(8),  parameter :: ahg2 = (0.0d0,0d0)
+   complex(8),  parameter :: ahg3 = (0.0d0,0d0)  ! pseudoscalar
+   complex(8),  parameter :: ahz1 = (1.0d0,0d0)
+   complex(8),  parameter :: ahz2 = (0.0d0,0d0)  ! this coupling does not contribute for gamma+gamma final states
+   complex(8),  parameter :: ahz3 = (0.0d0,0d0)  ! pseudoscalar
+
+!-- parameters that define off-shell spin 0 coupling to SM fields, see note
+   complex(8),  parameter :: ghg2 = (1.0d0,0d0)
+   complex(8),  parameter :: ghg3 = (0.0d0,0d0)
+   complex(8),  parameter :: ghg4 = (0.0d0,0d0)   ! pseudoscalar
+   complex(8),  parameter :: ghz1 = (1.0d0,0d0)
+   complex(8),  parameter :: ghz2 = (0.0d0,0d0)
+   complex(8),  parameter :: ghz3 = (0.0d0,0d0)
+   complex(8),  parameter :: ghz4 = (0.0d0,0d0)   ! pseudoscalar 
+
+
+
+real(8),  parameter :: aR_lep =-2d0*sitW**2*(-1d0)
+real(8),  parameter :: aL_lep =-2d0*sitW**2*(-1d0)-1d0
+real(8),  parameter :: aR_neu =-2d0*sitW**2*(0d0)
+real(8),  parameter :: aL_neu =-2d0*sitW**2*(0d0)+1d0
+
+real(8),  parameter :: aR_QUp =-2d0*sitW**2*(2d0/3d0)
+real(8),  parameter :: aL_QUp =-2d0*sitW**2*(2d0/3d0)+1d0
+real(8),  parameter :: aR_QDn =-2d0*sitW**2*(-1d0/3d0)
+real(8),  parameter :: aL_QDn =-2d0*sitW**2*(-1d0/3d0)-1d0
+
+real(8),  parameter :: bL = dsqrt(2d0)*dsqrt(1d0-sitW**2)
+real(8),  parameter :: bR = 0d0
+
+
+real(8),  parameter :: fbGeV2=0.389379d12/(100d0**2)
+real(8),  parameter :: SymmFac=1d0/2d0, SpinAvg=1d0/4d0, QuarkColAvg=1d0/3d0, GluonColAvg=1d0/8d0
+integer,  target :: Up_  = 1
+integer,  target :: Dn_  = 2
+integer,  target :: Chm_ = 3
+integer,  target :: Str_ = 4
+integer,  target :: Top_ = 5
+integer,  target :: Bot_ = 6
+integer,  target :: ElP_ = 7
+integer,  target :: MuP_ = 8
+integer,  target :: TaP_ = 9
+integer,  target :: Glu_ = 10
+integer,  target :: Pho_ = 11
+integer,  target :: Z0_  = 12
+integer,  target :: Wp_  = 13
+integer,  target :: NuE_ = 14
+integer,  target :: NuM_ = 15
+integer,  target :: NuT_ = 16
+
+integer,  target :: AUp_  = -1
+integer,  target :: ADn_  = -2
+integer,  target :: AChm_ = -3
+integer,  target :: AStr_ = -4
+integer,  target :: ATop_ = -5
+integer,  target :: ABot_ = -6
+integer,  target :: ElM_  = -7
+integer,  target :: MuM_  = -8
+integer,  target :: TaM_  = -9
+integer,  target :: Wm_   = -13
+integer,  target :: ANuE_ = -14
+integer,  target :: ANuM_ = -15
+integer,  target :: ANuT_ = -16
+
+
+real(8),  parameter :: pi =3.141592653589793238462643383279502884197d0
+real(8),  parameter :: sqrt2 = 1.4142135623730950488016887242096980786d0
+real(8),  parameter :: pisq = pi**2
+real(8),  parameter :: one = 1.0d0, mone = -1.0d0
+real(8),  parameter :: half  = 0.5d0,two = 2.0d0
+real(8),  parameter :: zero  = 0.0d0
+complex(8), parameter :: czero = 0.0d0
+complex(8), parameter :: cone = 1.0d0
+complex(8), parameter :: ci=(0.0d0,1.0d0)
+complex(8), parameter :: ne=(0.0d0,1.0d0)
+
+
+integer,parameter :: DecayMode1=0
+integer,parameter :: DecayMode2=0
+logical,parameter :: includeInterference=.false.
+logical,parameter :: OffShellReson=.true.
+real(8) :: M_V,Ga_V
+! real(8) :: scr
+! complex(8) :: sc,et1,pol_mless2,POL_DK2MOM
+integer, parameter  :: dp = selected_real_kind(15)
+real(8), parameter :: tol = 0.0000001d0
+
+    if( DecayMode1.le.3 ) then
+       M_V = M_Z
+       Ga_V= Ga_Z
+    elseif( (DecayMode1.ge.4) .and. (DecayMode1.le.6) ) then
+       M_V = M_W
+       Ga_V= Ga_W    
+    elseif( DecayMode1.eq.7 ) then
+       M_V = 0d0
+       Ga_V= 0d0    
+    endif
+
+

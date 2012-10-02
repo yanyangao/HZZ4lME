@@ -8,7 +8,6 @@ all:
 	@echo "ROOTSYS is not set. Please set ROOT environment properly"; echo
 else
 
-CC = g++
 CMSROOT = ./
 ROOFITINCLUDE = 
 RM  = /bin/rm
@@ -16,10 +15,15 @@ ifdef CMSSW_VERSION
 	ROOFITINCLUDE = $(shell scramv1 tool info roofitcore | grep INCLUDE | sed 's/^INCLUDE=/-I/')
 endif
 INCLUDE = -I$(CMSROOT) $(ROOFITINCLUDE) -I../Higgs/Higgs_CS_and_Width/include/ 
-CFLAGS = -Wall -Wno-unused-function -g -O2 -fPIC $(shell root-config --cflags) $(INCLUDE) $(EXTRACFLAGS)
+
+FORTRAN = gfortran
+FFLAGS = -O3 -ffree-line-length-none -Dcompiler=2 -fPIC
+
+CC = g++
+CFLAGS = -Wall -Wno-unused-function -g -O2 -fPIC -lm -lgfortran $(shell root-config --cflags) $(INCLUDE) $(EXTRACFLAGS)
 
 LINKER = g++
-LINKERFLAGS = $(shell root-config --ldflags)
+LINKERFLAGS = $(shell root-config --ldflags) mod_Higgs_MatEl.o
 
 ifeq ($(shell root-config --platform),macosx)
 ifdef CMSSW_RELEASE_BASE
@@ -34,11 +38,15 @@ SOURCES = $(wildcard *.cc)  $(wildcard foam/*.cc) ../Higgs/Higgs_CS_and_Width/sr
 OBJECTS = $(SOURCES:.cc=.o) LinkDef_out.o
 LIB = libME.so
 
-LIBS = $(LIB) 
-
 .PHONY: all help compile clean cms2env
 
-libs:	$(LIBS)
+libs: mod_Higgs_MatEl.o $(LIB)
+
+mod_Higgs_MatEl.o: mod_Higgs_MatEl.F90 includeVars.F90
+	@echo $(fcomp)
+	@echo " "
+	@echo " compiling mod_Higgs_MatEl.F90 includeVars.F90 with "$(FORTRAN)
+	$(FORTRAN) $(FFLAGS) -c mod_Higgs_MatEl.F90  -lm
 
 $(LIB):	$(OBJECTS) 
 	$(QUIET) echo "Linking $(LIB)"; \
