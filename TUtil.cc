@@ -261,6 +261,7 @@ double HiggsWidth(double mass){
 double TestModHiggsMatEl(mcfm_event_type* mcfm_event, double MReso, double GaReso )
 {
   // input unit = GeV/100 such that 125GeV is 1.25 in the code
+  // this needs to be applied for all the p4
   MReso = MReso / 100.0;
   GaReso = GaReso /100.0;
   double p4[6][4];
@@ -274,18 +275,18 @@ double TestModHiggsMatEl(mcfm_event_type* mcfm_event, double MReso, double GaRes
   // i=4,5: correspond to MY_IDUP(3),MY_IDUP(2)
   for(int ipar=0;ipar<2;ipar++){   
     if(mcfm_event->p[ipar].Energy()>0){
-      p4[ipar][0] = -mcfm_event->p[ipar].Energy();
-      p4[ipar][1] = -mcfm_event->p[ipar].Px();
-      p4[ipar][2] = -mcfm_event->p[ipar].Py();
-      p4[ipar][3] = -mcfm_event->p[ipar].Pz();
+      p4[ipar][0] = -mcfm_event->p[ipar].Energy()/100.;
+      p4[ipar][1] = -mcfm_event->p[ipar].Px()/100.;
+      p4[ipar][2] = -mcfm_event->p[ipar].Py()/100.;
+      p4[ipar][3] = -mcfm_event->p[ipar].Pz()/100.;
     }
   }
   //initialize decayed particles
   for(int ipar=2;ipar<NPart;ipar++){
-    p4[ipar][0] = mcfm_event->p[ipar].Energy();
-    p4[ipar][1] = mcfm_event->p[ipar].Px();
-    p4[ipar][2] = mcfm_event->p[ipar].Py();
-    p4[ipar][3] = mcfm_event->p[ipar].Pz();
+    p4[ipar][0] = mcfm_event->p[ipar].Energy()/100.;
+    p4[ipar][1] = mcfm_event->p[ipar].Px()/100.;
+    p4[ipar][2] = mcfm_event->p[ipar].Py()/100.;
+    p4[ipar][3] = mcfm_event->p[ipar].Pz()/100.;
   }
   
   // particle ID: +7=e+,  -7=e-,  +8=mu+,  -8=mu-
@@ -302,7 +303,12 @@ double TestModHiggsMatEl(mcfm_event_type* mcfm_event, double MReso, double GaRes
   }
   printf("Matr.el. squared: %20.17e \n ",MatElSq);
   */
-  return MatElSq;
+  // 
+  // This constant is needed to account for the different units used in 
+  // JHUGen compared to the MCFM
+  // 
+  double constant = 1.45/pow(10, 8);
+  return MatElSq*constant;
 
 }
 
