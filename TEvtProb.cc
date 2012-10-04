@@ -89,8 +89,22 @@ double TEvtProb::XsecCalc(TVar::Process proc, const hzz4l_event_type &hzz4l_even
     double msqjk; 
     if ( _matrixElement == TVar::MCFM ) 
       msqjk = SumMatrixElementPDF(proc, &mcfm_event, flavor_msq, &flux);
-    if ( _matrixElement == TVar::JHUGen )
-      msqjk = TestModHiggsMatEl(&mcfm_event, _hmass, _hwidth);
+    if ( _matrixElement == TVar::JHUGen ) {
+      // 
+      // By default set the Spin 0 couplings for SM case
+      // 
+      double g1 = 1.0;
+      double g2 = 0.0;
+      double g3 = 0.0; 
+      double g4 = 0.0;
+      if ( proc == TVar::PSHZZ_4l ) {
+	g1 = 0.0;
+	g2 = 0.0;
+	g3 = 0.0;
+	g4 = 1.0;
+      }
+      msqjk = TestModHiggsMatEl(&mcfm_event, _hmass, _hwidth, g1, g2, g3, g4);
+    }
     if(msqjk<=0){ mcfm_event.pswt=0; }
     
     flux=fbGeV2/(mcfm_event.p[0].Energy()*mcfm_event.p[1].Energy())	/(4*W);

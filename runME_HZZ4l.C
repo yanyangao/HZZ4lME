@@ -49,6 +49,9 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
 
   double dXsec_HZZ_JHU = 0.;
   double dXsecErr_HZZ_JHU = 0.;
+
+  double dXsec_PSHZZ_JHU = 0.;
+  double dXsecErr_PSHZZ_JHU = 0.;
   
   evt_tree->Branch("dXsec_ZZ"      ,&dXsec_ZZ           ,"dXsec_ZZ/D");
   evt_tree->Branch("dXsecErr_ZZ"   ,&dXsecErr_ZZ        ,"dXsecErr_ZZ/D");
@@ -58,7 +61,11 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
 
   evt_tree->Branch("dXsec_HZZ_JHU"   , &dXsec_HZZ_JHU      ,"dXsec_HZZ_JHU/D");
   evt_tree->Branch("dXsecErr_HZZ_JHU", &dXsecErr_HZZ_JHU   ,"dXsecErr_HZZ_JHU/D");
-  
+
+  evt_tree->Branch("dXsec_PSHZZ_JHU"   , &dXsec_PSHZZ_JHU      ,"dXsec_PSHZZ_JHU/D");
+  evt_tree->Branch("dXsecErr_PSHZZ_JHU", &dXsecErr_PSHZZ_JHU   ,"dXsecErr_PSHZZ_JHU/D");
+ 
+ 
   // Initialize the branches to use to calculate the differential cross-sections
   Double_t EL1_ = 0.;
   Double_t pXL1_ = 0.;
@@ -129,6 +136,9 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     dXsec_HZZ_JHU = 0.;
     dXsecErr_HZZ_JHU = 0.;
 
+    dXsec_PSHZZ_JHU = 0.;
+    dXsecErr_PSHZZ_JHU = 0.;
+
     ch->GetEntry(ievt);           
     
     hzz4l_event.p[0].SetXYZM(pXL1_, pYL1_, pZL1_, 0.);
@@ -171,6 +181,8 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     // Use the one from Markus
     Xcal2.SetMatrixElement(TVar::JHUGen);
     dXsec_HZZ_JHU = Xcal2.XsecCalc(TVar::HZZ_4l,hzz4l_event,verbosity);
+    Xcal2.SetMatrixElement(TVar::JHUGen);
+    dXsec_PSHZZ_JHU = Xcal2.XsecCalc(TVar::PSHZZ_4l,hzz4l_event,verbosity);
     evt_tree->Fill();
     
   }//nevent
