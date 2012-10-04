@@ -258,7 +258,7 @@ double HiggsWidth(double mass){
 //
 // Test code from Markus to calculate the HZZ cross-section
 // 
-double TestModHiggsMatEl(mcfm_event_type* mcfm_event, double MReso, double GaReso )
+double TestModHiggsMatEl(mcfm_event_type* mcfm_event, double MReso, double GaReso, double g1, double g2, double g3, double g4)
 {
   // input unit = GeV/100 such that 125GeV is 1.25 in the code
   // this needs to be applied for all the p4
@@ -294,7 +294,7 @@ double TestModHiggsMatEl(mcfm_event_type* mcfm_event, double MReso, double GaRes
   MYIDUP[1]=-7;
   MYIDUP[2]=+7;
   MYIDUP[3]=-7;
-  __modhiggs_MOD_evalamp_gg_h_vv(p4, &MReso,  &GaReso, MYIDUP, &MatElSq);
+  __modhiggs_MOD_evalamp_gg_h_vv(p4, &MReso,  &GaReso, &g1, &g2, &g3, &g4, MYIDUP, &MatElSq);
   /*
   printf("\n ");
   std::cout << "resoance = " << MReso *100. << ", width = " << GaReso*100. << "\n";
