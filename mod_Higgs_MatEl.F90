@@ -13,10 +13,11 @@
 !----- a subroutinefor gg -> H -> ZZ/WW/gammagamma
 !----- all outgoing convention and the following momentum assignment
 !-----  0 -> g(p1) + g(p2) + e-(p3) + e+(p4) +mu-(p5) +mu+(p6)
-      subroutine EvalAmp_gg_H_VV(p,M_Reso,Ga_Reso,MY_IDUP,sum)
+!      subroutine EvalAmp_gg_H_VV(p,M_Reso,Ga_Reso,ghz1,ghz2,ghz3,ghz4,MY_IDUP,sum)
+     subroutine EvalAmp_gg_H_VV(p,M_Reso,Ga_Reso,g1,g2,g3,g4,MY_IDUP,sum)
       implicit none
       real(8), intent(out) ::  sum
-      real(8), intent(in) :: p(4,6),M_Reso,Ga_Reso
+      real(8), intent(in) :: p(4,6),M_Reso,Ga_Reso,g1,g2,g3,g4
       integer, intent(in) :: MY_IDUP(6:9)
       complex(8) :: A(1:4)
       integer :: i1,i2,i3,i4,ordering(1:4)
@@ -24,8 +25,16 @@
       real(8) :: gZ_sq
       real(8) :: prefactor, Lambda_inv
       real(8), parameter :: symmFact=1d0/2d0
+      complex(8)  :: ghz1 
+      complex(8)  :: ghz2
+      complex(8)  :: ghz3
+      complex(8)  :: ghz4
       include "includeVars.F90"
-
+      
+      ghz1=CMPLX(g1)
+      ghz2=CMPLX(g2)
+      ghz3=CMPLX(g3)
+      ghz4=CMPLX(g4)
 
       gZ_sq = 4.0d0*pi*alpha_QED/4.0d0/(one-sitW**2)/sitW**2
 
@@ -104,10 +113,10 @@ do i3 = 1,2
 do i4 = 1,2
    
          ordering = (/3,4,5,6/)
-         call calcHelAmp(ordering,p(1:4,1:6),M_Reso,Ga_Reso,i1,i2,i3,i4,A(1))
+         call calcHelAmp(ordering,p(1:4,1:6),M_Reso,Ga_Reso,ghz1,ghz2,ghz3,ghz4,i1,i2,i3,i4,A(1))
          if( (includeInterference.eqv..true.) .and. (MY_IDUP(6).eq.MY_IDUP(8)) .and. (MY_IDUP(7).eq.MY_IDUP(9)) ) then
              ordering = (/5,4,3,6/)
-             call calcHelAmp(ordering,p(1:4,1:6),M_Reso,Ga_Reso,i1,i2,i3,i4,A(2))
+             call calcHelAmp(ordering,p(1:4,1:6),M_Reso,Ga_Reso,ghz1,ghz2,ghz3,ghz4,i1,i2,i3,i4,A(2))
              A(2) = -A(2) ! minus comes from fermi statistics
          endif
 
@@ -144,14 +153,15 @@ enddo
 
 
 
-     subroutine calcHelAmp(ordering,p,M_Reso,Ga_Reso,i1,i2,i3,i4,A)
+     subroutine calcHelAmp(ordering,p,M_Reso,Ga_Reso,ghz1,ghz2,ghz3,ghz4,i1,i2,i3,i4,A)
      implicit none
      integer :: ordering(1:4),i1,i2,i3,i4,l1,l2,l3,l4
      real(8) :: p(1:4,1:6),M_Reso,Ga_Reso
+     complex(8) :: ghz1,ghz2,ghz3,ghz4
      complex(8) :: propG, propZ1, propZ2
      real(8) :: s, pin(4,4)
      complex(8) :: A(1:1), sp(4,4)
-      include "includeVars.F90"
+     include "includeVars.F90"
 
 
       l1=ordering(1)
@@ -199,9 +209,9 @@ enddo
          endif
 
          if( OffShellReson ) then
-              call ggOffHZZampl(pin,sp,M_Reso,Ga_Reso,A(1))
+              call ggOffHZZampl(pin,sp,M_Reso,Ga_Reso,ghz1,ghz2,ghz3,ghz4,A(1))
          else
-              call ggHZZampl(pin,sp,M_Reso,Ga_Reso,A(1))
+              call ggHZZampl(pin,sp,M_Reso,Ga_Reso,ghz1,ghz2,ghz3,ghz4,A(1))
          endif
 
          A(1) = A(1) * propG*propZ1*propZ2
@@ -214,9 +224,10 @@ enddo
 
 
 
-      subroutine ggHZZampl(p,sp,M_Reso,Ga_Reso,res)
+      subroutine ggHZZampl(p,sp,M_Reso,Ga_Reso,ghz1,ghz2,ghz3,ghz4,res)
       implicit none
       real(8), intent(in) :: p(4,4),M_Reso,Ga_Reso
+      complex(8), intent(in) :: ghz1,ghz2,ghz3,ghz4
       complex(8), intent(in) :: sp(4,4)
       complex(8), intent(out) :: res
       complex(8) :: e1_e2, e1_e3, e1_e4
@@ -357,9 +368,10 @@ enddo
 
 
 
-      subroutine ggOffHZZampl(p,sp,M_Reso,Ga_Reso,res)
+      subroutine ggOffHZZampl(p,sp,M_Reso,Ga_Reso,ghz1,ghz2,ghz3,ghz4,res)
       implicit none
       real(8), intent(in) :: p(4,4),M_Reso,Ga_Reso
+      complex(8), intent(in) :: ghz1,ghz2,ghz3,ghz4
       complex(8), intent(in) :: sp(4,4)
       complex(8), intent(out) :: res
       complex(8) :: e1_e2, e1_e3, e1_e4
@@ -543,7 +555,7 @@ enddo
     real(8) :: p0,px,py,pz
     real(8) :: pv,ct,st,cphi,sphi
     complex(8) :: pol_mless(4)
-      include "includeVars.F90"
+    include "includeVars.F90"
 
 !^^^IFmp
 !    p0=(p(1)+conjg(p(1)))/two

@@ -27,10 +27,10 @@ real(8),  parameter :: sitW = dsqrt(0.23119d0)       ! sin(Theta_Weinberg) (PDG-
    complex(8),  parameter :: ghg2 = (1.0d0,0d0)
    complex(8),  parameter :: ghg3 = (0.0d0,0d0)
    complex(8),  parameter :: ghg4 = (0.0d0,0d0)   ! pseudoscalar
-   complex(8),  parameter :: ghz1 = (1.0d0,0d0)
-   complex(8),  parameter :: ghz2 = (0.0d0,0d0)
-   complex(8),  parameter :: ghz3 = (0.0d0,0d0)
-   complex(8),  parameter :: ghz4 = (0.0d0,0d0)   ! pseudoscalar 
+!   complex(8),  parameter :: ghz1 = (1.0d0,0d0)
+!   complex(8),  parameter :: ghz2 = (0.0d0,0d0)
+!   complex(8),  parameter :: ghz3 = (0.0d0,0d0)
+!   complex(8),  parameter :: ghz4 = (0.0d0,0d0)   ! pseudoscalar 
 
 
 
