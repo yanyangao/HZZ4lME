@@ -18,6 +18,7 @@
 #include "TVar.hh"
 #include "TMCFM.hh"
 #include "TModHiggsMatEl.hh"
+#include "TModGravitonMatEl.hh"
 
 
 using namespace std;
@@ -27,7 +28,6 @@ void SetEwkCoupligParameters();
 bool My_smalls(double s[][12], int npart);
 double SumMatrixElementPDF(TVar::Process procees, mcfm_event_type* mcfm_event,double flavor_msq[][11],double* flux);
 double HiggsWidth(double mass);
-double TestModHiggsMatEl( mcfm_event_type* mcfm_event, double MReso, double GaReso, double g1, double g2, double g3, double g4);
-
+double JHUGenMatEl(TVar::Process procees, mcfm_event_type* mcfm_event, double MReso, double GaReso, double *xggcoupl, double *xvvcoupl);
 
 #endif

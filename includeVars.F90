@@ -15,8 +15,8 @@ real(8),  parameter :: alpha_QED = 1d0/128.0d0       ! el.magn. coupling
 real(8),  parameter :: sitW = dsqrt(0.23119d0)       ! sin(Theta_Weinberg) (PDG-2008)
 
 !-- parameters that define on-shell spin 0 coupling to SM fields, see note
-   logical,  parameter :: generate_as = .false.
-   complex(8),  parameter :: ahg1 = (1.0d0,0d0)
+   logical,  parameter :: generate_as = .false.! this cannot be changed
+   complex(8),  parameter :: ahg1 = (1.0d0,0d0)! these parameters are not used
    complex(8),  parameter :: ahg2 = (0.0d0,0d0)
    complex(8),  parameter :: ahg3 = (0.0d0,0d0)  ! pseudoscalar
    complex(8),  parameter :: ahz1 = (1.0d0,0d0)
@@ -24,13 +24,52 @@ real(8),  parameter :: sitW = dsqrt(0.23119d0)       ! sin(Theta_Weinberg) (PDG-
    complex(8),  parameter :: ahz3 = (0.0d0,0d0)  ! pseudoscalar
 
 !-- parameters that define off-shell spin 0 coupling to SM fields, see note
-   complex(8),  parameter :: ghg2 = (1.0d0,0d0)
-   complex(8),  parameter :: ghg3 = (0.0d0,0d0)
-   complex(8),  parameter :: ghg4 = (0.0d0,0d0)   ! pseudoscalar
-!   complex(8),  parameter :: ghz1 = (1.0d0,0d0)
-!   complex(8),  parameter :: ghz2 = (0.0d0,0d0)
-!   complex(8),  parameter :: ghz3 = (0.0d0,0d0)
-!   complex(8),  parameter :: ghz4 = (0.0d0,0d0)   ! pseudoscalar 
+   complex(8) :: ghg2
+   complex(8) :: ghg3
+   complex(8) :: ghg4   ! pseudoscalar
+   complex(8) :: ghz1
+   complex(8) :: ghz2
+   complex(8) :: ghz3
+   complex(8) :: ghz4  ! pseudoscalar
+
+
+
+!-- parameters that define spin 2 coupling to SM fields, see note
+! minimal coupling corresponds to a1 = b1 = b5 = 1 everything else 0
+  complex(8) :: a1    ! g1  -- c.f. draft
+  complex(8) :: a2    ! g2
+  complex(8) :: a3    ! g3
+  complex(8) :: a4    ! g4
+  complex(8) :: a5    ! pseudoscalar, g8
+  complex(8) :: graviton_qq_left! graviton coupling to quarks
+  complex(8) :: graviton_qq_right
+
+!-- see mod_Graviton
+  logical,  parameter :: generate_bis = .true.! this cannot be changed
+  logical,  parameter :: use_dynamic_MG = .true.
+
+  complex(8) :: b1    !  all b' below are g's in the draft
+  complex(8) :: b2
+  complex(8) :: b3
+  complex(8) :: b4
+  complex(8) :: b5
+  complex(8) :: b6
+  complex(8) :: b7
+  complex(8) :: b8
+  complex(8) :: b9  ! this coupling does not contribute to gamma+gamma final states
+  complex(8) :: b10  ! this coupling does not contribute to gamma+gamma final states
+
+
+  complex(8),  parameter  :: c1 = (1.0d0,0d0)! this parameters are not used
+  complex(8),  parameter  :: c2 = (0.0d0,0d0)
+  complex(8),  parameter  :: c3 = (0.0d0,0d0)
+  complex(8),  parameter  :: c41= (0.0d0,0d0)
+  complex(8),  parameter  :: c42= (0.0d0,0d0)
+  complex(8),  parameter  :: c5 = (0.0d0,0d0)
+  complex(8),  parameter  :: c6 = (0.0d0,0d0)  ! this coupling does not contribute to gamma+gamma final states
+  complex(8),  parameter  :: c7 = (0.0d0,0d0)  ! this coupling does not contribute to gamma+gamma final states
+
+
 
 
 

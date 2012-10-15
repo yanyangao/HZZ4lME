@@ -2,7 +2,9 @@
       implicit none
 
       public :: EvalAmp_gg_H_VV
-
+      private
+      integer, parameter  :: dp = selected_real_kind(15)
+      real(dp), private, parameter :: tol = 0.00000010_dp
 
       contains
 
@@ -13,28 +15,19 @@
 !----- a subroutinefor gg -> H -> ZZ/WW/gammagamma
 !----- all outgoing convention and the following momentum assignment
 !-----  0 -> g(p1) + g(p2) + e-(p3) + e+(p4) +mu-(p5) +mu+(p6)
-!      subroutine EvalAmp_gg_H_VV(p,M_Reso,Ga_Reso,ghz1,ghz2,ghz3,ghz4,MY_IDUP,sum)
-     subroutine EvalAmp_gg_H_VV(p,M_Reso,Ga_Reso,g1,g2,g3,g4,MY_IDUP,sum)
+      subroutine EvalAmp_gg_H_VV(p,M_Reso,Ga_Reso,ggcoupl,vvcoupl,MY_IDUP,sum)
       implicit none
-      real(8), intent(out) ::  sum
-      real(8), intent(in) :: p(4,6),M_Reso,Ga_Reso,g1,g2,g3,g4
+      real(dp), intent(out) ::  sum
+      real(dp), intent(in) :: p(4,6),M_Reso,Ga_Reso,ggcoupl(1:3),vvcoupl(1:4)
       integer, intent(in) :: MY_IDUP(6:9)
-      complex(8) :: A(1:4)
+      complex(dp) :: A(1:4)
       integer :: i1,i2,i3,i4,ordering(1:4)
-      real(8) :: aL1,aR1,aL2,aR2
-      real(8) :: gZ_sq
-      real(8) :: prefactor, Lambda_inv
-      real(8), parameter :: symmFact=1d0/2d0
-      complex(8)  :: ghz1 
-      complex(8)  :: ghz2
-      complex(8)  :: ghz3
-      complex(8)  :: ghz4
+      real(dp) :: aL1,aR1,aL2,aR2
+      real(dp) :: gZ_sq
+      real(dp) :: prefactor, Lambda_inv
+      real(dp), parameter :: symmFact=1d0/2d0
       include "includeVars.F90"
-      
-      ghz1=CMPLX(g1)
-      ghz2=CMPLX(g2)
-      ghz3=CMPLX(g3)
-      ghz4=CMPLX(g4)
+
 
       gZ_sq = 4.0d0*pi*alpha_QED/4.0d0/(one-sitW**2)/sitW**2
 
@@ -113,10 +106,10 @@ do i3 = 1,2
 do i4 = 1,2
    
          ordering = (/3,4,5,6/)
-         call calcHelAmp(ordering,p(1:4,1:6),M_Reso,Ga_Reso,ghz1,ghz2,ghz3,ghz4,i1,i2,i3,i4,A(1))
+         call calcHelAmp(ordering,p(1:4,1:6),M_Reso,Ga_Reso,ggcoupl(1:3),vvcoupl(1:4),i1,i2,i3,i4,A(1))
          if( (includeInterference.eqv..true.) .and. (MY_IDUP(6).eq.MY_IDUP(8)) .and. (MY_IDUP(7).eq.MY_IDUP(9)) ) then
              ordering = (/5,4,3,6/)
-             call calcHelAmp(ordering,p(1:4,1:6),M_Reso,Ga_Reso,ghz1,ghz2,ghz3,ghz4,i1,i2,i3,i4,A(2))
+             call calcHelAmp(ordering,p(1:4,1:6),M_Reso,Ga_Reso,ggcoupl(1:3),vvcoupl(1:4),i1,i2,i3,i4,A(2))
              A(2) = -A(2) ! minus comes from fermi statistics
          endif
 
@@ -153,15 +146,14 @@ enddo
 
 
 
-     subroutine calcHelAmp(ordering,p,M_Reso,Ga_Reso,ghz1,ghz2,ghz3,ghz4,i1,i2,i3,i4,A)
+     subroutine calcHelAmp(ordering,p,M_Reso,Ga_Reso,ggcoupl,vvcoupl,i1,i2,i3,i4,A)
      implicit none
      integer :: ordering(1:4),i1,i2,i3,i4,l1,l2,l3,l4
-     real(8) :: p(1:4,1:6),M_Reso,Ga_Reso
-     complex(8) :: ghz1,ghz2,ghz3,ghz4
-     complex(8) :: propG, propZ1, propZ2
-     real(8) :: s, pin(4,4)
-     complex(8) :: A(1:1), sp(4,4)
-     include "includeVars.F90"
+     real(dp) :: p(1:4,1:6),M_Reso,Ga_Reso,ggcoupl(1:3),vvcoupl(1:4)
+     complex(dp) :: propG, propZ1, propZ2
+     real(dp) :: s, pin(4,4)
+     complex(dp) :: A(1:1), sp(4,4)
+      include "includeVars.F90"
 
 
       l1=ordering(1)
@@ -209,9 +201,9 @@ enddo
          endif
 
          if( OffShellReson ) then
-              call ggOffHZZampl(pin,sp,M_Reso,Ga_Reso,ghz1,ghz2,ghz3,ghz4,A(1))
+              call ggOffHZZampl(pin,sp,M_Reso,Ga_Reso,ggcoupl(1:3),vvcoupl(1:4),A(1))
          else
-              call ggHZZampl(pin,sp,M_Reso,Ga_Reso,ghz1,ghz2,ghz3,ghz4,A(1))
+              call ggHZZampl(pin,sp,M_Reso,Ga_Reso,ggcoupl(1:3),vvcoupl(1:4),A(1))
          endif
 
          A(1) = A(1) * propG*propZ1*propZ2
@@ -224,30 +216,35 @@ enddo
 
 
 
-      subroutine ggHZZampl(p,sp,M_Reso,Ga_Reso,ghz1,ghz2,ghz3,ghz4,res)
+      subroutine ggHZZampl(p,sp,M_Reso,Ga_Reso,ggcoupl,vvcoupl,res)
       implicit none
-      real(8), intent(in) :: p(4,4),M_Reso,Ga_Reso
-      complex(8), intent(in) :: ghz1,ghz2,ghz3,ghz4
-      complex(8), intent(in) :: sp(4,4)
-      complex(8), intent(out) :: res
-      complex(8) :: e1_e2, e1_e3, e1_e4
-      complex(8) :: e2_e3, e2_e4
-      complex(8) :: e3_e4
-      complex(8) :: q_q
-      complex(8) :: q1_q2,q1_q3,q1_q4
-      complex(8) :: q2_q3,q2_q4
-      complex(8) :: q3_q4
-      complex(8) :: q1_e3,q1_e4,q2_e3,q2_e4
-      complex(8) :: e1_q3,e1_q4,e2_q3,e2_q4
-      complex(8) :: e3_q4,e4_q3
-      complex(8) :: q1(4),q2(4),q3(4),q4(4),q(4)
-      complex(8) :: e1(4),e2(4),e3(4),e4(4)
-      complex(8) :: xxx1,xxx2,xxx3,yyy1,yyy2,yyy3,yyy4
-      real(8) :: q34
-      real(8) :: MG, MZ3, MZ4, q3_q3, q4_q4
+      real(dp), intent(in) :: p(4,4),M_Reso,Ga_Reso,ggcoupl(1:3),vvcoupl(1:4)
+      complex(dp), intent(in) :: sp(4,4)
+      complex(dp), intent(out) :: res
+      complex(dp) :: e1_e2, e1_e3, e1_e4
+      complex(dp) :: e2_e3, e2_e4
+      complex(dp) :: e3_e4
+      complex(dp) :: q_q
+      complex(dp) :: q1_q2,q1_q3,q1_q4
+      complex(dp) :: q2_q3,q2_q4
+      complex(dp) :: q3_q4
+      complex(dp) :: q1_e3,q1_e4,q2_e3,q2_e4
+      complex(dp) :: e1_q3,e1_q4,e2_q3,e2_q4
+      complex(dp) :: e3_q4,e4_q3
+      complex(dp) :: q1(4),q2(4),q3(4),q4(4),q(4)
+      complex(dp) :: e1(4),e2(4),e3(4),e4(4)
+      complex(dp) :: xxx1,xxx2,xxx3,yyy1,yyy2,yyy3,yyy4
+      real(dp) :: q34
+      real(dp) :: MG, MZ3, MZ4, q3_q3, q4_q4
       include "includeVars.F90"
 
-
+      ghg2 = dcmplx( ggcoupl(1) )
+      ghg3 = dcmplx( ggcoupl(2) )
+      ghg4 = dcmplx( ggcoupl(3) )
+      ghz1 = dcmplx( vvcoupl(1) )
+      ghz2 = dcmplx( vvcoupl(2) )
+      ghz3 = dcmplx( vvcoupl(3) )
+      ghz4 = dcmplx( vvcoupl(4) )
 
       res = 0d0
 
@@ -368,29 +365,36 @@ enddo
 
 
 
-      subroutine ggOffHZZampl(p,sp,M_Reso,Ga_Reso,ghz1,ghz2,ghz3,ghz4,res)
+      subroutine ggOffHZZampl(p,sp,M_Reso,Ga_Reso,ggcoupl,vvcoupl,res)
       implicit none
-      real(8), intent(in) :: p(4,4),M_Reso,Ga_Reso
-      complex(8), intent(in) :: ghz1,ghz2,ghz3,ghz4
-      complex(8), intent(in) :: sp(4,4)
-      complex(8), intent(out) :: res
-      complex(8) :: e1_e2, e1_e3, e1_e4
-      complex(8) :: e2_e3, e2_e4
-      complex(8) :: e3_e4
-      complex(8) :: q_q
-      complex(8) :: q1_q2,q1_q3,q1_q4
-      complex(8) :: q2_q3,q2_q4
-      complex(8) :: q3_q4
-      complex(8) :: q1_e3,q1_e4,q2_e3,q2_e4
-      complex(8) :: e1_q3,e1_q4,e2_q3,e2_q4
-      complex(8) :: e3_q4,e4_q3
-      complex(8) :: q1(4),q2(4),q3(4),q4(4),q(4)
-      complex(8) :: e1(4),e2(4),e3(4),e4(4)
-      complex(8) :: xxx1,xxx2,xxx3,yyy1,yyy2,yyy3,yyy4
-      real(8) :: q34, MG, MZ3, MZ4, q3_q3, q4_q4
+      real(dp), intent(in) :: p(4,4),M_Reso,Ga_Reso,ggcoupl(1:3),vvcoupl(1:4)
+      complex(dp), intent(in) :: sp(4,4)
+      complex(dp), intent(out) :: res
+      complex(dp) :: e1_e2, e1_e3, e1_e4
+      complex(dp) :: e2_e3, e2_e4
+      complex(dp) :: e3_e4
+      complex(dp) :: q_q
+      complex(dp) :: q1_q2,q1_q3,q1_q4
+      complex(dp) :: q2_q3,q2_q4
+      complex(dp) :: q3_q4
+      complex(dp) :: q1_e3,q1_e4,q2_e3,q2_e4
+      complex(dp) :: e1_q3,e1_q4,e2_q3,e2_q4
+      complex(dp) :: e3_q4,e4_q3
+      complex(dp) :: q1(4),q2(4),q3(4),q4(4),q(4)
+      complex(dp) :: e1(4),e2(4),e3(4),e4(4)
+      complex(dp) :: xxx1,xxx2,xxx3,yyy1,yyy2,yyy3,yyy4
+      real(dp) :: q34, MG, MZ3, MZ4, q3_q3, q4_q4
       include "includeVars.F90"
 
       res = 0d0
+
+      ghg2 = dcmplx( ggcoupl(1) )
+      ghg3 = dcmplx( ggcoupl(2) )
+      ghg4 = dcmplx( ggcoupl(3) )
+      ghz1 = dcmplx( vvcoupl(1) )
+      ghz2 = dcmplx( vvcoupl(2) )
+      ghz3 = dcmplx( vvcoupl(3) )
+      ghz4 = dcmplx( vvcoupl(4) )
 
       q1 = dcmplx(p(1,:),0d0)
       q2 = dcmplx(p(2,:),0d0)
@@ -509,7 +513,7 @@ enddo
 
    double complex function et1(e1,e2,e3,e4)
     implicit none
-    complex(8), intent(in) :: e1(4), e2(4), e3(4), e4(4)
+    complex(dp), intent(in) :: e1(4), e2(4), e3(4), e4(4)
 
     et1 =  e1(1)*e2(2)*e3(3)*e4(4)-e1(1)*e2(2)*e3(4)*e4(3) &
           -e1(1)*e2(3)*e3(2)*e4(4)+e1(1)*e2(3)*e3(4)*e4(2) &
@@ -529,15 +533,15 @@ enddo
 
 
       double complex function sc(q1,q2)
-        complex(8), intent(in) :: q1(4)
-        complex(8), intent(in) :: q2(4)
+        complex(dp), intent(in) :: q1(4)
+        complex(dp), intent(in) :: q2(4)
 
         sc = q1(1)*q2(1) - q1(2)*q2(2)-q1(3)*q2(3) -q1(4)*q2(4)
 
       end function sc
 
       double precision function scr(p1,p2)
-        real(8), intent(in) :: p1(4),p2(4)
+        real(dp), intent(in) :: p1(4),p2(4)
 
         scr = p1(1)*p2(1) - p1(2)*p2(2)-p1(3)*p2(3) -p1(4)*p2(4)
 
@@ -547,15 +551,15 @@ enddo
 
   ! -- massless vector polarization subroutine
   function pol_mless(p,i,outgoing)
-    complex(8), intent(in)    :: p(4)
+    complex(dp), intent(in)    :: p(4)
     integer, intent(in)          :: i
     logical, intent(in) :: outgoing
     ! -------------------------------
     integer :: pol
-    real(8) :: p0,px,py,pz
-    real(8) :: pv,ct,st,cphi,sphi
-    complex(8) :: pol_mless(4)
-    include "includeVars.F90"
+    real(dp) :: p0,px,py,pz
+    real(dp) :: pv,ct,st,cphi,sphi
+    complex(dp) :: pol_mless(4)
+      include "includeVars.F90"
 
 !^^^IFmp
 !    p0=(p(1)+conjg(p(1)))/two
@@ -605,9 +609,9 @@ enddo
 
   function pol_mless2(p,i,out)
     integer, intent(in)       :: i
-    complex(8), intent(in) :: p(4)
+    complex(dp), intent(in) :: p(4)
     character(len=*), intent(in):: out
-    complex(8)             :: pol_mless2(4)
+    complex(dp)             :: pol_mless2(4)
     ! -------------------------------------
 
     if (out == 'out') then
@@ -622,9 +626,9 @@ enddo
   implicit none
     integer, intent(in) :: i
     integer :: j
-    complex(8), intent(in) :: plepton(1:4),antilepton(1:4)
-    complex(8) :: pol_dk2mom(4),Ub(4),V(4),q(4),qsq
-    complex(8),parameter :: ci=(0d0,1d0)
+    complex(dp), intent(in) :: plepton(1:4),antilepton(1:4)
+    complex(dp) :: pol_dk2mom(4),Ub(4),V(4),q(4),qsq
+    complex(dp),parameter :: ci=(0d0,1d0)
     
 
 
@@ -659,12 +663,12 @@ enddo
    !     ubar spinor, massless
 
   function ubar0(p,i)
-    complex(8), intent(in) :: p(4)
+    complex(dp), intent(in) :: p(4)
     integer, intent(in)       :: i
     ! -------------------------------
-    complex(8) :: ubar0(4)
-    complex(8) :: fc, fc2
-    real(8)    :: p0,px,py,pz
+    complex(dp) :: ubar0(4)
+    complex(dp) :: fc, fc2
+    real(dp)    :: p0,px,py,pz
       include "includeVars.F90"
 
 !^^^IFmp
@@ -721,12 +725,12 @@ enddo
 
   ! -- v0  spinor, massless
   function v0(p,i)
-    complex(8), intent(in) :: p(4)
+    complex(dp), intent(in) :: p(4)
     integer, intent(in)       :: i
     ! -------------------------------
-    complex(8) :: v0(4)
-    complex(8) :: fc2, fc
-    real(8)    :: p0,px,py,pz
+    complex(dp) :: v0(4)
+    complex(dp) :: fc2, fc
+    real(dp)    :: p0,px,py,pz
       include "includeVars.F90"
 
 !^^^IFmp
