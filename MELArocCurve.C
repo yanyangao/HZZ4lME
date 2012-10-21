@@ -6,14 +6,14 @@
 TGraph* makeROCcurve(char* drawVar="melaLD", 
 		     const int bins=100, float start=0, float end=1,
 		     int lineColor=1, int lineStyle=1, int lineWidth=2,
-		     char* sigFile="SMHiggsZZ_250GeV_JHU_ME.root",
-		     char* bkgFile="TZZ_2mplus_250GeV_JHU_ME.root"
+		     char* sigFile="SMHiggsZZ_250_JHU_ME.root",
+		     char* bkgFile="TZZ_2mplus_250_JHU_ME.root"
 		     ){
 
-  TChain* SMHtree = new TChain("newTree");
+  TChain* SMHtree = new TChain("angles");
   SMHtree->Add(sigFile);
 
-  TChain* PStree = new TChain("newTree");
+  TChain* PStree = new TChain("angles");
   PStree->Add(bkgFile);
   
   TH1F *SMHhisto, *PShisto;
