@@ -1,0 +1,55 @@
+############################
+## instructions for reproducing
+## anlaytical KD and JHUGen 
+## numerical KD distributions
+## and ROC curves.
+############################
+
+
+# Add variables to trees
+
+#check out and install the HZZ4lME package 
+#from Yanyan and Sergo. 
+
+cmsrel CMSSW_4_2_3
+cd CMSSW_4_2_3/src/
+cmsenv
+cvs co -d HZZ4lME UserCode/YGao/HZZ4lME
+cvs co -d Higgs/Higgs_CS_and_Width UserCode/Snowball/Higgs/Higgs_CS_and_Width
+cp -r Higgs/Higgs_CS_and_Width/txtFiles .
+cd HZZ4lME/
+cp /afs/cern.ch/user/y/yygao/public/libmcfm.so .
+make
+
+# check out PDFs from MELA package
+
+cvs co -r V00-01-05 -d PDFs UserCode/CJLST/ZZMatrixElement/MELA/src/RooSpinTwo_7D.cc
+cvs co -r V00-01-05 -d PDFs UserCode/CJLST/ZZMatrixElement/MELA/src/RooSpinTwo_7D.h
+
+cvs co -r V00-01-05 -d PDFs UserCode/CJLST/ZZMatrixElement/MELA/src/RooXZsZs_5D.cc
+cvs co -r V00-01-05 -d PDFs UserCode/CJLST/ZZMatrixElement/MELA/src/RooXZsZs_5D.h
+
+# Compile code:
+
+root -l -n 
+
+
+# Add the following lines to rootlogon.C
+
+  gSystem->AddIncludePath("-I$ROOFITSYS/include/");
+  gROOT->ProcessLine(".L PDFs/RooSpinTwo_7D.cc+");
+  gROOT->ProcessLine(".L PDFs/RooXZsZs_5D.cc+");
+
+# run code to add gravi-MELA and JHUGen ME branches to tree
+
+root -l -n rootlogon.C
+.L runME_HZZ4l_JHUgenSamples.C+
+// for example
+runME_HZZ4l_JHUgenSamples("/home/ygao/HZZME/","SMHiggsZZ_250_JHU.root","./",10000,0)
+runME_HZZ4l_JHUgenSamples("/home/ygao/HZZME/","TZZ_2mplus_250_JHU.root","./",10000,0)
+
+.q 
+
+# Plot ROC curves - 
+
+root -l -n MELArocCurves.C
