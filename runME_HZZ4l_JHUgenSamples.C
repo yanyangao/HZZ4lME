@@ -138,15 +138,26 @@ pair<double,double> calculateGraviMela(double mzz_,double m1_, double m2_,
 			mZ,gamZ);
 
   checkZorder(m1_,m2_,hs_,h1_,h2_,phi_,phi1_);
+
+  // 
+  // change the variables 
+  // 
   
+  double phi1Val = phi1_;
+
+  if ( phi1_ < 0 ) 
+    phi1Val = phi1_ + TMath::Pi();
+  else 
+    phi1Val = phi1_ - TMath::Pi();
+
   mzz.setVal(mzz_);  m1.setVal(m1_);   m2.setVal(m2_);
   hs.setVal(hs_);  h1.setVal(h1_);   h2.setVal(h2_);  
-  phi.setVal(phi_);  phi1.setVal(phi1_);  
+  phi.setVal(phi_);  phi1.setVal(phi1Val);  
   
   pair<double,double> result;
   result.first=SMHiggs.getVal();
   result.second=minGrav.getVal();
-
+  
   return result;
   
 }
@@ -378,7 +389,7 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     Xcal2.SetMatrixElement(TVar::MCFM);
     dXsec_ZZ = Xcal2.XsecCalc(TVar::ZZ_4l,hzz4l_event,verbosity);
     dXsec_HZZ = Xcal2.XsecCalc(TVar::HZZ_4l,hzz4l_event,verbosity);
-
+    
     // calculate X->ZZ using JHUGen
     Xcal2.SetMatrixElement(TVar::JHUGen);
     dXsec_HZZ_JHU = Xcal2.XsecCalc(TVar::HZZ_4l,hzz4l_event,verbosity);
