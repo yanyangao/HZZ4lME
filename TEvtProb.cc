@@ -114,16 +114,19 @@ double TEvtProb::XsecCalc(TVar::Process proc, const hzz4l_event_type &hzz4l_even
       if ( proc == TVar::TZZ_4l ) {
 	// Graviton->Glu Glu coupling constants 
 	double Gggcoupl[5] = {1.0, 0.0, 0.0, 0.0, 0.0}; // 2m+
+	// double Gggcoupl[5] = {0.0, 0.0, 0.0, 1.0, 0.0}; // 2h+
+	// double Gggcoupl[5] = {0.0, 1.0, 1.0, 0.0, 0.0}; // 2L+
+	// double Gggcoupl[5] = {0.0, 0.0, 0.0, 0.0, 1.0}; // 2h-
 	// Graviton->ZZ coupling constants 
 	double Gvvcoupl[10]; 
-	Gvvcoupl[0]=1.0;
-	Gvvcoupl[1]=0.0;
-	Gvvcoupl[2]=0.0;
-	Gvvcoupl[3]=0.0;
-	Gvvcoupl[4]=1.0;
+	Gvvcoupl[0]=1.0; // 2m+
+	Gvvcoupl[1]=0.0; 
+	Gvvcoupl[2]=0.0;  
+	Gvvcoupl[3]=0.0; // 2h+
+	Gvvcoupl[4]=1.0; // 2m+ 
 	Gvvcoupl[5]=0.0;
 	Gvvcoupl[6]=0.0;
-	Gvvcoupl[7]=0.0;
+	Gvvcoupl[7]=0.0; // 2h-
 	Gvvcoupl[8]=0.0;
 	Gvvcoupl[9]=0.0;
 	msqjk = JHUGenMatEl(proc, &mcfm_event, _hmass, _hwidth, Gggcoupl, Gvvcoupl);
@@ -158,4 +161,11 @@ void TEvtProb::SetHiggsMass(double mass){
     masses_mcfm_.hwidth=myCSW_->HiggsWidth(0, mass);
     _hmass = mass;
     _hwidth = myCSW_->HiggsWidth(0, mass);
+    /*
+    //
+    // get higgs width for 125 and 250 GeV
+    // 
+    std::cout << "H125 width " << myCSW_->HiggsWidth(0, 125);
+    std::cout << "H250 width " << myCSW_->HiggsWidth(0, 250);
+    */
 }
