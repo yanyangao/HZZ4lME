@@ -13,6 +13,7 @@
 // analytic PDFs
 #include "PDFs/RooXZsZs_5D.h"
 #include "PDFs/RooSpinTwo_7D.h"
+#include "PDFs/RooSpinOne_7D.h"
 #include "RooRealVar.h"
 
 typedef ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<double> > LorentzVector; 
@@ -137,6 +138,21 @@ pair<double,double> calculateGraviMela(double mzz_,double m1_, double m2_,
 			R1,R2,
 			mZ,gamZ);
 
+  //
+  // Spin One parameters
+  // 
+  
+  // 1-
+  RooRealVar g1ValV("g1ValV","g1ValV",1.);
+  RooRealVar g2ValV("g2ValV","g2ValV",0.);
+  // this is the acceptance term associated with the production angles
+  // the default setting is for setting no-acceptance
+  RooRealVar aParam("aParam","aParam",0);
+  RooSpinOne_7D zprime("zprime","zprime", mzz,m1,m2,hs,h1,h2,phi,phi1,
+		                          g1ValV, g2ValV, 
+		                          R1, R2, aParam, mZ, gamZ);
+  
+
   checkZorder(m1_,m2_,hs_,h1_,h2_,phi_,phi1_);
 
   // 
@@ -156,7 +172,8 @@ pair<double,double> calculateGraviMela(double mzz_,double m1_, double m2_,
   
   pair<double,double> result;
   result.first=SMHiggs.getVal();
-  result.second=minGrav.getVal();
+  // result.second=minGrav.getVal();
+  result.second=zprime.getVal();
   
   return result;
   
@@ -266,6 +283,9 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
 
   double dXsec_TZZ_JHU = 0.;
   double dXsecErr_TZZ_JHU = 0.;
+
+  double dXsec_VZZ_JHU = 0.;
+  double dXsecErr_VZZ_JHU = 0.;
   
   evt_tree->Branch("dXsec_HZZ_JHU"   , &dXsec_HZZ_JHU      ,"dXsec_HZZ_JHU/D");
   evt_tree->Branch("dXsecErr_HZZ_JHU", &dXsecErr_HZZ_JHU   ,"dXsecErr_HZZ_JHU/D");
@@ -275,6 +295,9 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
 
   evt_tree->Branch("dXsec_TZZ_JHU"   , &dXsec_TZZ_JHU      ,"dXsec_TZZ_JHU/D");
   evt_tree->Branch("dXsecErr_TZZ_JHU", &dXsecErr_TZZ_JHU   ,"dXsecErr_TZZ_JHU/D");
+
+  evt_tree->Branch("dXsec_VZZ_JHU"   , &dXsec_VZZ_JHU      ,"dXsec_VZZ_JHU/D");
+  evt_tree->Branch("dXsecErr_VZZ_JHU", &dXsecErr_VZZ_JHU   ,"dXsecErr_VZZ_JHU/D");
 
   double psig_new, pbkg_new, graviMela;
 
@@ -327,6 +350,9 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
 
     dXsec_TZZ_JHU = 0.;
     dXsecErr_TZZ_JHU = 0.;
+
+    dXsec_VZZ_JHU = 0.;
+    dXsecErr_VZZ_JHU = 0.;
 
     ch->GetEntry(ievt);           
 
@@ -384,19 +410,27 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     
     // ==== Begin the differential cross-section calculation
     Xcal2.SetHiggsMass(zzmass);
-    
+    /*
     // calculate the ZZ using MCFM
     Xcal2.SetMatrixElement(TVar::MCFM);
     dXsec_ZZ = Xcal2.XsecCalc(TVar::ZZ_4l,hzz4l_event,verbosity);
     dXsec_HZZ = Xcal2.XsecCalc(TVar::HZZ_4l,hzz4l_event,verbosity);
-    
+    */
     // calculate X->ZZ using JHUGen
+    // 0+ 
     Xcal2.SetMatrixElement(TVar::JHUGen);
     dXsec_HZZ_JHU = Xcal2.XsecCalc(TVar::HZZ_4l,hzz4l_event,verbosity);
+    // 0-
     Xcal2.SetMatrixElement(TVar::JHUGen);
     dXsec_PSHZZ_JHU = Xcal2.XsecCalc(TVar::PSHZZ_4l,hzz4l_event,verbosity);
+    // spin 2
     Xcal2.SetMatrixElement(TVar::JHUGen);
     dXsec_TZZ_JHU = Xcal2.XsecCalc(TVar::TZZ_4l,hzz4l_event,verbosity);
+
+    // 1-
+    Xcal2.SetMatrixElement(TVar::JHUGen);
+    dXsec_VZZ_JHU = Xcal2.XsecCalc(TVar::VZZ_4l,hzz4l_event,verbosity);    
+    
     evt_tree->Fill();
     
   }//nevent

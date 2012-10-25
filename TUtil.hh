@@ -19,6 +19,7 @@
 #include "TMCFM.hh"
 #include "TModHiggsMatEl.hh"
 #include "TModGravitonMatEl.hh"
+#include "TModZprimeMatEl.hh"
 
 
 using namespace std;

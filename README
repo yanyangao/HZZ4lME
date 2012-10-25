@@ -1,9 +1,15 @@
-This package provides the caculation of the differential cross-sections for 
-ZZ->4l final state for the ee/mm currently. 
+############################
+## instructions for reproducing
+## anlaytical KD and JHUGen 
+## numerical KD distributions
+## and ROC curves.
+############################
 
-To run the scripts you need to follow the instructions as below:
 
-1. Check out and complile code in CMSSW area, current code tested only on CMSSW_4_2_3
+# Add variables to trees
+
+#check out and install the HZZ4lME package 
+#from Yanyan and Sergo. 
 
 cmsrel CMSSW_4_2_3
 cd CMSSW_4_2_3/src/
@@ -15,40 +21,39 @@ cd HZZ4lME/
 cp /afs/cern.ch/user/y/yygao/public/libmcfm.so .
 make
 
-** Note this pre-made libmcfm.so is extracted from the MCFM62 version by doing this,
-1). Get and install the MCFM package
-wget http://mcfm.fnal.gov/mcfm-6.2.tar.gz
-tar -zxf mcfm-6.2.tar.gz
-cd MCFM
-./Install
-2). Edit the compiler flags for both g++ and f90 in the makefile
-The PIC flag must be added to allow the shared library to be built
-The following lines are identical to those in the default makefile, except for the addition of the PIC flag
-FFLAGS  = -fno-automatic -fno-f2c -O0 -g -fPIC -I$(INCPATH) -Iobj
-F90FLAGS = -fno-automatic -fno-f2c -O2 -g -fPIC -I$(INCPATH) -Iobj -Jobj
-3) compile the library
-make
-cd obj
-g++ -Wl,-soname,libmcfm.so -shared -o libmcfm.so *.o 
+# check out PDFs from MELA package
+
+cvs co -r V00-01-05 -d PDFs UserCode/CJLST/ZZMatrixElement/MELA/src/RooSpinTwo_7D.cc
+cvs co -r V00-01-05 -d PDFs UserCode/CJLST/ZZMatrixElement/MELA/src/RooSpinTwo_7D.h
+
+cvs co -r V00-01-05 -d PDFs UserCode/CJLST/ZZMatrixElement/MELA/src/RooXZsZs_5D.cc
+cvs co -r V00-01-05 -d PDFs UserCode/CJLST/ZZMatrixElement/MELA/src/RooXZsZs_5D.h
+
+cvs co -r V00-01-05 -d PDFs UserCode/CJLST/ZZMatrixElement/MELA/src/RooSpinOne_7D.cc
+cvs co -r V00-01-05 -d PDFs UserCode/CJLST/ZZMatrixElement/MELA/src/RooSpinOne_7D.h
+
+# Compile code:
+
+root -l -n 
 
 
-2. Run the script based on the 
+# Add the following lines to rootlogon.C
 
-lxplus.cern.ch:~whitbeck/public/LO_data_BKG_eemm.root 
-lxplus.cern.ch:~whitbeck/public/LO_data_SIG_eemm.root 
+  gSystem->AddIncludePath("-I$ROOFITSYS/include/");
+  gROOT->ProcessLine(".L PDFs/RooSpinTwo_7D.cc+");
+  gROOT->ProcessLine(".L PDFs/RooXZsZs_5D.cc+");
+  gROOT->ProcessLine(".L PDFs/RooSpinOne_7D.cc+");
 
-root -l
-.L runME_HZZ4l.C++
-runME_HZZ4l("./","LO_data_BKG_eemm.root","./",1000000,0)
+# run code to add gravi-MELA and JHUGen ME branches to tree
 
-3. The output is the same file with _ME.root, it contains 6 branches starting with "dXsec" which are the 
-event-by-event differential cross-section
+root -l -n rootlogon.C
+.L runME_HZZ4l_JHUgenSamples.C+
+// for example
+runME_HZZ4l_JHUgenSamples("/home/ygao/HZZME/","SMHiggsZZ_250_JHU.root","./",10000,0)
+runME_HZZ4l_JHUgenSamples("/home/ygao/HZZME/","TZZ_2mplus_250_JHU.root","./",10000,0)
 
-OBJ: TLeafD	dXsec_ZZ	dXsec_ZZ : 0 at: 0xf1d36e0
-OBJ: TLeafD	dXsecErr_ZZ	dXsecErr_ZZ : 0 at: 0xf1d3c70
-OBJ: TLeafD	dXsec_HZZ	dXsec_HZZ : 0 at: 0xf1d4200
-OBJ: TLeafD	dXsecErr_HZZ	dXsecErr_HZZ : 0 at: 0xf1d4790
-OBJ: TLeafD	dXsec_HZZ_JHU	dXsec_HZZ_JHU : 0 at: 0xf1d4d20
-OBJ: TLeafD	dXsecErr_HZZ_JHU	dXsecErr_HZZ_JHU : 0 at: 0xf1d52d0
+.q 
 
-The ones with _JHU is calcualted based on the JHUGen based Matrix element code. 
+# Plot ROC curves - 
+
+root -l -n MELArocCurves.C

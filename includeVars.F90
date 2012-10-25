@@ -33,6 +33,12 @@ real(8),  parameter :: sitW = dsqrt(0.23119d0)       ! sin(Theta_Weinberg) (PDG-
    complex(8) :: ghz4  ! pseudoscalar
 
 
+!---parameters that define spin 1 coupling to SM fields, see note
+   complex(8) :: zprime_qq_left
+   complex(8) :: zprime_qq_right
+   complex(8) :: zprime_zz_1!  =1 for JP=1- vector
+   complex(8) :: zprime_zz_2!  =1 for JP=1+ pseudovector
+
 
 !-- parameters that define spin 2 coupling to SM fields, see note
 ! minimal coupling corresponds to a1 = b1 = b5 = 1 everything else 0

@@ -23,7 +23,7 @@ CC = g++
 CFLAGS = -Wall -Wno-unused-function -g -O2 -fPIC -lm -lgfortran $(shell root-config --cflags) $(INCLUDE) $(EXTRACFLAGS)
 
 LINKER = g++
-LINKERFLAGS = $(shell root-config --ldflags) mod_Higgs_MatEl.o mod_Graviton_MatEl.o
+LINKERFLAGS = $(shell root-config --ldflags) mod_Higgs_MatEl.o mod_Graviton_MatEl.o mod_Zprime_MatEl.o
 
 ifeq ($(shell root-config --platform),macosx)
 ifdef CMSSW_RELEASE_BASE
@@ -40,7 +40,7 @@ LIB = libME.so
 
 .PHONY: all help compile clean cms2env
 
-libs: mod_Higgs_MatEl.o mod_Graviton_MatEl.o $(LIB)
+libs: mod_Higgs_MatEl.o mod_Graviton_MatEl.o mod_Zprime_MatEl.o $(LIB)
 
 mod_Higgs_MatEl.o: mod_Higgs_MatEl.F90 includeVars.F90
 	@echo $(fcomp)
@@ -53,6 +53,12 @@ mod_Graviton_MatEl.o: mod_Graviton_MatEl.F90 includeVars.F90
 	@echo " "
 	@echo " compiling mod_Graviton_MatEl.F90 includeVars.F90 with "$(FORTRAN)
 	$(FORTRAN) $(FFLAGS) -c mod_Graviton_MatEl.F90  -lm
+
+mod_Zprime_MatEl.o: mod_Zprime_MatEl.F90 includeVars.F90
+	@echo $(fcomp)
+	@echo " "
+	@echo " compiling mod_Zprime_MatEl.F90 includeVars.F90 with "$(FORTRAN)
+	$(FORTRAN) $(FFLAGS) -c mod_Zprime_MatEl.F90  -lm
 
 $(LIB):	$(OBJECTS) 
 	$(QUIET) echo "Linking $(LIB)"; \

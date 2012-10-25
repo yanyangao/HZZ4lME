@@ -8,4 +8,5 @@
   gSystem->AddIncludePath("-I$ROOFITSYS/include/");
   gROOT->ProcessLine(".L PDFs/RooSpinTwo_7D.cc+");
   gROOT->ProcessLine(".L PDFs/RooXZsZs_5D.cc+");
+  gROOT->ProcessLine(".L PDFs/RooSpinOne_7D.cc+");
 }
