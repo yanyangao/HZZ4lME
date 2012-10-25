@@ -25,10 +25,10 @@ public:
   };
   enum Process{
     ZZ_4l    =0,
-    HZZ_4l   =1,
-    PSHZZ_4l =2,
-    TZZ_4l =3,
-    VZZ_4l =4,
+    HZZ_4l   =1, // 0+
+    PSHZZ_4l =2, // 0-
+    TZZ_4l =3, // spin 2 couplings have to set in TEvtProb.cc
+    VZZ_4l =4, // spin 1 couplings have to set in TEvtProb.cc
     Null
   };
   //---------------------------------
@@ -39,6 +39,10 @@ public:
       return TString("ZZ_4l");
     else if(temp==TVar::HZZ_4l   ) 
       return TString("HZZ_4l");
+    else if(temp==TVar::TZZ_4l   ) 
+      return TString("TZZ_2mplus_4l");
+    else if(temp==TVar::VZZ_4l   ) 
+      return TString("VZZ_4l");
     else 
       return TString("UnKnown");
   };
