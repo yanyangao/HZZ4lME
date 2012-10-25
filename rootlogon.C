@@ -5,4 +5,7 @@
   gSystem->Load("libEG.so");
   gSystem->Load("./libmcfm.so");
   gSystem->Load("./libME.so");
+  gSystem->AddIncludePath("-I$ROOFITSYS/include/");
+  gROOT->ProcessLine(".L PDFs/RooSpinTwo_7D.cc+");
+  gROOT->ProcessLine(".L PDFs/RooXZsZs_5D.cc+");
 }
