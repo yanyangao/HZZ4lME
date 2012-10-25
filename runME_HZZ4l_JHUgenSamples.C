@@ -148,7 +148,7 @@ pair<double,double> calculateGraviMela(double mzz_,double m1_, double m2_,
   // this is the acceptance term associated with the production angles
   // the default setting is for setting no-acceptance
   RooRealVar aParam("aParam","aParam",0);
-  RooSpinOne_7D zprime("zprime","zprime", mzz,m1,m2,hs,h1,h2,phi,phi1,
+  RooSpinOne_7D zprime("zprime","zprime", mzz,m1,m2,h1,h2,hs,phi,phi1,
 		                          g1ValV, g2ValV, 
 		                          R1, R2, aParam, mZ, gamZ);
   
@@ -300,10 +300,17 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   evt_tree->Branch("dXsecErr_VZZ_JHU", &dXsecErr_VZZ_JHU   ,"dXsecErr_VZZ_JHU/D");
 
   double psig_new, pbkg_new, graviMela;
+  double pbkg_phiPpi, pbkg_negHs;
+  double psig_phiPpi, psig_negHs;
 
   evt_tree->Branch("Psmh_new"   , &psig_new      ,"Psmh_new/D");
   evt_tree->Branch("Pgrav_new", &pbkg_new   ,"Pgrav_new/D");
   evt_tree->Branch("graviMela"   , &graviMela      ,"graviMela/D");
+
+  evt_tree->Branch("Pgrav_negHs", &pbkg_negHs   ,"Pgrav_negHs/D");
+  evt_tree->Branch("Pgrav_phiPpi", &pbkg_phiPpi   ,"Pgrav_phiPpi/D");
+  evt_tree->Branch("Psmh_negHs", &psig_negHs   ,"Psmh_negHs/D");
+  evt_tree->Branch("Psmh_phiPpi", &psig_phiPpi   ,"Psmh_phiPpi/D");
  
   double m1,m2,h1,h2,hs,phi,phi1,mzz;  
    
@@ -361,6 +368,19 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     cout << "h1: " << h1 << " h2: " << h2 << " hs: " << hs << endl;
     cout << "phi: " << phi << " phi1: " << phi1 << endl;
     */
+
+    prob = calculateGraviMela(mzz,m1,m2,-hs,h1,h2,phi,phi1);
+
+    psig_negHs = prob.first;
+    pbkg_negHs = prob.second;
+    
+    if(phi1<0)
+      prob = calculateGraviMela(mzz,m1,m2,hs,h1,h2,phi,phi1+TMath::Pi());
+    else
+      prob = calculateGraviMela(mzz,m1,m2,hs,h1,h2,phi,phi1-TMath::Pi());
+
+    psig_phiPpi = prob.first;
+    pbkg_phiPpi = prob.second;
 
     prob = calculateGraviMela(mzz,m1,m2,hs,h1,h2,phi,phi1);
 
