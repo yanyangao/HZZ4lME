@@ -245,16 +245,6 @@ double SumMatrixElementPDF(TVar::Process process, mcfm_event_type* mcfm_event,do
   
 }
 
-double HiggsWidth(double mass){
-
-     double width=0.004;
-     if (mass==125.) width=0.41650E-02; // obtained by running MCFM standalone
-     
- return width;
-
-
-}
-
 //
 // Test code from Markus to calculate the HZZ cross-section
 // 
