@@ -67,6 +67,13 @@ double TEvtProb::XsecCalc(TVar::Process proc, const hzz4l_event_type &hzz4l_even
     mcfm_event.p[4].SetPxPyPzE   (hzz4l_event.p[2].Px(), hzz4l_event.p[2].Py(), hzz4l_event.p[2].Pz(), hzz4l_event.p[2].Energy());
     mcfm_event.p[5].SetPxPyPzE   (hzz4l_event.p[3].Px(), hzz4l_event.p[3].Py(), hzz4l_event.p[3].Pz(), hzz4l_event.p[3].Energy());
     
+    mcfm_event.PdgCode[0] = 21;
+    mcfm_event.PdgCode[1] = 21;
+    mcfm_event.PdgCode[2] = hzz4l_event.PdgCode[0];
+    mcfm_event.PdgCode[3] = hzz4l_event.PdgCode[1];
+    mcfm_event.PdgCode[4] = hzz4l_event.PdgCode[2];
+    mcfm_event.PdgCode[5] = hzz4l_event.PdgCode[3];
+
     /*
     for ( int i = 0; i < 6; i++ ) {
       std::cout << "Particle " << i << " (Px, Py, Pz, E): " <<  mcfm_event.p[i].Px() << ", " << mcfm_event.p[i].Py() 

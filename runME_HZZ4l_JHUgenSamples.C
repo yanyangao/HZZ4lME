@@ -106,10 +106,22 @@ pair<double,double> calculateGraviMela(double mzz_,double m1_, double m2_,
   RooXZsZs_5D SMHiggs("SMHiggs","SMHiggs",m1,m2,h1,h2,phi,a1,p1,a2,p2,a3,p3,mZ,gamZ,mzz,R1,R2);
 
   // - - - - - - - - - - - - - - - -
+  // PS Higgs PDF
+  // - - - - - - - - - - - - - - - -
+
+  RooRealVar a1PS("a1PS","a1PS",0.,-1000.,1000.);
+  RooRealVar a2PS("a2PS","a2PS",0.,-1000.,1000.);
+  RooRealVar a3PS("a3PS","a3PS",1.,-1000.,1000.);
+
+  RooXZsZs_5D PSHiggs("PSHiggs","PSHiggs",m1,m2,h1,h2,phi,a1PS,p1,a2PS,p2,a3PS,p3,mZ,gamZ,mzz,R1,R2);
+  
+
+
+  // - - - - - - - - - - - - - - - -
   // minimal coupling graviton parameters
   // - - - - - - - - - - - - - - - - 
 
-  RooRealVar c1("c1","c1",0.,-1000.,1000.);
+  RooRealVar c1("c1","c1",1.,-1000.,1000.);
   RooRealVar c2("c2","c2",0.,-1000.,1000.);
   RooRealVar c3("c3","c3",0.,-1000.,1000.);
   RooRealVar c4("c4","c4",0.,-1000.,1000.);
@@ -155,26 +167,16 @@ pair<double,double> calculateGraviMela(double mzz_,double m1_, double m2_,
 
   checkZorder(m1_,m2_,hs_,h1_,h2_,phi_,phi1_);
 
-  // 
-  // change the variables 
-  // 
-  
-  double phi1Val = phi1_;
-
-  if ( phi1_ < 0 ) 
-    phi1Val = phi1_ + TMath::Pi();
-  else 
-    phi1Val = phi1_ - TMath::Pi();
-
   mzz.setVal(mzz_);  m1.setVal(m1_);   m2.setVal(m2_);
   hs.setVal(hs_);  h1.setVal(h1_);   h2.setVal(h2_);  
-  phi.setVal(phi_);  phi1.setVal(phi1Val);  
+  phi.setVal(phi_);  phi1.setVal(phi1_);  
   
   pair<double,double> result;
   result.first=SMHiggs.getVal();
-  // result.second=minGrav.getVal();
-  result.second=zprime.getVal();
-  
+  //result.second=minGrav.getVal();
+  //result.second=zprime.getVal();
+  result.second=PSHiggs.getVal();
+
   return result;
   
 }
@@ -286,7 +288,11 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
 
   double dXsec_VZZ_JHU = 0.;
   double dXsecErr_VZZ_JHU = 0.;
+
   
+  evt_tree->Branch("dXsec_HZZ"   , &dXsec_HZZ      ,"dXsec_HZZ/D");
+  evt_tree->Branch("dXsecErr_HZZ", &dXsecErr_HZZ  ,"dXsecErr_HZZ/D");
+
   evt_tree->Branch("dXsec_HZZ_JHU"   , &dXsec_HZZ_JHU      ,"dXsec_HZZ_JHU/D");
   evt_tree->Branch("dXsecErr_HZZ_JHU", &dXsecErr_HZZ_JHU   ,"dXsecErr_HZZ_JHU/D");
 
@@ -298,22 +304,15 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
 
   evt_tree->Branch("dXsec_VZZ_JHU"   , &dXsec_VZZ_JHU      ,"dXsec_VZZ_JHU/D");
   evt_tree->Branch("dXsecErr_VZZ_JHU", &dXsecErr_VZZ_JHU   ,"dXsecErr_VZZ_JHU/D");
-
+  
   double psig_new, pbkg_new, graviMela;
-  double pbkg_phiPpi, pbkg_negHs;
-  double psig_phiPpi, psig_negHs;
 
   evt_tree->Branch("Psmh_new"   , &psig_new      ,"Psmh_new/D");
   evt_tree->Branch("Pgrav_new", &pbkg_new   ,"Pgrav_new/D");
   evt_tree->Branch("graviMela"   , &graviMela      ,"graviMela/D");
-
-  evt_tree->Branch("Pgrav_negHs", &pbkg_negHs   ,"Pgrav_negHs/D");
-  evt_tree->Branch("Pgrav_phiPpi", &pbkg_phiPpi   ,"Pgrav_phiPpi/D");
-  evt_tree->Branch("Psmh_negHs", &psig_negHs   ,"Psmh_negHs/D");
-  evt_tree->Branch("Psmh_phiPpi", &psig_phiPpi   ,"Psmh_phiPpi/D");
  
   double m1,m2,h1,h2,hs,phi,phi1,mzz;  
-   
+  int mflavor = 3; // by default it is ee/mm 
   ch->SetBranchAddress( "z1mass"        , &m1      );   
   ch->SetBranchAddress( "z2mass"        , &m2      );   
   ch->SetBranchAddress( "costheta1"     , &h1      );   
@@ -322,6 +321,52 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   ch->SetBranchAddress( "phi"           , &phi     );   
   ch->SetBranchAddress( "phistar1"      , &phi1    );   
   ch->SetBranchAddress( "zzmass"        , &mzz     );   
+  if ( ch->GetBranchStatus("flavortype") ) 
+    ch->SetBranchAddress( "flavortype"   , &mflavor);
+
+
+ // Initialize the branches to use to calculate the differential cross-sections
+  Double_t EL1_ = 0.;
+  Double_t pXL1_ = 0.;
+  Double_t pYL1_ = 0.;
+  Double_t pZL1_ = 0.;
+
+  Double_t EL2_ = 0.;
+  Double_t pXL2_ = 0.;
+  Double_t pYL2_ = 0.;
+  Double_t pZL2_ = 0.;
+  
+  Double_t EL3_ = 0.;
+  Double_t pXL3_ = 0.;
+  Double_t pYL3_ = 0.;
+  Double_t pZL3_ = 0.;
+
+  Double_t EL4_ = 0.;
+  Double_t pXL4_ = 0.;
+  Double_t pYL4_ = 0.;
+  Double_t pZL4_ = 0.;
+
+
+  ch->SetBranchAddress( "EL1"       , &EL1_      );   
+  ch->SetBranchAddress( "pXL1"      , &pXL1_     );   
+  ch->SetBranchAddress( "pYL1"      , &pYL1_     );   
+  ch->SetBranchAddress( "pZL1"      , &pZL1_     );   
+
+  ch->SetBranchAddress( "EL2"       , &EL2_      );   
+  ch->SetBranchAddress( "pXL2"      , &pXL2_     );   
+  ch->SetBranchAddress( "pYL2"      , &pYL2_     );   
+  ch->SetBranchAddress( "pZL2"      , &pZL2_      );   
+
+  ch->SetBranchAddress( "EL3"       , &EL3_      );   
+  ch->SetBranchAddress( "pXL3"      , &pXL3_     );   
+  ch->SetBranchAddress( "pYL3"      , &pYL3_     );   
+  ch->SetBranchAddress( "pZL3"      , &pZL3_      );   
+
+  ch->SetBranchAddress( "EL4"       , &EL4_      );   
+  ch->SetBranchAddress( "pXL4"      , &pXL4_     );   
+  ch->SetBranchAddress( "pYL4"      , &pYL4_     );   
+  ch->SetBranchAddress( "pZL4"      , &pZL4_      );   
+
 
   // Create the instance of TEvtProb to calculate the differential cross-section
   TEvtProb Xcal2;  
@@ -369,19 +414,6 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     cout << "phi: " << phi << " phi1: " << phi1 << endl;
     */
 
-    prob = calculateGraviMela(mzz,m1,m2,-hs,h1,h2,phi,phi1);
-
-    psig_negHs = prob.first;
-    pbkg_negHs = prob.second;
-    
-    if(phi1<0)
-      prob = calculateGraviMela(mzz,m1,m2,hs,h1,h2,phi,phi1+TMath::Pi());
-    else
-      prob = calculateGraviMela(mzz,m1,m2,hs,h1,h2,phi,phi1-TMath::Pi());
-
-    psig_phiPpi = prob.first;
-    pbkg_phiPpi = prob.second;
-
     prob = calculateGraviMela(mzz,m1,m2,hs,h1,h2,phi,phi1);
 
     psig_new = prob.first;
@@ -402,7 +434,34 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     hzz4l_event.p[1].SetXYZM(p[1].Px(), p[1].Py(), p[1].Pz(), 0.);
     hzz4l_event.p[2].SetXYZM(p[2].Px(), p[2].Py(), p[2].Pz(), 0.);
     hzz4l_event.p[3].SetXYZM(p[3].Px(), p[3].Py(), p[3].Pz(), 0.);
-    
+
+    // flavor 1 for 4e, 2 for 4m, 3 for 2e2mu  
+    if ( mflavor == 1 ) {
+      hzz4l_event.PdgCode[0] = 13;
+      hzz4l_event.PdgCode[1] = -13;
+      hzz4l_event.PdgCode[2] = 13;
+      hzz4l_event.PdgCode[3] = -13;
+    }
+    if ( mflavor == 2 ) {
+      hzz4l_event.PdgCode[0] = 11;
+      hzz4l_event.PdgCode[1] = -11;
+      hzz4l_event.PdgCode[2] = 11;
+      hzz4l_event.PdgCode[3] = -11;
+    }
+    if ( mflavor == 3 ) {
+      hzz4l_event.PdgCode[0] = 11;
+      hzz4l_event.PdgCode[1] = -11;
+      hzz4l_event.PdgCode[2] = 13;
+      hzz4l_event.PdgCode[3] = -13;
+    }
+
+    /*
+    hzz4l_event.p[0].SetXYZM(pXL1_, pYL1_, pZL1_, 0.);
+    hzz4l_event.p[1].SetXYZM(pXL2_, pYL2_, pZL2_, 0.);
+    hzz4l_event.p[2].SetXYZM(pXL3_, pYL3_, pZL3_, 0.);
+    hzz4l_event.p[3].SetXYZM(pXL4_, pYL4_, pZL4_, 0.);
+    */
+
     double z1mass = (hzz4l_event.p[0]+hzz4l_event.p[1]).M();
     double z2mass = (hzz4l_event.p[2]+hzz4l_event.p[3]).M();
     double zzmass = (hzz4l_event.p[0]+hzz4l_event.p[1]+hzz4l_event.p[2]+hzz4l_event.p[3]).M();
@@ -430,12 +489,10 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     
     // ==== Begin the differential cross-section calculation
     Xcal2.SetHiggsMass(zzmass);
-    /*
     // calculate the ZZ using MCFM
     Xcal2.SetMatrixElement(TVar::MCFM);
     dXsec_ZZ = Xcal2.XsecCalc(TVar::ZZ_4l,hzz4l_event,verbosity);
     dXsec_HZZ = Xcal2.XsecCalc(TVar::HZZ_4l,hzz4l_event,verbosity);
-    */
     // calculate X->ZZ using JHUGen
     // 0+ 
     Xcal2.SetMatrixElement(TVar::JHUGen);
@@ -446,8 +503,7 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     // spin 2
     Xcal2.SetMatrixElement(TVar::JHUGen);
     dXsec_TZZ_JHU = Xcal2.XsecCalc(TVar::TZZ_4l,hzz4l_event,verbosity);
-
-    // 1-
+    // spin 1
     Xcal2.SetMatrixElement(TVar::JHUGen);
     dXsec_VZZ_JHU = Xcal2.XsecCalc(TVar::VZZ_4l,hzz4l_event,verbosity);    
     

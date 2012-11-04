@@ -280,11 +280,28 @@ double JHUGenMatEl(TVar::Process process, mcfm_event_type* mcfm_event, double MR
   }
   
   // particle ID: +7=e+,  -7=e-,  +8=mu+,  -8=mu-
-  MYIDUP[0]=+7;
-  MYIDUP[1]=-7;
-  MYIDUP[2]=+7;
-  MYIDUP[3]=-7;
-  
+
+  if ( TMath::Abs(mcfm_event->PdgCode[2]) == TMath::Abs(mcfm_event->PdgCode[3]) && 
+       TMath::Abs(mcfm_event->PdgCode[3]) == TMath::Abs(mcfm_event->PdgCode[4]) && 
+       TMath::Abs(mcfm_event->PdgCode[4]) == TMath::Abs(mcfm_event->PdgCode[5]) ) {
+    if ( TMath::Abs(mcfm_event->PdgCode[2]) == 11  ) {
+      MYIDUP[0]=+7;
+      MYIDUP[1]=-7;
+      MYIDUP[2]=+7;
+      MYIDUP[3]=-7;
+    } 
+    if ( TMath::Abs(mcfm_event->PdgCode[2]) == 13  ) {
+      MYIDUP[0]=+8;
+      MYIDUP[1]=-8;
+      MYIDUP[2]=+8;
+      MYIDUP[3]=-8;
+    } 
+  } else {
+      MYIDUP[0]=+7;
+      MYIDUP[1]=-7;
+      MYIDUP[2]=+8;
+      MYIDUP[3]=-8;
+  }
   if ( process == TVar::HZZ_4l || process == TVar::PSHZZ_4l ) {
     __modhiggs_MOD_evalamp_gg_h_vv(p4, &MReso,  &GaReso, xggcoupl, xvvcoupl, MYIDUP, &MatElSq);
   }
