@@ -58,6 +58,12 @@ if(process==TVar::ZZ_2e2m ){
     zcouple_.r2=zcouple_.re;*/
     chooser_();
 
+ }  else if ( process == TVar::ZZ_4e) {
+
+    // 90 '  f(p1)+f(p2) --> Z^0(-->e^-(p3)+e^+(p4)) + Z^0(-->e^-(p5)+e^+(p6))' 'L'
+    nproc_.nproc=90;
+    chooser_();
+
  }  else if ( process == TVar::HZZ_4l) {
 
   //  114 '  f(p1)+f(p2) --> H(--> Z^0(mu^-(p3)+mu^+(p4)) + Z^0(e^-(p5)+e^+(p6))' 'N'
@@ -214,7 +220,7 @@ double SumMatrixElementPDF(TVar::Process process, mcfm_event_type* mcfm_event,do
   fdist_ (&density_.ih1, &xx[0], &scale_.scale, fx1); 
   fdist_ (&density_.ih2, &xx[1], &scale_.scale, fx2); 
   
-  if( process==TVar::ZZ_2e2m)      qqb_zz_  (p4[0],msq[0]);
+  if( process==TVar::ZZ_2e2m || process==TVar::ZZ_4e )      qqb_zz_  (p4[0],msq[0]);
   if( process==TVar::HZZ_4l)     qqb_hzz_ (p4[0],msq[0]);
   
   double msqjk=0;
