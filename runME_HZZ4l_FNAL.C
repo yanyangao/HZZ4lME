@@ -145,12 +145,17 @@ void runME_HZZ4l_FNAL(TString inputDir, TString fileName, TString outputDir, int
   double dXsec_HZZ_JHU = 0.;
   double dXsec_PSHZZ_JHU = 0.;
   double dXsec_TZZ_JHU = 0.;
+  double pseudoME = 0.;
+  double graviME = 0.;
+  
 
   evt_tree->Branch("dXsec_ZZ_MCFM"   , &dXsec_ZZ_MCFM    ,   "dXsec_ZZ_MCFM/D"  );
   evt_tree->Branch("dXsec_HZZ_MCFM"  , &dXsec_HZZ_MCFM   ,   "dXsec_HZZ_MCFM/D" );
   evt_tree->Branch("dXsec_HZZ_JHU"   , &dXsec_HZZ_JHU    ,   "dXsec_HZZ_JHU/D"  );
   evt_tree->Branch("dXsec_PSHZZ_JHU" , &dXsec_PSHZZ_JHU  ,   "dXsec_PSHZZ_JHU/D");
   evt_tree->Branch("dXsec_TZZ_JHU"   , &dXsec_TZZ_JHU    ,   "dXsec_TZZ_JHU/D"  );
+  evt_tree->Branch("pseudoME"        , &pseudoME         ,   "pseudoME/D"  );
+  evt_tree->Branch("graviME"         , &graviME          ,   "graviME/D"  );
 
   // declare the input variables 
   float m1,m2,h1,h2,hs,phi,phi1,mzz;  
@@ -189,6 +194,8 @@ void runME_HZZ4l_FNAL(TString inputDir, TString fileName, TString outputDir, int
     dXsec_HZZ_JHU = 0.;
     dXsec_PSHZZ_JHU = 0.;
     dXsec_TZZ_JHU = 0.;
+    pseudoME = 0.;
+    graviME = 0.;
 
     ch->GetEntry(ievt);           
 
@@ -240,7 +247,6 @@ void runME_HZZ4l_FNAL(TString inputDir, TString fileName, TString outputDir, int
     
     // ==== Begin the differential cross-section calculation
     Xcal2.SetHiggsMass(zzmass);
-
     // 
     // MCFM based calculations
     // 
@@ -258,8 +264,12 @@ void runME_HZZ4l_FNAL(TString inputDir, TString fileName, TString outputDir, int
     dXsec_HZZ_JHU = Xcal2.XsecCalc(TVar::HZZ_4l,hzz4l_event,verbosity);
     // 0-
     dXsec_PSHZZ_JHU = Xcal2.XsecCalc(TVar::PSHZZ_4l,hzz4l_event,verbosity);
+    pseudoME =  dXsec_HZZ_JHU / ( dXsec_HZZ_JHU + 10*dXsec_PSHZZ_JHU );
+    
     // 2m+
     dXsec_TZZ_JHU = Xcal2.XsecCalc(TVar::TZZ_4l,hzz4l_event,verbosity);
+    graviME =  dXsec_HZZ_JHU / ( dXsec_HZZ_JHU + 0.2*dXsec_TZZ_JHU );
+
     evt_tree->Fill();
     
   }//nevent
