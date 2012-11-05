@@ -246,6 +246,9 @@ void runME_HZZ4l_FNAL(TString inputDir, TString fileName, TString outputDir, int
     // 
     Xcal2.SetMatrixElement(TVar::MCFM);
     dXsec_ZZ_MCFM = Xcal2.XsecCalc(TVar::ZZ_2e2m,hzz4l_event,verbosity);
+    // do a trick on the process based on the directory
+    if ( inputDir.Contains("4e", TString::kExact) || inputDir.Contains("4mu", TString::kExact) )  
+      dXsec_ZZ_MCFM = Xcal2.XsecCalc(TVar::ZZ_4e,hzz4l_event,verbosity);
     dXsec_HZZ_MCFM = Xcal2.XsecCalc(TVar::HZZ_4l,hzz4l_event,verbosity);
     //
     // JHUGen based calcualtions 
