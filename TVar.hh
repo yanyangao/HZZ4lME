@@ -24,19 +24,22 @@ public:
     JHUGen
   };
   enum Process{
-    ZZ_4l    =0,
+    ZZ_2e2m    =0, // eemm
     HZZ_4l   =1, // 0+
     PSHZZ_4l =2, // 0-
     TZZ_4l =3, // spin 2 couplings have to set in TEvtProb.cc
     VZZ_4l =4, // spin 1 couplings have to set in TEvtProb.cc
+    ZZ_4e    =5,
     Null
   };
   //---------------------------------
   // Function
   //---------------------------------
   static TString ProcessName(int temp){ 
-    if(temp==TVar::ZZ_4l   ) 
-      return TString("ZZ_4l");
+    if(temp==TVar::ZZ_2e2m   ) 
+      return TString("ZZ_2e2m");
+    if(temp==TVar::ZZ_4e   ) 
+      return TString("ZZ_4e");
     else if(temp==TVar::HZZ_4l   ) 
       return TString("HZZ_4l");
     else if(temp==TVar::TZZ_4l   ) 

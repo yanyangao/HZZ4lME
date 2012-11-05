@@ -271,39 +271,21 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   TTree* evt_tree=(TTree*) ch->CloneTree(0, "fast");
   
   // Declare the matrix element related variables to be added to the existing ntuples
-  double dXsec_ZZ = 0.;
-  double dXsecErr_ZZ = 0.;
 
-  double dXsec_HZZ = 0.;
-  double dXsecErr_HZZ = 0.;
-
+  double dXsec_ZZ_MCFM = 0.;
+  double dXsec_HZZ_MCFM = 0.;
   double dXsec_HZZ_JHU = 0.;
-  double dXsecErr_HZZ_JHU = 0.;
-
   double dXsec_PSHZZ_JHU = 0.;
-  double dXsecErr_PSHZZ_JHU = 0.;
-
   double dXsec_TZZ_JHU = 0.;
-  double dXsecErr_TZZ_JHU = 0.;
-
   double dXsec_VZZ_JHU = 0.;
-  double dXsecErr_VZZ_JHU = 0.;
 
   
-  evt_tree->Branch("dXsec_HZZ"   , &dXsec_HZZ      ,"dXsec_HZZ/D");
-  evt_tree->Branch("dXsecErr_HZZ", &dXsecErr_HZZ  ,"dXsecErr_HZZ/D");
-
-  evt_tree->Branch("dXsec_HZZ_JHU"   , &dXsec_HZZ_JHU      ,"dXsec_HZZ_JHU/D");
-  evt_tree->Branch("dXsecErr_HZZ_JHU", &dXsecErr_HZZ_JHU   ,"dXsecErr_HZZ_JHU/D");
-
-  evt_tree->Branch("dXsec_PSHZZ_JHU"   , &dXsec_PSHZZ_JHU      ,"dXsec_PSHZZ_JHU/D");
-  evt_tree->Branch("dXsecErr_PSHZZ_JHU", &dXsecErr_PSHZZ_JHU   ,"dXsecErr_PSHZZ_JHU/D");
-
-  evt_tree->Branch("dXsec_TZZ_JHU"   , &dXsec_TZZ_JHU      ,"dXsec_TZZ_JHU/D");
-  evt_tree->Branch("dXsecErr_TZZ_JHU", &dXsecErr_TZZ_JHU   ,"dXsecErr_TZZ_JHU/D");
-
-  evt_tree->Branch("dXsec_VZZ_JHU"   , &dXsec_VZZ_JHU      ,"dXsec_VZZ_JHU/D");
-  evt_tree->Branch("dXsecErr_VZZ_JHU", &dXsecErr_VZZ_JHU   ,"dXsecErr_VZZ_JHU/D");
+  evt_tree->Branch("dXsec_ZZ_MCFM"   , &dXsec_ZZ_MCFM   ,"dXsec_ZZ_MCFM/D");
+  evt_tree->Branch("dXsec_HZZ_MCFM"  , &dXsec_HZZ_MCFM   ,"dXsec_HZZ_MCFM/D");
+  evt_tree->Branch("dXsec_HZZ_JHU"   , &dXsec_HZZ_JHU   ,"dXsec_HZZ_JHU/D");
+  evt_tree->Branch("dXsec_PSHZZ_JHU" , &dXsec_PSHZZ_JHU ,"dXsec_PSHZZ_JHU/D");
+  evt_tree->Branch("dXsec_TZZ_JHU"   , &dXsec_TZZ_JHU   ,"dXsec_TZZ_JHU/D");
+  evt_tree->Branch("dXsec_VZZ_JHU"   , &dXsec_VZZ_JHU   ,"dXsec_VZZ_JHU/D");
   
   double psig_new, pbkg_new, graviMela;
 
@@ -371,6 +353,7 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   // Create the instance of TEvtProb to calculate the differential cross-section
   TEvtProb Xcal2;  
   hzz4l_event_type hzz4l_event;
+  hzz4l_event_type hzz4l_event_swap;
   //==========================================
   // Loop All Events
   //==========================================
@@ -388,23 +371,12 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     // 
     // initialise the differential cross-sections
     // 
-    dXsec_ZZ = 0.;
-    dXsecErr_ZZ = 0.;
-
-    dXsec_HZZ = 0.;
-    dXsecErr_HZZ = 0.;
-    
+    dXsec_ZZ_MCFM = 0.;
+    dXsec_HZZ_MCFM = 0.;
     dXsec_HZZ_JHU = 0.;
-    dXsecErr_HZZ_JHU = 0.;
-
     dXsec_PSHZZ_JHU = 0.;
-    dXsecErr_PSHZZ_JHU = 0.;
-
     dXsec_TZZ_JHU = 0.;
-    dXsecErr_TZZ_JHU = 0.;
-
     dXsec_VZZ_JHU = 0.;
-    dXsecErr_VZZ_JHU = 0.;
 
     ch->GetEntry(ievt);           
 
@@ -428,12 +400,16 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     TLorentzVector Z2_minus = p[2];
     TLorentzVector Z2_plus  = p[3];
 
-    //if((Z1_minus+Z1_plus+ Z2_minus+Z2_plus).M()>130 || (Z1_minus+Z1_plus+ Z2_minus+Z2_plus).M()<120) continue; // || (Z1_minus+Z1_plus).M()<40 || (Z2_minus+Z2_plus).M()<12) continue;
+    hzz4l_event.p[0].SetXYZM(Z1_minus.Px(), Z1_minus.Py(), Z1_minus.Pz(), 0.);
+    hzz4l_event.p[1].SetXYZM(Z1_plus.Px(), Z1_plus.Py(), Z1_plus.Pz(), 0.);
+    hzz4l_event.p[2].SetXYZM(Z2_minus.Px(), Z2_minus.Py(), Z2_minus.Pz(), 0.);
+    hzz4l_event.p[3].SetXYZM(Z2_plus.Px(), Z2_plus.Py(), Z2_plus.Pz(), 0.);
 
-    hzz4l_event.p[0].SetXYZM(p[0].Px(), p[0].Py(), p[0].Pz(), 0.);
-    hzz4l_event.p[1].SetXYZM(p[1].Px(), p[1].Py(), p[1].Pz(), 0.);
-    hzz4l_event.p[2].SetXYZM(p[2].Px(), p[2].Py(), p[2].Pz(), 0.);
-    hzz4l_event.p[3].SetXYZM(p[3].Px(), p[3].Py(), p[3].Pz(), 0.);
+    hzz4l_event_swap.p[0].SetXYZM(Z1_minus.Px(), Z1_minus.Py(), Z1_minus.Pz(), 0.);
+    hzz4l_event_swap.p[1].SetXYZM(Z2_plus.Px(), Z2_plus.Py(), Z2_plus.Pz(), 0.);
+    hzz4l_event_swap.p[2].SetXYZM(Z2_minus.Px(), Z2_minus.Py(), Z2_minus.Pz(), 0.);
+    hzz4l_event_swap.p[3].SetXYZM(Z1_plus.Px(), Z1_plus.Py(), Z1_plus.Pz(), 0.);
+
 
     // flavor 1 for 4e, 2 for 4m, 3 for 2e2mu  
     if ( mflavor == 1 ) {
@@ -441,18 +417,35 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
       hzz4l_event.PdgCode[1] = -13;
       hzz4l_event.PdgCode[2] = 13;
       hzz4l_event.PdgCode[3] = -13;
+
+      hzz4l_event_swap.PdgCode[0] = 13;
+      hzz4l_event_swap.PdgCode[1] = -13;
+      hzz4l_event_swap.PdgCode[2] = 13;
+      hzz4l_event_swap.PdgCode[3] = -13;
+
     }
     if ( mflavor == 2 ) {
       hzz4l_event.PdgCode[0] = 11;
       hzz4l_event.PdgCode[1] = -11;
       hzz4l_event.PdgCode[2] = 11;
       hzz4l_event.PdgCode[3] = -11;
+
+      hzz4l_event_swap.PdgCode[0] = 11;
+      hzz4l_event_swap.PdgCode[1] = -11;
+      hzz4l_event_swap.PdgCode[2] = 11;
+      hzz4l_event_swap.PdgCode[3] = -11;
+
     }
     if ( mflavor == 3 ) {
       hzz4l_event.PdgCode[0] = 11;
       hzz4l_event.PdgCode[1] = -11;
       hzz4l_event.PdgCode[2] = 13;
       hzz4l_event.PdgCode[3] = -13;
+
+      hzz4l_event_swap.PdgCode[0] = 11;
+      hzz4l_event_swap.PdgCode[1] = -11;
+      hzz4l_event_swap.PdgCode[2] = 13;
+      hzz4l_event_swap.PdgCode[3] = -13;
     }
 
     /*
@@ -466,8 +459,6 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     double z2mass = (hzz4l_event.p[2]+hzz4l_event.p[3]).M();
     double zzmass = (hzz4l_event.p[0]+hzz4l_event.p[1]+hzz4l_event.p[2]+hzz4l_event.p[3]).M();
 
-    // if ( TMath::Abs(z1mass - 91.1876) > 15. || TMath::Abs(z2mass - 91.1875) > 15. ) continue;
-    
     if (verbosity >= TVar::DEBUG) {
       cout << "\n=========================================================\n";
       cout << "Entry: " << ievt << "\n";
@@ -491,15 +482,25 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     Xcal2.SetHiggsMass(zzmass);
     // calculate the ZZ using MCFM
     Xcal2.SetMatrixElement(TVar::MCFM);
-    dXsec_ZZ = Xcal2.XsecCalc(TVar::ZZ_4l,hzz4l_event,verbosity);
-    dXsec_HZZ = Xcal2.XsecCalc(TVar::HZZ_4l,hzz4l_event,verbosity);
+    dXsec_ZZ_MCFM = Xcal2.XsecCalc(TVar::ZZ_2e2m,hzz4l_event,verbosity);
+    dXsec_HZZ_MCFM = Xcal2.XsecCalc(TVar::HZZ_4l,hzz4l_event,verbosity);
     // calculate X->ZZ using JHUGen
     // 0+ 
     Xcal2.SetMatrixElement(TVar::JHUGen);
-    dXsec_HZZ_JHU = Xcal2.XsecCalc(TVar::HZZ_4l,hzz4l_event,verbosity);
+    double dXsec_HZZ_JHU_nominal =  Xcal2.XsecCalc(TVar::HZZ_4l,hzz4l_event,verbosity);
+    double dXsec_HZZ_JHU_swap =  Xcal2.XsecCalc(TVar::HZZ_4l,hzz4l_event_swap,verbosity);
+    dXsec_HZZ_JHU = dXsec_HZZ_JHU_nominal;
+    if ( mflavor < 3 ) 
+      dXsec_HZZ_JHU = dXsec_HZZ_JHU_nominal + dXsec_HZZ_JHU_swap;
+
     // 0-
     Xcal2.SetMatrixElement(TVar::JHUGen);
-    dXsec_PSHZZ_JHU = Xcal2.XsecCalc(TVar::PSHZZ_4l,hzz4l_event,verbosity);
+    double dXsec_PSHZZ_JHU_nominal = Xcal2.XsecCalc(TVar::PSHZZ_4l,hzz4l_event,verbosity);
+    double dXsec_PSHZZ_JHU_swap = Xcal2.XsecCalc(TVar::PSHZZ_4l,hzz4l_event_swap,verbosity);
+    dXsec_PSHZZ_JHU  = dXsec_PSHZZ_JHU_nominal;
+    // if ( mflavor < 3 ) 
+    //   dXsec_PSHZZ_JHU  = dXsec_PSHZZ_JHU_nominal + dXsec_PSHZZ_JHU_swap;
+    
     // spin 2
     Xcal2.SetMatrixElement(TVar::JHUGen);
     dXsec_TZZ_JHU = Xcal2.XsecCalc(TVar::TZZ_4l,hzz4l_event,verbosity);

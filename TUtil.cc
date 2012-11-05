@@ -25,7 +25,7 @@ void SetEwkCoupligParameters(){
 void My_choose(TVar::Process process){
  
 //ZZ_4l
-if(process==TVar::ZZ_4l ){ 
+if(process==TVar::ZZ_2e2m ){ 
  
     //81 '  f(p1)+f(p2) --> Z^0(-->mu^-(p3)+mu^+(p4)) + Z^0(-->e^-(p5)+e^+(p6))'
     //86 '  f(p1)+f(p2) --> Z^0(-->e^-(p5)+e^+(p6))+Z^0(-->mu^-(p3)+mu^+(p4)) (NO GAMMA*)'
@@ -93,7 +93,7 @@ bool My_masscuts(double s[][12],TVar::Process process){
 
  double minZmassSqr=10*10;
 
- if(process==TVar::ZZ_4l){
+ if(process==TVar::ZZ_2e2m){
    if(s[2][3]< minZmassSqr) return true;
    if(s[4][5]< minZmassSqr) return true;
  }
@@ -214,7 +214,7 @@ double SumMatrixElementPDF(TVar::Process process, mcfm_event_type* mcfm_event,do
   fdist_ (&density_.ih1, &xx[0], &scale_.scale, fx1); 
   fdist_ (&density_.ih2, &xx[1], &scale_.scale, fx2); 
   
-  if( process==TVar::ZZ_4l)      qqb_zz_  (p4[0],msq[0]);
+  if( process==TVar::ZZ_2e2m)      qqb_zz_  (p4[0],msq[0]);
   if( process==TVar::HZZ_4l)     qqb_hzz_ (p4[0],msq[0]);
   
   double msqjk=0;
@@ -232,7 +232,7 @@ double SumMatrixElementPDF(TVar::Process process, mcfm_event_type* mcfm_event,do
     //    cout<<"\n";
   }//jj
 
-  if( process==TVar::ZZ_4l) msqjk=msq[3][7]+msq[7][3];
+  if( process==TVar::ZZ_2e2m) msqjk=msq[3][7]+msq[7][3];
   
   (*flux)=fbGeV2/(8*xx[0]*xx[1]*EBEAM*EBEAM);
   
