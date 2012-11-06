@@ -67,7 +67,6 @@ if(process==TVar::ZZ_2e2m ){
 
     // these settings are  from 
     // ProdHep/chooser.f
-
     npart_.npart=4;
     nqcdjets_.nqcdjets=0;
 
@@ -96,11 +95,10 @@ if(process==TVar::ZZ_2e2m ){
     
  }  else if ( process == TVar::HZZ_4l) {
 
-  //  114 '  f(p1)+f(p2) --> H(--> Z^0(mu^-(p3)+mu^+(p4)) + Z^0(e^-(p5)+e^+(p6))' 'N'
-     nproc_.nproc=114;
-     chooser_();
+    // 114 '  f(p1)+f(p2) --> H(--> Z^0(mu^-(p3)+mu^+(p4)) + Z^0(e^-(p5)+e^+(p6))' 'N'
+    // nproc_.nproc=114;
+    // chooser_();
      
-    /*
      npart_.npart=4;
      nqcdjets_.nqcdjets=0;
 
@@ -119,7 +117,7 @@ if(process==TVar::ZZ_2e2m ){
      zcouple_.r1=zcouple_.re;
      
      zcouple_.l2=zcouple_.le;
-     zcouple_.r2=zcouple_.re;*/
+     zcouple_.r2=zcouple_.re;
 
  } 
  else{
