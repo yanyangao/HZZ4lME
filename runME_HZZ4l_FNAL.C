@@ -247,6 +247,7 @@ void runME_HZZ4l_FNAL(TString inputDir, TString fileName, TString outputDir, int
     
     // ==== Begin the differential cross-section calculation
     Xcal2.SetHiggsMass(zzmass);
+
     // 
     // MCFM based calculations
     // 
@@ -256,6 +257,7 @@ void runME_HZZ4l_FNAL(TString inputDir, TString fileName, TString outputDir, int
     if ( inputDir.Contains("4e", TString::kExact) || inputDir.Contains("4mu", TString::kExact) )  
       dXsec_ZZ_MCFM = Xcal2.XsecCalc(TVar::ZZ_4e,hzz4l_event,verbosity);
     dXsec_HZZ_MCFM = Xcal2.XsecCalc(TVar::HZZ_4l,hzz4l_event,verbosity);
+    
     //
     // JHUGen based calcualtions 
     //
@@ -264,11 +266,11 @@ void runME_HZZ4l_FNAL(TString inputDir, TString fileName, TString outputDir, int
     dXsec_HZZ_JHU = Xcal2.XsecCalc(TVar::HZZ_4l,hzz4l_event,verbosity);
     // 0-
     dXsec_PSHZZ_JHU = Xcal2.XsecCalc(TVar::PSHZZ_4l,hzz4l_event,verbosity);
-    pseudoME =  dXsec_HZZ_JHU / ( dXsec_HZZ_JHU + 10*dXsec_PSHZZ_JHU );
+    pseudoME =  dXsec_HZZ_JHU / ( dXsec_HZZ_JHU + 6*dXsec_PSHZZ_JHU );
     
     // 2m+
     dXsec_TZZ_JHU = Xcal2.XsecCalc(TVar::TZZ_4l,hzz4l_event,verbosity);
-    graviME =  dXsec_HZZ_JHU / ( dXsec_HZZ_JHU + 0.2*dXsec_TZZ_JHU );
+    graviME =  dXsec_HZZ_JHU / ( dXsec_HZZ_JHU + 1.2*dXsec_TZZ_JHU );
 
     evt_tree->Fill();
     
