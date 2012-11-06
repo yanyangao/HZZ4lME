@@ -278,7 +278,8 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   double dXsec_PSHZZ_JHU = 0.;
   double dXsec_TZZ_JHU = 0.;
   double dXsec_VZZ_JHU = 0.;
-
+  double pseudoME = 0.;
+  double graviME = 0.;
   
   evt_tree->Branch("dXsec_ZZ_MCFM"   , &dXsec_ZZ_MCFM   ,"dXsec_ZZ_MCFM/D");
   evt_tree->Branch("dXsec_HZZ_MCFM"  , &dXsec_HZZ_MCFM   ,"dXsec_HZZ_MCFM/D");
@@ -286,6 +287,9 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   evt_tree->Branch("dXsec_PSHZZ_JHU" , &dXsec_PSHZZ_JHU ,"dXsec_PSHZZ_JHU/D");
   evt_tree->Branch("dXsec_TZZ_JHU"   , &dXsec_TZZ_JHU   ,"dXsec_TZZ_JHU/D");
   evt_tree->Branch("dXsec_VZZ_JHU"   , &dXsec_VZZ_JHU   ,"dXsec_VZZ_JHU/D");
+  evt_tree->Branch("pseudoME"        , &pseudoME         ,   "pseudoME/D"  );
+  evt_tree->Branch("graviME"         , &graviME          ,   "graviME/D"  );
+
   
   double psig_new, pbkg_new, graviMela;
 
@@ -306,6 +310,7 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   if ( ch->GetBranchStatus("flavortype") ) 
     ch->SetBranchAddress( "flavortype"   , &mflavor);
 
+ 
 
  // Initialize the branches to use to calculate the differential cross-sections
   Double_t EL1_ = 0.;
@@ -328,26 +333,40 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   Double_t pYL4_ = 0.;
   Double_t pZL4_ = 0.;
 
+  if ( ch->GetBranchStatus("EL1") ) 
+    ch->SetBranchAddress( "EL1"       , &EL1_      );   
+  if ( ch->GetBranchStatus("pXL1") ) 
+    ch->SetBranchAddress( "pXL1"      , &pXL1_     );   
+  if ( ch->GetBranchStatus("pYL1") ) 
+    ch->SetBranchAddress( "pYL1"      , &pYL1_     );   
+  if ( ch->GetBranchStatus("pZL1") ) 
+    ch->SetBranchAddress( "pZL1"      , &pZL1_     );   
+  if ( ch->GetBranchStatus("EL2") ) 
+    ch->SetBranchAddress( "EL2"       , &EL2_      );   
+  if ( ch->GetBranchStatus("pXL2") ) 
+    ch->SetBranchAddress( "pXL2"      , &pXL2_     );   
+  if ( ch->GetBranchStatus("pYL2") ) 
+    ch->SetBranchAddress( "pYL2"      , &pYL2_     );   
+  if ( ch->GetBranchStatus("pZL2") ) 
+    ch->SetBranchAddress( "pZL2"      , &pZL2_      );   
 
-  ch->SetBranchAddress( "EL1"       , &EL1_      );   
-  ch->SetBranchAddress( "pXL1"      , &pXL1_     );   
-  ch->SetBranchAddress( "pYL1"      , &pYL1_     );   
-  ch->SetBranchAddress( "pZL1"      , &pZL1_     );   
+  if ( ch->GetBranchStatus("EL3") ) 
+    ch->SetBranchAddress( "EL3"       , &EL3_      );   
+  if ( ch->GetBranchStatus("pXL3") ) 
+    ch->SetBranchAddress( "pXL3"      , &pXL3_     );   
+  if ( ch->GetBranchStatus("pYL3") ) 
+    ch->SetBranchAddress( "pYL3"      , &pYL3_     );   
+  if ( ch->GetBranchStatus("pZL3") ) 
+    ch->SetBranchAddress( "pZL3"      , &pZL3_      );   
 
-  ch->SetBranchAddress( "EL2"       , &EL2_      );   
-  ch->SetBranchAddress( "pXL2"      , &pXL2_     );   
-  ch->SetBranchAddress( "pYL2"      , &pYL2_     );   
-  ch->SetBranchAddress( "pZL2"      , &pZL2_      );   
-
-  ch->SetBranchAddress( "EL3"       , &EL3_      );   
-  ch->SetBranchAddress( "pXL3"      , &pXL3_     );   
-  ch->SetBranchAddress( "pYL3"      , &pYL3_     );   
-  ch->SetBranchAddress( "pZL3"      , &pZL3_      );   
-
-  ch->SetBranchAddress( "EL4"       , &EL4_      );   
-  ch->SetBranchAddress( "pXL4"      , &pXL4_     );   
-  ch->SetBranchAddress( "pYL4"      , &pYL4_     );   
-  ch->SetBranchAddress( "pZL4"      , &pZL4_      );   
+  if ( ch->GetBranchStatus("EL4") ) 
+    ch->SetBranchAddress( "EL4"       , &EL4_      );   
+  if ( ch->GetBranchStatus("pXL4") ) 
+    ch->SetBranchAddress( "pXL4"      , &pXL4_     );   
+  if ( ch->GetBranchStatus("pYL4") ) 
+    ch->SetBranchAddress( "pYL4"      , &pYL4_     );   
+  if ( ch->GetBranchStatus("pZL4") ) 
+    ch->SetBranchAddress( "pZL4"      , &pZL4_      );   
 
 
   // Create the instance of TEvtProb to calculate the differential cross-section
@@ -377,7 +396,9 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     dXsec_PSHZZ_JHU = 0.;
     dXsec_TZZ_JHU = 0.;
     dXsec_VZZ_JHU = 0.;
-
+    pseudoME = 0.;
+    graviME = 0.;
+    
     ch->GetEntry(ievt);           
 
     /*
@@ -482,7 +503,10 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     Xcal2.SetHiggsMass(zzmass);
     // calculate the ZZ using MCFM
     Xcal2.SetMatrixElement(TVar::MCFM);
-    dXsec_ZZ_MCFM = Xcal2.XsecCalc(TVar::ZZ_2e2m,hzz4l_event,verbosity);
+    if ( mflavor < 3  )
+      dXsec_ZZ_MCFM = Xcal2.XsecCalc(TVar::ZZ_4e,hzz4l_event,verbosity);
+    else 
+      dXsec_ZZ_MCFM = Xcal2.XsecCalc(TVar::ZZ_2e2m,hzz4l_event,verbosity);
     dXsec_HZZ_MCFM = Xcal2.XsecCalc(TVar::HZZ_4l,hzz4l_event,verbosity);
     // calculate X->ZZ using JHUGen
     // 0+ 
@@ -498,12 +522,15 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     double dXsec_PSHZZ_JHU_nominal = Xcal2.XsecCalc(TVar::PSHZZ_4l,hzz4l_event,verbosity);
     double dXsec_PSHZZ_JHU_swap = Xcal2.XsecCalc(TVar::PSHZZ_4l,hzz4l_event_swap,verbosity);
     dXsec_PSHZZ_JHU  = dXsec_PSHZZ_JHU_nominal;
+    pseudoME =  dXsec_HZZ_JHU / ( dXsec_HZZ_JHU + 6*dXsec_PSHZZ_JHU );
     // if ( mflavor < 3 ) 
     //   dXsec_PSHZZ_JHU  = dXsec_PSHZZ_JHU_nominal + dXsec_PSHZZ_JHU_swap;
     
     // spin 2
     Xcal2.SetMatrixElement(TVar::JHUGen);
     dXsec_TZZ_JHU = Xcal2.XsecCalc(TVar::TZZ_4l,hzz4l_event,verbosity);
+    graviME =  dXsec_HZZ_JHU / ( dXsec_HZZ_JHU + 1.2*dXsec_TZZ_JHU );
+    
     // spin 1
     Xcal2.SetMatrixElement(TVar::JHUGen);
     dXsec_VZZ_JHU = Xcal2.XsecCalc(TVar::VZZ_4l,hzz4l_event,verbosity);    
