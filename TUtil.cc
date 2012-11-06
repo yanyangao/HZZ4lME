@@ -29,9 +29,10 @@ if(process==TVar::ZZ_2e2m ){
  
     //81 '  f(p1)+f(p2) --> Z^0(-->mu^-(p3)+mu^+(p4)) + Z^0(-->e^-(p5)+e^+(p6))'
     //86 '  f(p1)+f(p2) --> Z^0(-->e^-(p5)+e^+(p6))+Z^0(-->mu^-(p3)+mu^+(p4)) (NO GAMMA*)'
+    //    nproc_.nproc=81;  
+    //    chooser_();
   
-    nproc_.nproc=81;
-    /*
+  // these settings are identical to use the chooser_() function
     npart_.npart=4;
     nqcdjets_.nqcdjets=0;
 
@@ -55,19 +56,50 @@ if(process==TVar::ZZ_2e2m ){
 
     zcouple_.q2=-1.0;
     zcouple_.l2=zcouple_.le;
-    zcouple_.r2=zcouple_.re;*/
-    chooser_();
+    zcouple_.r2=zcouple_.re;
+
 
  }  else if ( process == TVar::ZZ_4e) {
 
     // 90 '  f(p1)+f(p2) --> Z^0(-->e^-(p3)+e^+(p4)) + Z^0(-->e^-(p5)+e^+(p6))' 'L'
-    nproc_.nproc=90;
-    chooser_();
+    // nproc_.nproc=90;
+    //  chooser_();
 
+    // these settings are  from 
+    // ProdHep/chooser.f
+
+    npart_.npart=4;
+    nqcdjets_.nqcdjets=0;
+
+    vsymfact_.vsymfact=0.25;                                                                                                               
+    interference_.interference=true;
+
+    nwz_.nwz=0;
+    bveg1_mcfm_.ndim=10;
+    masses_mcfm_.mb=0;
+    breit_.n2=1;
+    breit_.n3=1;
+
+    breit_.mass2=masses_mcfm_.zmass;
+    breit_.width2=masses_mcfm_.zwidth;
+    breit_.mass3=masses_mcfm_.zmass;
+    breit_.width3=masses_mcfm_.zwidth;
+
+    zcouple_.q1=-1.0;
+    zcouple_.l1=zcouple_.le;
+    zcouple_.r1=zcouple_.re;
+
+    zcouple_.q2=-1.0;
+    zcouple_.l2=zcouple_.le;
+    zcouple_.r2=zcouple_.re;
+
+    
  }  else if ( process == TVar::HZZ_4l) {
 
   //  114 '  f(p1)+f(p2) --> H(--> Z^0(mu^-(p3)+mu^+(p4)) + Z^0(e^-(p5)+e^+(p6))' 'N'
      nproc_.nproc=114;
+     chooser_();
+     
     /*
      npart_.npart=4;
      nqcdjets_.nqcdjets=0;
@@ -88,7 +120,7 @@ if(process==TVar::ZZ_2e2m ){
      
      zcouple_.l2=zcouple_.le;
      zcouple_.r2=zcouple_.re;*/
-     chooser_();
+
  } 
  else{
      std::cerr <<"[My_choose]: Can't identify Process: " << process <<endl;
