@@ -8,8 +8,10 @@
 
 1. Check out and compile the package
 
-cmsrel CMSSW_4_2_3
-cd CMSSW_4_2_3/src/
+1) main ME code 
+
+cmsrel CMSSW_5_2_5
+cd CMSSW_5_2_5/src/
 cmsenv
 cvs co -d HZZ4lME UserCode/YGao/HZZ4lME
 cvs co -d Higgs/Higgs_CS_and_Width UserCode/Snowball/Higgs/Higgs_CS_and_Width
@@ -17,6 +19,21 @@ cp -r Higgs/Higgs_CS_and_Width/txtFiles .
 cd HZZ4lME/
 cp /afs/cern.ch/user/y/yygao/public/libmcfm.so .
 make
+
+2) check out PDFs from MELA package 
+
+cvs co -r V00-01-08 -d PDFs UserCode/CJLST/ZZMatrixElement/MELA/src/RooSpinTwo_7D.cc
+cvs co -r V00-01-08 -d PDFs UserCode/CJLST/ZZMatrixElement/MELA/src/RooSpinTwo_7D.h
+
+cvs co -r V00-01-08 -d PDFs UserCode/CJLST/ZZMatrixElement/MELA/src/RooXZsZs_5D.cc
+cvs co -r V00-01-08 -d PDFs UserCode/CJLST/ZZMatrixElement/MELA/src/RooXZsZs_5D.h
+
+cvs co -r V00-01-08 -d PDFs UserCode/CJLST/ZZMatrixElement/MELA/src/RooSpinOne_7D.cc
+cvs co -r V00-01-08 -d PDFs UserCode/CJLST/ZZMatrixElement/MELA/src/RooSpinOne_7D.h
+
+3) Compile code:
+
+root -l -n 
 
 
 2. Add ME files for the CJLST trees
@@ -30,40 +47,16 @@ make
 
 These instructions are for quick studies based on ROC curves
 
-1) check out PDFs from MELA package 
-
-cvs co -r V00-01-05 -d PDFs UserCode/CJLST/ZZMatrixElement/MELA/src/RooSpinTwo_7D.cc
-cvs co -r V00-01-05 -d PDFs UserCode/CJLST/ZZMatrixElement/MELA/src/RooSpinTwo_7D.h
-
-cvs co -r V00-01-05 -d PDFs UserCode/CJLST/ZZMatrixElement/MELA/src/RooXZsZs_5D.cc
-cvs co -r V00-01-05 -d PDFs UserCode/CJLST/ZZMatrixElement/MELA/src/RooXZsZs_5D.h
-
-cvs co -r V00-01-05 -d PDFs UserCode/CJLST/ZZMatrixElement/MELA/src/RooSpinOne_7D.cc
-cvs co -r V00-01-05 -d PDFs UserCode/CJLST/ZZMatrixElement/MELA/src/RooSpinOne_7D.h
-
-2) Compile code:
-
-root -l -n 
-
-
-3) Add the following lines to rootlogon.C
-
-  gSystem->AddIncludePath("-I$ROOFITSYS/include/");
-  gROOT->ProcessLine(".L PDFs/RooSpinTwo_7D.cc+");
-  gROOT->ProcessLine(".L PDFs/RooXZsZs_5D.cc+");
-  gROOT->ProcessLine(".L PDFs/RooSpinOne_7D.cc+");
-
-4) run code to add gravi-MELA and JHUGen ME branches to tree
-
+1) Add variables
+ 
 root -l -n rootlogon.C
 .L runME_HZZ4l_JHUgenSamples.C+
 // for example
 runME_HZZ4l_JHUgenSamples("/home/ygao/HZZME/","SMHiggsZZ_250_JHU.root","./",10000,0)
 runME_HZZ4l_JHUgenSamples("/home/ygao/HZZME/","TZZ_2mplus_250_JHU.root","./",10000,0)
-
 .q 
 
-5) Plot ROC curves - 
+2) Plot ROC curves - 
 
 root -l -n MELArocCurves.C
 
