@@ -135,7 +135,12 @@ void runME_HZZ4l_FNAL(TString inputDir, TString fileName, TString outputDir, int
   cout << outFileName <<endl;
   TFile *newfile = new TFile(outFileName,"recreate");
 
-  TTree* ch=(TTree*)fin->Get("SelectedTree");
+  TString treeName = "SelectedTree";
+  // for the data/ directory, the tree name is data_obs
+  if ( inputDir.Contains("data", TString::kExact) )
+    treeName = "data_obs";
+  
+  TTree* ch=(TTree*)fin->Get(treeName);
   if (ch==0x0) return; 
   TTree* evt_tree=(TTree*) ch->CloneTree(0, "fast");
   
