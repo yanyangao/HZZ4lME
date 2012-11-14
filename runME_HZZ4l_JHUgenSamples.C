@@ -378,7 +378,8 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   //==========================================
   
   int Ntot = maxevt > ch->GetEntries() ? ch->GetEntries() : maxevt; 
-  
+  if ( maxevt < 0. ) Ntot =  ch->GetEntries();
+
   pair<double,double> prob;
 
   if (verbosity >= TVar::INFO) printf("Total number of events = %d\n", Ntot);
@@ -514,8 +515,8 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     double dXsec_HZZ_JHU_nominal =  Xcal2.XsecCalc(TVar::HZZ_4l,hzz4l_event,verbosity);
     double dXsec_HZZ_JHU_swap =  Xcal2.XsecCalc(TVar::HZZ_4l,hzz4l_event_swap,verbosity);
     dXsec_HZZ_JHU = dXsec_HZZ_JHU_nominal;
-    if ( mflavor < 3 ) 
-      dXsec_HZZ_JHU = dXsec_HZZ_JHU_nominal + dXsec_HZZ_JHU_swap;
+    // if ( mflavor < 3 ) 
+    //  dXsec_HZZ_JHU = dXsec_HZZ_JHU_nominal + dXsec_HZZ_JHU_swap;
 
     // 0-
     Xcal2.SetMatrixElement(TVar::JHUGen);
