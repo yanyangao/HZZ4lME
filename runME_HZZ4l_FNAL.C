@@ -251,7 +251,37 @@ void runME_HZZ4l_FNAL(TString inputDir, TString fileName, TString outputDir, int
       std::cout << "Z1 mass = " << z1mass << "\tz2mass = " << z2mass << "\n";
       cout << "=========================================================\n";
     } 
+    
+    //
+    // set the lepton flavor final states according to the datadir
+    // by default it assumes 2e2mu
+    // 
+    hzz4l_event.PdgCode[0] = 11;
+    hzz4l_event.PdgCode[1] = -11;
+    hzz4l_event.PdgCode[2] = 13;
+    hzz4l_event.PdgCode[3] = -13;
+        
+    if ( inputDir.Contains("4mu", TString::kExact) ) {
+      hzz4l_event.PdgCode[0] = 13;
+      hzz4l_event.PdgCode[1] = -13;
+      hzz4l_event.PdgCode[2] = 13;
+      hzz4l_event.PdgCode[3] = -13;
+    }
+    if ( inputDir.Contains("4e", TString::kExact) ) {
+      hzz4l_event.PdgCode[0] = 11;
+      hzz4l_event.PdgCode[1] = -11;
+      hzz4l_event.PdgCode[2] = 11;
+      hzz4l_event.PdgCode[3] = -11;
+    }
     // finish loading event information
+    
+    if (verbosity >= TVar::DEBUG) {
+      std::cout << "PDG code \n";
+      std::cout << "hzz4l_event.PdgCode[0] = " << hzz4l_event.PdgCode[0] << "\n";
+      std::cout << "hzz4l_event.PdgCode[1] = " << hzz4l_event.PdgCode[1] << "\n";
+      std::cout << "hzz4l_event.PdgCode[2] = " << hzz4l_event.PdgCode[2] << "\n";
+      std::cout << "hzz4l_event.PdgCode[3] = " << hzz4l_event.PdgCode[3] << "\n";
+    }
     
     // ==== Begin the differential cross-section calculation
     Xcal2.SetHiggsMass(zzmass);
