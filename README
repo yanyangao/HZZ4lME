@@ -20,6 +20,14 @@ cd HZZ4lME/
 cp /afs/cern.ch/user/y/yygao/public/libmcfm.so .
 make
 
+NOTE, when changing the ME input files, such as the includeVars.F90, you need 
+to remake the library, by doing the following. 
+
+make clean   # absolutely needed
+make
+
+
+
 2) check out PDFs from MELA package 
 
 cvs co -r V00-01-08 -d PDFs UserCode/CJLST/ZZMatrixElement/MELA/src/RooSpinTwo_7D.cc
@@ -35,19 +43,13 @@ cvs co -r V00-01-08 -d PDFs UserCode/CJLST/ZZMatrixElement/MELA/src/RooSpinOne_7
 
 root -l -n 
 
-********
-WARNING:::
-********
-
-This code uses a rootlogon.C file inside this package. So please check your ~/.rootrc file to 
-make sure that you do not have a default loading of some other rootlogon.C
-
 
 2. Add ME files for the CJLST trees
 
 1) The maco is runME_HZZ4l_FNAL.C
 2) To process all the files in a given directory use the code
 ./processall.sh
+
 
 3. Add both MELA and ME to the JHUGen angles tree
 
