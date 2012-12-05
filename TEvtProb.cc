@@ -162,7 +162,8 @@ double TEvtProb::XsecCalc(TVar::Process proc, const hzz4l_event_type &hzz4l_even
     
     if (verbosity >= TVar::DEBUG)
       {
-	cout <<" TEvtProb::XsecCalc(): dXsec=" << dXsec
+	cout <<"Process " << TVar::ProcessName(proc) << 
+	  " TEvtProb::XsecCalc(): dXsec=" << dXsec
 	     <<" Msq="<<msqjk 
 	     <<" flux="<<flux 
 	     <<endl;
