@@ -150,12 +150,14 @@ void runME_HZZ4l_FNAL(TString inputDir, TString fileName, TString outputDir, int
   double dXsec_HZZ_JHU = 0.;
   double dXsec_PSHZZ_JHU = 0.;
   double dXsec_TZZ_JHU = 0.;
+  double dXsec_GGZZ_MCFM = 0.;
   double ME = 0.;
   double pseudoME = 0.;
   double graviME = 0.;
   
 
   evt_tree->Branch("dXsec_ZZ_MCFM"   , &dXsec_ZZ_MCFM    ,   "dXsec_ZZ_MCFM/D"  );
+  evt_tree->Branch("dXsec_GGZZ_MCFM" , &dXsec_GGZZ_MCFM  ,   "dXsec_GGZZ_MCFM/D");
   evt_tree->Branch("dXsec_HZZ_MCFM"  , &dXsec_HZZ_MCFM   ,   "dXsec_HZZ_MCFM/D" );
   evt_tree->Branch("dXsec_HZZ_JHU"   , &dXsec_HZZ_JHU    ,   "dXsec_HZZ_JHU/D"  );
   evt_tree->Branch("dXsec_PSHZZ_JHU" , &dXsec_PSHZZ_JHU  ,   "dXsec_PSHZZ_JHU/D");
@@ -197,6 +199,7 @@ void runME_HZZ4l_FNAL(TString inputDir, TString fileName, TString outputDir, int
     // initialise the differential cross-sections
     // 
     dXsec_ZZ_MCFM = 0.;
+    dXsec_GGZZ_MCFM = 0.;
     dXsec_HZZ_MCFM = 0.;
     dXsec_HZZ_JHU = 0.;
     dXsec_PSHZZ_JHU = 0.;
@@ -295,6 +298,7 @@ void runME_HZZ4l_FNAL(TString inputDir, TString fileName, TString outputDir, int
     if ( inputDir.Contains("4e", TString::kExact) || inputDir.Contains("4mu", TString::kExact) )  
       dXsec_ZZ_MCFM = Xcal2.XsecCalc(TVar::ZZ_4e,hzz4l_event,verbosity);
     dXsec_HZZ_MCFM = Xcal2.XsecCalc(TVar::HZZ_4l,hzz4l_event,verbosity);
+    dXsec_GGZZ_MCFM = Xcal2.XsecCalc(TVar::GGZZ_4l,hzz4l_event,verbosity);
     
     //
     // JHUGen based calcualtions 

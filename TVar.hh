@@ -30,6 +30,7 @@ public:
     TZZ_4l =3, // spin 2 couplings have to set in TEvtProb.cc
     VZZ_4l =4, // spin 1 couplings have to set in TEvtProb.cc
     ZZ_4e    =5,
+    GGZZ_4l = 6,
     Null
   };
   //---------------------------------
@@ -40,8 +41,12 @@ public:
       return TString("ZZ_2e2m");
     if(temp==TVar::ZZ_4e   ) 
       return TString("ZZ_4e");
+    if(temp==TVar::GGZZ_4l   ) 
+      return TString("GGZZ_4l");
     else if(temp==TVar::HZZ_4l   ) 
       return TString("HZZ_4l");
+    else if(temp==TVar::PSHZZ_4l   ) 
+      return TString("PSHZZ_4l");
     else if(temp==TVar::TZZ_4l   ) 
       return TString("TZZ_2mplus_4l");
     else if(temp==TVar::VZZ_4l   ) 

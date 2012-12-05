@@ -153,6 +153,9 @@ extern "C" {
   void qqb_zz_(double* p, double* msq);
   void gen4_(double* r, double* p, double* wt4);  //r(22) p(4,12)
 
+  #define gg_zz_ gg_zz_
+  void gg_zz_(double* p, double* msq);
+
   // For H->WW
   void gen4h_(double* r, double* p, double* wt4);  //r(22) p(4,12)
 
