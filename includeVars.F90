@@ -141,7 +141,7 @@ complex(8), parameter :: ne=(0.0d0,1.0d0)
 
 integer,parameter :: DecayMode1=0
 integer,parameter :: DecayMode2=0
-logical,parameter :: includeInterference=.false.
+logical,parameter :: includeInterference=.true.
 logical,parameter :: OffShellReson=.true.
 real(8) :: M_V,Ga_V
 ! real(8) :: scr
