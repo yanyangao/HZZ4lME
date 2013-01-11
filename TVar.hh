@@ -31,6 +31,8 @@ public:
     VZZ_4l =4, // spin 1 couplings have to set in TEvtProb.cc
     ZZ_4e    =5,
     GGZZ_4l = 6,
+    AVZZ_4l = 7,
+    QQB_TZZ_4l = 8,
     Null
   };
   //---------------------------------
@@ -49,8 +51,12 @@ public:
       return TString("PSHZZ_4l");
     else if(temp==TVar::TZZ_4l   ) 
       return TString("TZZ_2mplus_4l");
+    else if(temp==TVar::QQB_TZZ_4l   ) 
+      return TString("QQB_TZZ_2mplus_4l");
     else if(temp==TVar::VZZ_4l   ) 
       return TString("VZZ_4l");
+    else if(temp==TVar::AVZZ_4l   ) 
+      return TString("AVZZ_4l");
     else 
       return TString("UnKnown");
   };

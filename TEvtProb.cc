@@ -147,11 +147,16 @@ double TEvtProb::XsecCalc(TVar::Process proc, const hzz4l_event_type &hzz4l_even
 	// Zprime->qq coupling constants 
 	double Zqqcoupl[2] = {1.0, 1.0}; // do not change 
 	double Zvvcoupl[2] = {1.0, 0.0};  // 1 -
-	// double Zvvcoupl[2] = {0.0, 1.0};  // 1 +
+	msqjk = JHUGenMatEl(proc, &mcfm_event, _hmass, _hwidth, Zqqcoupl, Zvvcoupl);
+      }
+    
+    if ( proc == TVar::AVZZ_4l ) {
+        // Zprime->qq coupling constants 
+	double Zqqcoupl[2] = {1.0, 1.0}; // do not change 
+	double Zvvcoupl[2] = {0.0, 1.0};  // 1 +
 	msqjk = JHUGenMatEl(proc, &mcfm_event, _hmass, _hwidth, Zqqcoupl, Zvvcoupl);
       }
     }
-
 
     if(msqjk<=0){ mcfm_event.pswt=0; }
     

@@ -150,7 +150,9 @@ void runME_HZZ4l_FNAL(TString inputDir, TString fileName, TString outputDir, int
   double dXsec_HZZ_JHU = 0.;
   double dXsec_PSHZZ_JHU = 0.;
   double dXsec_VZZ_JHU = 0.;
+  double dXsec_AVZZ_JHU = 0.;
   double dXsec_TZZ_JHU = 0.;
+  double dXsec_QQB_TZZ_JHU = 0.;
   double dXsec_GGZZ_MCFM = 0.;
   double ME = 0.;
   double pseudoME = 0.;
@@ -163,7 +165,9 @@ void runME_HZZ4l_FNAL(TString inputDir, TString fileName, TString outputDir, int
   evt_tree->Branch("dXsec_HZZ_JHU"   , &dXsec_HZZ_JHU    ,   "dXsec_HZZ_JHU/D"  );
   evt_tree->Branch("dXsec_PSHZZ_JHU" , &dXsec_PSHZZ_JHU  ,   "dXsec_PSHZZ_JHU/D");
   evt_tree->Branch("dXsec_TZZ_JHU"   , &dXsec_TZZ_JHU    ,   "dXsec_TZZ_JHU/D"  );
+  evt_tree->Branch("dXsec_QQB_TZZ_JHU",&dXsec_QQB_TZZ_JHU,   "dXsec_QQB_TZZ_JHU/D");
   evt_tree->Branch("dXsec_VZZ_JHU"   , &dXsec_VZZ_JHU    ,   "dXsec_VZZ_JHU/D"  );
+  evt_tree->Branch("dXsec_AVZZ_JHU"  , &dXsec_AVZZ_JHU   ,   "dXsec_AVZZ_JHU/D"  );
   evt_tree->Branch("ME"              , &ME               ,   "ME/D"             );
   evt_tree->Branch("pseudoME"        , &pseudoME         ,   "pseudoME/D"       );
   evt_tree->Branch("graviME"         , &graviME          ,   "graviME/D"        );
@@ -206,7 +210,10 @@ void runME_HZZ4l_FNAL(TString inputDir, TString fileName, TString outputDir, int
     dXsec_HZZ_JHU = 0.;
     dXsec_PSHZZ_JHU = 0.;
     dXsec_VZZ_JHU = 0.;
+    dXsec_AVZZ_JHU = 0.;
     dXsec_TZZ_JHU = 0.;
+    dXsec_QQB_TZZ_JHU = 0.;
+
     ME = 0.;
     pseudoME = 0.;
     graviME = 0.;
@@ -317,10 +324,16 @@ void runME_HZZ4l_FNAL(TString inputDir, TString fileName, TString outputDir, int
 
     // 1-
     dXsec_VZZ_JHU = Xcal2.XsecCalc(TVar::VZZ_4l,hzz4l_event,verbosity);
+
+    // 1+
+    dXsec_AVZZ_JHU = Xcal2.XsecCalc(TVar::AVZZ_4l,hzz4l_event,verbosity);
     
     // 2m+
     dXsec_TZZ_JHU = Xcal2.XsecCalc(TVar::TZZ_4l,hzz4l_event,verbosity);
     graviME =  dXsec_HZZ_JHU / ( dXsec_HZZ_JHU + 1.2*dXsec_TZZ_JHU );
+
+    // qqbar->2m+
+    dXsec_QQB_TZZ_JHU = Xcal2.XsecCalc(TVar::TZZ_4l,hzz4l_event,verbosity);
 
     evt_tree->Fill();
     
