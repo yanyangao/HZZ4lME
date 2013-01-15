@@ -118,12 +118,16 @@ double TEvtProb::XsecCalc(TVar::Process proc, const hzz4l_event_type &hzz4l_even
       //
       // spin 2 
       // 
-      if ( proc == TVar::TZZ_4l ) {
+      if ( proc == TVar::TZZ_4l || proc == TVar::QQB_TZZ_4l ) {
 	// Graviton->Glu Glu coupling constants 
 	double Gggcoupl[5] = {1.0, 0.0, 0.0, 0.0, 0.0}; // 2m+
 	// double Gggcoupl[5] = {0.0, 0.0, 0.0, 1.0, 0.0}; // 2h+
 	// double Gggcoupl[5] = {0.0, 1.0, 1.0, 0.0, 0.0}; // 2L+
 	// double Gggcoupl[5] = {0.0, 0.0, 0.0, 0.0, 1.0}; // 2h-
+
+	// Graviton->qqbar coupling constants
+	double Gqqcoupl[2] = {1.0, 1.0}; // do not change
+	
 	// Graviton->ZZ coupling constants 
 	double Gvvcoupl[10]; 
 	Gvvcoupl[0]=1.0; // 2m+
@@ -136,9 +140,12 @@ double TEvtProb::XsecCalc(TVar::Process proc, const hzz4l_event_type &hzz4l_even
 	Gvvcoupl[7]=0.0; // 2h-
 	Gvvcoupl[8]=0.0;
 	Gvvcoupl[9]=0.0;
-	msqjk = JHUGenMatEl(proc, &mcfm_event, _hmass, _hwidth, Gggcoupl, Gvvcoupl);
+	if ( proc == TVar::TZZ_4l )
+	  msqjk = JHUGenMatEl(proc, &mcfm_event, _hmass, _hwidth, Gggcoupl, Gvvcoupl);
+	if ( proc == TVar::QQB_TZZ_4l )
+	  msqjk = JHUGenMatEl(proc, &mcfm_event, _hmass, _hwidth, Gqqcoupl, Gvvcoupl);
       }
-
+      
       //
       // spin 1
       // 

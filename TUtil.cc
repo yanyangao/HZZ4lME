@@ -347,6 +347,10 @@ double JHUGenMatEl(TVar::Process process, mcfm_event_type* mcfm_event, double MR
   if ( process == TVar::TZZ_4l ) {
     __modgraviton_MOD_evalamp_gg_g_vv(p4, &MReso,  &GaReso, xggcoupl, xvvcoupl, MYIDUP, &MatElSq);
   }
+  if ( process == TVar::QQB_TZZ_4l ) {
+    // -- YY: note that even if it is called xggcouplings, we are only testing xqq!
+    __modgraviton_MOD_evalamp_qqb_g_vv(p4, &MReso,  &GaReso, xggcoupl, xvvcoupl, MYIDUP, &MatElSq);
+  }
   if ( process == TVar::VZZ_4l || process == TVar::AVZZ_4l) {
     // -- YY: note that even if it is called xggcouplings, we are only testing xqq!
     __modzprime_MOD_evalamp_qqb_zprime_vv(p4, &MReso,  &GaReso, xggcoupl, xvvcoupl, MYIDUP, &MatElSq);
