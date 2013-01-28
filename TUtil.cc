@@ -344,7 +344,7 @@ double JHUGenMatEl(TVar::Process process, mcfm_event_type* mcfm_event, double MR
   if ( process == TVar::HZZ_4l || process == TVar::PSHZZ_4l ) {
     __modhiggs_MOD_evalamp_gg_h_vv(p4, &MReso,  &GaReso, xggcoupl, xvvcoupl, MYIDUP, &MatElSq);
   }
-  if ( process == TVar::TZZ_4l ) {
+  if ( process == TVar::TZZ_4l || process == TVar::GGUNPOL_TZZ_4l) {
     __modgraviton_MOD_evalamp_gg_g_vv(p4, &MReso,  &GaReso, xggcoupl, xvvcoupl, MYIDUP, &MatElSq);
   }
   if ( process == TVar::QQB_TZZ_4l ) {

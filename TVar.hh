@@ -33,6 +33,7 @@ public:
     GGZZ_4l = 6,
     AVZZ_4l = 7,
     QQB_TZZ_4l = 8,
+    GGUNPOL_TZZ_4l = 9,
     Null
   };
   //---------------------------------
@@ -53,6 +54,8 @@ public:
       return TString("TZZ_2mplus_4l");
     else if(temp==TVar::QQB_TZZ_4l   ) 
       return TString("QQB_TZZ_2mplus_4l");
+    else if(temp==TVar::GGUNPOL_TZZ_4l   ) 
+      return TString("GGUNPOL_TZZ_2mplus_4l");
     else if(temp==TVar::VZZ_4l   ) 
       return TString("VZZ_4l");
     else if(temp==TVar::AVZZ_4l   ) 
