@@ -344,8 +344,35 @@ double JHUGenMatEl(TVar::Process process, mcfm_event_type* mcfm_event, double MR
   if ( process == TVar::HZZ_4l || process == TVar::PSHZZ_4l ) {
     __modhiggs_MOD_evalamp_gg_h_vv(p4, &MReso,  &GaReso, xggcoupl, xvvcoupl, MYIDUP, &MatElSq);
   }
-  if ( process == TVar::TZZ_4l || process == TVar::GGUNPOL_TZZ_4l) {
+  if ( process == TVar::TZZ_4l) {
     __modgraviton_MOD_evalamp_gg_g_vv(p4, &MReso,  &GaReso, xggcoupl, xvvcoupl, MYIDUP, &MatElSq);
+  }
+  if ( process == TVar::TZZ_DECAY_4l) {
+    // special treatment of the 4-vectors
+    // From Markus: 
+    // Note that the momentum no.2, p(1:4,2), is a dummy which is not used. Momentum no.1,
+    // p(1:4,1) = (/   -1.25d0,    0.00d0,    0.00d0,    0.00d0   /),
+    // is the resonance momentum in its rest frame, which is crossed into the final state, 
+    // i.e. the physical momentum is  -p(1:4,1) with a mass of 125GeV.
+    
+    double P[6][4];
+    P[0][0]=-(mcfm_event->p[0]+mcfm_event->p[1]).M()/100.;
+    P[0][1]=0.0;
+    P[0][2]=0.0;
+    P[0][3]=0.0;
+    
+    P[1][0]=0.0;
+    P[1][1]=0.0;
+    P[1][2]=0.0;
+    P[1][3]=0.0;
+    //initialize decayed particles
+    for(int ipar=2;ipar<NPart;ipar++){
+      P[ipar][0] = mcfm_event->p[ipar].Energy()/100.;
+      P[ipar][1] = mcfm_event->p[ipar].Px()/100.;
+      P[ipar][2] = mcfm_event->p[ipar].Py()/100.;
+      P[ipar][3] = mcfm_event->p[ipar].Pz()/100.;
+    }
+    __modgraviton_MOD_evalamp_g_vv(P, &MReso,  &GaReso, xvvcoupl, MYIDUP, &MatElSq);
   }
   if ( process == TVar::QQB_TZZ_4l ) {
     // -- YY: note that even if it is called xggcouplings, we are only testing xqq!

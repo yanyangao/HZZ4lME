@@ -1,3 +1,7 @@
+// 
+// This code is for private use only Yanyan Gao (ygao@fnal.gov)
+// 
+
 #include "TFile.h"
 #include "TTree.h"
 #include "TLeaf.h"
@@ -116,7 +120,6 @@ pair<double,double> calculateGraviMela(double mzz_,double m1_, double m2_,
   RooXZsZs_5D PSHiggs("PSHiggs","PSHiggs",m1,m2,h1,h2,phi,a1PS,p1,a2PS,p2,a3PS,p3,mZ,gamZ,mzz,R1,R2);
   
 
-
   // - - - - - - - - - - - - - - - -
   // minimal coupling graviton parameters
   // - - - - - - - - - - - - - - - - 
@@ -173,9 +176,9 @@ pair<double,double> calculateGraviMela(double mzz_,double m1_, double m2_,
   
   pair<double,double> result;
   result.first=SMHiggs.getVal();
-  //result.second=minGrav.getVal();
+  result.second=minGrav.getVal();
   //result.second=zprime.getVal();
-  result.second=PSHiggs.getVal();
+  // result.second=PSHiggs.getVal();
 
   return result;
   
@@ -266,7 +269,7 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   cout << outFileName <<endl;
   TFile *newfile = new TFile(outFileName,"recreate");
 
-  TTree* ch=(TTree*)fin->Get("angles"); 
+  TTree* ch=(TTree*)fin->Get("SelectedTree"); 
   if (ch==0x0) return; 
   TTree* evt_tree=(TTree*) ch->CloneTree(0, "fast");
   
@@ -278,6 +281,10 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   double dXsec_PSHZZ_JHU = 0.;
   double dXsec_TZZ_JHU = 0.;
   double dXsec_VZZ_JHU = 0.;
+  double dXsec_AVZZ_JHU = 0.;
+  double dXsec_QQB_TZZ_JHU = 0.;
+  double dXsec_TZZ_DECAY_JHU = 0.;
+
   double pseudoME = 0.;
   double graviME = 0.;
   
@@ -287,8 +294,11 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   evt_tree->Branch("dXsec_PSHZZ_JHU" , &dXsec_PSHZZ_JHU ,"dXsec_PSHZZ_JHU/D");
   evt_tree->Branch("dXsec_TZZ_JHU"   , &dXsec_TZZ_JHU   ,"dXsec_TZZ_JHU/D");
   evt_tree->Branch("dXsec_VZZ_JHU"   , &dXsec_VZZ_JHU   ,"dXsec_VZZ_JHU/D");
-  evt_tree->Branch("pseudoME"        , &pseudoME         ,   "pseudoME/D"  );
-  evt_tree->Branch("graviME"         , &graviME          ,   "graviME/D"  );
+  evt_tree->Branch("dXsec_AVZZ_JHU"  , &dXsec_AVZZ_JHU  ,"dXsec_AVZZ_JHU/D");
+  evt_tree->Branch("dXsec_QQB_TZZ_JHU", &dXsec_QQB_TZZ_JHU   ,"dXsec_QQB_TZZ_JHU/D");
+  evt_tree->Branch("dXsec_TZZ_DECAY_JHU", &dXsec_TZZ_DECAY_JHU   ,"dXsec_TZZ_DECAY_JHU/D");
+  evt_tree->Branch("pseudoME"        , &pseudoME        ,   "pseudoME/D"  );
+  evt_tree->Branch("graviME"         , &graviME         ,   "graviME/D"  );
 
   
   double psig_new, pbkg_new, graviMela;
@@ -297,8 +307,9 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   evt_tree->Branch("Pgrav_new", &pbkg_new   ,"Pgrav_new/D");
   evt_tree->Branch("graviMela"   , &graviMela      ,"graviMela/D");
  
-  double m1,m2,h1,h2,hs,phi,phi1,mzz;  
+  float m1,m2,h1,h2,hs,phi,phi1,mzz;  
   int mflavor = 3; // by default it is ee/mm 
+  /*
   ch->SetBranchAddress( "z1mass"        , &m1      );   
   ch->SetBranchAddress( "z2mass"        , &m2      );   
   ch->SetBranchAddress( "costheta1"     , &h1      );   
@@ -307,8 +318,18 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   ch->SetBranchAddress( "phi"           , &phi     );   
   ch->SetBranchAddress( "phistar1"      , &phi1    );   
   ch->SetBranchAddress( "zzmass"        , &mzz     );   
+  */
+  ch->SetBranchAddress( "Z1Mass"        , &m1      );   
+  ch->SetBranchAddress( "Z2Mass"        , &m2      );   
+  ch->SetBranchAddress( "helcosthetaZ1" , &h1      );   
+  ch->SetBranchAddress( "helcosthetaZ2" , &h2      );   
+  ch->SetBranchAddress( "costhetastar"  , &hs      );   
+  ch->SetBranchAddress( "helphi"        , &phi     );   
+  ch->SetBranchAddress( "phistarZ1"     , &phi1    );   
+  ch->SetBranchAddress( "ZZMass"        , &mzz     );   
   if ( ch->GetBranchStatus("flavortype") ) 
     ch->SetBranchAddress( "flavortype"   , &mflavor);
+
 
  
 
@@ -372,7 +393,7 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   // Create the instance of TEvtProb to calculate the differential cross-section
   TEvtProb Xcal2;  
   hzz4l_event_type hzz4l_event;
-  hzz4l_event_type hzz4l_event_swap;
+
   //==========================================
   // Loop All Events
   //==========================================
@@ -397,6 +418,9 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     dXsec_PSHZZ_JHU = 0.;
     dXsec_TZZ_JHU = 0.;
     dXsec_VZZ_JHU = 0.;
+    dXsec_AVZZ_JHU = 0.;
+    dXsec_QQB_TZZ_JHU = 0.;
+    dXsec_TZZ_DECAY_JHU = 0.;
     pseudoME = 0.;
     graviME = 0.;
     
@@ -427,47 +451,25 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     hzz4l_event.p[2].SetXYZM(Z2_minus.Px(), Z2_minus.Py(), Z2_minus.Pz(), 0.);
     hzz4l_event.p[3].SetXYZM(Z2_plus.Px(), Z2_plus.Py(), Z2_plus.Pz(), 0.);
 
-    hzz4l_event_swap.p[0].SetXYZM(Z1_minus.Px(), Z1_minus.Py(), Z1_minus.Pz(), 0.);
-    hzz4l_event_swap.p[1].SetXYZM(Z2_plus.Px(), Z2_plus.Py(), Z2_plus.Pz(), 0.);
-    hzz4l_event_swap.p[2].SetXYZM(Z2_minus.Px(), Z2_minus.Py(), Z2_minus.Pz(), 0.);
-    hzz4l_event_swap.p[3].SetXYZM(Z1_plus.Px(), Z1_plus.Py(), Z1_plus.Pz(), 0.);
-
 
     // flavor 1 for 4e, 2 for 4m, 3 for 2e2mu  
     if ( mflavor == 1 ) {
-      hzz4l_event.PdgCode[0] = 13;
-      hzz4l_event.PdgCode[1] = -13;
-      hzz4l_event.PdgCode[2] = 13;
-      hzz4l_event.PdgCode[3] = -13;
-
-      hzz4l_event_swap.PdgCode[0] = 13;
-      hzz4l_event_swap.PdgCode[1] = -13;
-      hzz4l_event_swap.PdgCode[2] = 13;
-      hzz4l_event_swap.PdgCode[3] = -13;
-
-    }
-    if ( mflavor == 2 ) {
       hzz4l_event.PdgCode[0] = 11;
       hzz4l_event.PdgCode[1] = -11;
       hzz4l_event.PdgCode[2] = 11;
       hzz4l_event.PdgCode[3] = -11;
-
-      hzz4l_event_swap.PdgCode[0] = 11;
-      hzz4l_event_swap.PdgCode[1] = -11;
-      hzz4l_event_swap.PdgCode[2] = 11;
-      hzz4l_event_swap.PdgCode[3] = -11;
-
+    }
+    if ( mflavor == 2 ) {
+      hzz4l_event.PdgCode[0] = 13;
+      hzz4l_event.PdgCode[1] = -13;
+      hzz4l_event.PdgCode[2] = 13;
+      hzz4l_event.PdgCode[3] = -13;
     }
     if ( mflavor == 3 ) {
       hzz4l_event.PdgCode[0] = 11;
       hzz4l_event.PdgCode[1] = -11;
       hzz4l_event.PdgCode[2] = 13;
       hzz4l_event.PdgCode[3] = -13;
-
-      hzz4l_event_swap.PdgCode[0] = 11;
-      hzz4l_event_swap.PdgCode[1] = -11;
-      hzz4l_event_swap.PdgCode[2] = 13;
-      hzz4l_event_swap.PdgCode[3] = -13;
     }
 
     /*
@@ -509,32 +511,30 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     else 
       dXsec_ZZ_MCFM = Xcal2.XsecCalc(TVar::ZZ_2e2m,hzz4l_event,verbosity);
     dXsec_HZZ_MCFM = Xcal2.XsecCalc(TVar::HZZ_4l,hzz4l_event,verbosity);
+
     // calculate X->ZZ using JHUGen
-    // 0+ 
     Xcal2.SetMatrixElement(TVar::JHUGen);
-    double dXsec_HZZ_JHU_nominal =  Xcal2.XsecCalc(TVar::HZZ_4l,hzz4l_event,verbosity);
-    double dXsec_HZZ_JHU_swap =  Xcal2.XsecCalc(TVar::HZZ_4l,hzz4l_event_swap,verbosity);
-    dXsec_HZZ_JHU = dXsec_HZZ_JHU_nominal;
-    // if ( mflavor < 3 ) 
-    //  dXsec_HZZ_JHU = dXsec_HZZ_JHU_nominal + dXsec_HZZ_JHU_swap;
+    
+    // 0+ 
+    dXsec_HZZ_JHU =  Xcal2.XsecCalc(TVar::HZZ_4l,hzz4l_event,verbosity);
 
     // 0-
-    Xcal2.SetMatrixElement(TVar::JHUGen);
-    double dXsec_PSHZZ_JHU_nominal = Xcal2.XsecCalc(TVar::PSHZZ_4l,hzz4l_event,verbosity);
-    double dXsec_PSHZZ_JHU_swap = Xcal2.XsecCalc(TVar::PSHZZ_4l,hzz4l_event_swap,verbosity);
-    dXsec_PSHZZ_JHU  = dXsec_PSHZZ_JHU_nominal;
+    dXsec_PSHZZ_JHU = Xcal2.XsecCalc(TVar::PSHZZ_4l,hzz4l_event,verbosity);
     pseudoME =  dXsec_HZZ_JHU / ( dXsec_HZZ_JHU + 6*dXsec_PSHZZ_JHU );
-    // if ( mflavor < 3 ) 
-    //   dXsec_PSHZZ_JHU  = dXsec_PSHZZ_JHU_nominal + dXsec_PSHZZ_JHU_swap;
     
-    // spin 2
-    Xcal2.SetMatrixElement(TVar::JHUGen);
-    dXsec_TZZ_JHU = Xcal2.XsecCalc(TVar::TZZ_4l,hzz4l_event,verbosity);
-    graviME =  dXsec_HZZ_JHU / ( dXsec_HZZ_JHU + 1.2*dXsec_TZZ_JHU );
-    
-    // spin 1
-    Xcal2.SetMatrixElement(TVar::JHUGen);
+    // 1-
     dXsec_VZZ_JHU = Xcal2.XsecCalc(TVar::VZZ_4l,hzz4l_event,verbosity);    
+    
+    // 1+
+    dXsec_AVZZ_JHU = Xcal2.XsecCalc(TVar::AVZZ_4l,hzz4l_event,verbosity);    
+    
+    // 2m+ 
+    dXsec_TZZ_JHU = Xcal2.XsecCalc(TVar::TZZ_4l,hzz4l_event,verbosity);
+    dXsec_QQB_TZZ_JHU = Xcal2.XsecCalc(TVar::QQB_TZZ_4l,hzz4l_event,verbosity);
+    graviME =  dXsec_HZZ_JHU / ( dXsec_HZZ_JHU + 5*dXsec_QQB_TZZ_JHU );
+
+    // 2m+ decay
+    dXsec_TZZ_DECAY_JHU = Xcal2.XsecCalc(TVar::TZZ_DECAY_4l,hzz4l_event,verbosity);
     
     evt_tree->Fill();
     
