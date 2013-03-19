@@ -1488,7 +1488,6 @@ enddo
 
      endif
 
-
       end subroutine GZZampl
 
 
@@ -1795,7 +1794,8 @@ enddo
 
           if(pv/m.lt.1d-8) then
                 if(i.eq.0) then
-                    pol_mass(1:4)=(0d0,0d0)
+                    pol_mass(1:3)=(0d0,0d0)
+                    pol_mass( 4 )=(1d0,0d0)
                     return
                 endif
                 ct = 1d0; st=0d0
