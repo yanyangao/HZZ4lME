@@ -347,7 +347,7 @@ double JHUGenMatEl(TVar::Process process, mcfm_event_type* mcfm_event, double MR
   if ( process == TVar::TZZ_4l) {
     __modgraviton_MOD_evalamp_gg_g_vv(p4, &MReso,  &GaReso, xggcoupl, xvvcoupl, MYIDUP, &MatElSq);
   }
-  if ( process == TVar::TZZ_DECAY_4l) {
+  if ( process == TVar::TZZ_DECAY_4l || process  == TVar::VZZ_DECAY_4l || process == TVar::AVZZ_DECAY_4l ) {
     // special treatment of the 4-vectors
     // From Markus: 
     // Note that the momentum no.2, p(1:4,2), is a dummy which is not used. Momentum no.1,
@@ -372,8 +372,13 @@ double JHUGenMatEl(TVar::Process process, mcfm_event_type* mcfm_event, double MR
       P[ipar][2] = mcfm_event->p[ipar].Py()/100.;
       P[ipar][3] = mcfm_event->p[ipar].Pz()/100.;
     }
-    __modgraviton_MOD_evalamp_g_vv(P, &MReso,  &GaReso, xvvcoupl, MYIDUP, &MatElSq);
-  }
+    
+    if ( process == TVar::TZZ_DECAY_4l ) 
+      __modgraviton_MOD_evalamp_g_vv(P, &MReso,  &GaReso, xvvcoupl, MYIDUP, &MatElSq);
+
+    if ( process == TVar::VZZ_DECAY_4l || process == TVar::AVZZ_DECAY_4l )
+      __modzprime_MOD_evalamp_zprime_vv(P, &MReso,  &GaReso, xvvcoupl, MYIDUP, &MatElSq);
+  } 
   if ( process == TVar::QQB_TZZ_4l ) {
     // -- YY: note that even if it is called xggcouplings, we are only testing xqq!
     __modgraviton_MOD_evalamp_qqb_g_vv(p4, &MReso,  &GaReso, xggcoupl, xvvcoupl, MYIDUP, &MatElSq);

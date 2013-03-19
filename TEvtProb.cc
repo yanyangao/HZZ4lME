@@ -150,14 +150,14 @@ double TEvtProb::XsecCalc(TVar::Process proc, const hzz4l_event_type &hzz4l_even
       // spin 1
       // 
       
-      if ( proc == TVar::VZZ_4l ) {
+      if ( proc == TVar::VZZ_4l || proc == TVar::VZZ_DECAY_4l ) {
 	// Zprime->qq coupling constants 
 	double Zqqcoupl[2] = {1.0, 1.0}; // do not change 
 	double Zvvcoupl[2] = {1.0, 0.0};  // 1 -
 	msqjk = JHUGenMatEl(proc, &mcfm_event, _hmass, _hwidth, Zqqcoupl, Zvvcoupl);
       }
     
-    if ( proc == TVar::AVZZ_4l ) {
+      if ( proc == TVar::AVZZ_4l || proc == TVar::AVZZ_DECAY_4l ) {
         // Zprime->qq coupling constants 
 	double Zqqcoupl[2] = {1.0, 1.0}; // do not change 
 	double Zvvcoupl[2] = {0.0, 1.0};  // 1 +
