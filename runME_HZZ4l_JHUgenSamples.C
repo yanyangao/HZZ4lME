@@ -334,6 +334,9 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   double dXsec_TZZ_DECAY_JHU = 0.;
   double dXsec_VZZ_DECAY_JHU = 0.;
   double dXsec_AVZZ_DECAY_JHU = 0.;
+  double dXsec_PTZZ_2hminus_JHU = 0.;
+  double dXsec_TZZ_2hplus_JHU = 0.;
+  double dXsec_TZZ_2bplus_JHU = 0.;
 
   double pseudoME = 0.;
   double graviME = 0.;
@@ -350,6 +353,9 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   evt_tree->Branch("dXsec_TZZ_DECAY_JHU", &dXsec_TZZ_DECAY_JHU   ,"dXsec_TZZ_DECAY_JHU/D");
   evt_tree->Branch("dXsec_VZZ_DECAY_JHU", &dXsec_VZZ_DECAY_JHU   ,"dXsec_VZZ_DECAY_JHU/D");
   evt_tree->Branch("dXsec_AVZZ_DECAY_JHU", &dXsec_AVZZ_DECAY_JHU   ,"dXsec_AVZZ_DECAY_JHU/D");
+  evt_tree->Branch("dXsec_PTZZ_2hminus_JHU" , &dXsec_PTZZ_2hminus_JHU   ,"dXsec_PTZZ_2hminus_JHU/D");
+  evt_tree->Branch("dXsec_TZZ_2hplus_JHU"   , &dXsec_TZZ_2hplus_JHU     ,"dXsec_TZZ_2hplus_JHU/D");
+  evt_tree->Branch("dXsec_TZZ_2bplus_JHU"   , &dXsec_TZZ_2bplus_JHU     ,"dXsec_TZZ_2bplus_JHU/D");
   evt_tree->Branch("pseudoME"        , &pseudoME        ,   "pseudoME/D"  );
   evt_tree->Branch("graviME"         , &graviME         ,   "graviME/D"  );
 
@@ -490,6 +496,9 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     dXsec_TZZ_DECAY_JHU = 0.;
     dXsec_VZZ_DECAY_JHU = 0.;
     dXsec_AVZZ_DECAY_JHU = 0.;
+    dXsec_PTZZ_2hminus_JHU = 0.;
+    dXsec_TZZ_2hplus_JHU = 0.;
+    dXsec_TZZ_2bplus_JHU = 0.;
     pseudoME = 0.;
     graviME = 0.;
     
@@ -615,6 +624,15 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     // 2m+ decay
     dXsec_TZZ_DECAY_JHU = Xcal2.XsecCalc(TVar::TZZ_DECAY_4l,hzz4l_event,verbosity);
 
+    // 2h-
+    dXsec_PTZZ_2hminus_JHU = Xcal2.XsecCalc(TVar::PTZZ_2hminus_4l,hzz4l_event,verbosity);
+
+    // 2h+
+    dXsec_TZZ_2hplus_JHU = Xcal2.XsecCalc(TVar::TZZ_2hplus_4l,hzz4l_event,verbosity);
+
+    // 2b+
+    dXsec_TZZ_2bplus_JHU = Xcal2.XsecCalc(TVar::TZZ_2bplus_4l,hzz4l_event,verbosity);
+
     // use the same constants defined in 
     // http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/UserCode/CJLST/ZZMatrixElement/MELA/src/Mela.cc?revision=1.40&view=markup
     
@@ -635,16 +653,26 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
       dXsec_TZZ_JHU*=1.4;
       dXsec_QQB_TZZ_JHU*=30;
     }
-    // tuned on the emu only at this point 
-    dXsec_TZZ_DECAY_JHU *= 1.6e+9;
-    dXsec_VZZ_DECAY_JHU *= 1e+10;
-    dXsec_AVZZ_DECAY_JHU *= 1e+10;
-    Ptwoplus_        *= 2e-07; 
-    Poneplus_         *= 5e-03;
-    Poneminus_        *= 5e-03;
-    Ptwomplus_decay_ *= 1e-08;
-    Poneplus_decay_ *= 3.7e-04;
-    Poneminus_decay_ *= 3.7e-04;
+
+    // 
+    // WARNING: tuned on the emu only at this point 
+    // 
+
+    // constants for JHUGen
+    dXsec_TZZ_DECAY_JHU    *= 1.6e+9;
+    dXsec_VZZ_DECAY_JHU    *= 1e+10;
+    dXsec_AVZZ_DECAY_JHU   *= 1e+10;
+    dXsec_PTZZ_2hminus_JHU *= 1e+10;
+    dXsec_TZZ_2hplus_JHU   *= 1e+10;
+
+    // constants for the analytical MELA
+    Ptwomplus_gg_        *= 2e-07; 
+    Ptwomplus_qq_        *= 2e-07; 
+    Poneplus_            *= 5e-03;
+    Poneminus_           *= 5e-03;
+    Ptwomplus_decay_     *= 1e-08;
+    Poneplus_decay_      *= 3.7e-04;
+    Poneminus_decay_     *= 3.7e-04;
     // ---------------------------------
 
 
