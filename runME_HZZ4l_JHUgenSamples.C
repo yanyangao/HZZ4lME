@@ -614,7 +614,40 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
 
     // 2m+ decay
     dXsec_TZZ_DECAY_JHU = Xcal2.XsecCalc(TVar::TZZ_DECAY_4l,hzz4l_event,verbosity);
+
+    // use the same constants defined in 
+    // http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/UserCode/CJLST/ZZMatrixElement/MELA/src/Mela.cc?revision=1.40&view=markup
     
+    // add constants for discriminants
+    // ---------------------------------
+    if(mflavor==3){
+      dXsec_PSHZZ_JHU*=6.0;
+      dXsec_HDHZZ_JHU*=2.1;
+      dXsec_VZZ_JHU*=16;
+      dXsec_AVZZ_JHU*=13;
+      dXsec_TZZ_JHU*=.6;
+      dXsec_QQB_TZZ_JHU*=13;
+    }else{
+      dXsec_PSHZZ_JHU*=7.0;
+      dXsec_HDHZZ_JHU*=2.3;
+      dXsec_VZZ_JHU*=38;
+      dXsec_AVZZ_JHU*=28;
+      dXsec_TZZ_JHU*=1.4;
+      dXsec_QQB_TZZ_JHU*=30;
+    }
+    // tuned on the emu only at this point 
+    dXsec_TZZ_DECAY_JHU *= 1.6e+9;
+    dXsec_VZZ_DECAY_JHU *= 1e+10;
+    dXsec_AVZZ_DECAY_JHU *= 1e+10;
+    Ptwoplus_        *= 2e-07; 
+    Poneplus_         *= 5e-03;
+    Poneminus_        *= 5e-03;
+    Ptwomplus_decay_ *= 1e-08;
+    Poneplus_decay_ *= 3.7e-04;
+    Poneminus_decay_ *= 3.7e-04;
+    // ---------------------------------
+
+
     evt_tree->Fill();
     
   }//nevent
