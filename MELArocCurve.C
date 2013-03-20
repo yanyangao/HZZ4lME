@@ -1,31 +1,19 @@
 //
 // Run by root -l -b MELArocCurve.C
-// very very messy...
-// YY will clean it if she is in a good cleaning mood
 // 
 
-//char* fileName = "1minus";
-//char* fileName = "1plus";
-//char* fileName = "minGrav";
-char* fileName = "minGravqq";
+#include "TVar.hh"
 
-TGraph* makeROCcurve(char* drawVar="melaLD", 
-		     const int bins=100, float start=0, float end=1,
-		     int lineColor=1, int lineStyle=1, int lineWidth=2,	int flavor = 4, 
-		     char* sigFile="SMHiggs_comb_withDiscriminants_ME.root",
-		     // char* bkgFile="minGrav_comb_withDiscriminants_ME.root",
-		     char* bkgFile="minGravqq_comb_withDiscriminants_ME.root",
-		     // char* bkgFile="1minus_8-126_ME.root",
-		     //char* bkgFile="1plus_8-126_ME.root",
+TGraph* makeROCcurve(char* drawVar, const int bins, float start, float end,
+		     int lineColor, int lineStyle, int lineWidth, int flavor,
+		     TString sigFile, TString bkgFile, TString testName
 		     ){
 
   TChain* SMHtree = new TChain("newTree");
-  SMHtree->Add(sigFile);
+  SMHtree->Add(sigFile.Data());
 
   TChain* PStree = new TChain("newTree");
-  PStree->Add(bkgFile);
-
-  // std::cout << bkgFile<< "\n";
+  PStree->Add(bkgFile.Data());
   
   TH1F *SMHhisto, *PShisto;
   
@@ -64,8 +52,7 @@ TGraph* makeROCcurve(char* drawVar="melaLD",
   ROC->SetLineStyle(lineStyle);
   ROC->SetLineWidth(lineWidth);
   ROC->GetXaxis()->SetTitle("#epsilon_{0^{+}}");
-  //   ROC->GetYaxis()->SetTitle("qq#rightarrow#epsilon_{2^{+}_{min}}");
-  ROC->GetYaxis()->SetTitle(Form("#epsilon_{%s}", fileName));
+  ROC->GetYaxis()->SetTitle(Form("#epsilon_{%s}", testName.Data()));
   delete SMHtree;
   delete PStree;
 
@@ -78,84 +65,103 @@ void MELArocCurve(){
 
   gROOT->ProcessLine(".L ~/tdrstyle.C");
   tdrstyle();
+  
+  TString sigFile = "SMHiggs_comb_withDiscriminants_ME.root";
+  
+  std::vector<TString> bkgFiles;
+  std::vector<int> tests;
+  
+  // 2m+ gg
+  bkgFiles.push_back("minGrav_comb_withDiscriminants_ME.root");
+  tests.push_back(TVar::TZZ_4l);
 
-  for ( int flavor = 1; flavor < 5; flavor ++ ) {
-    
-    // if ( flavor != 3) continue;
-    
-    //
-    // for spin 2 
-    // 
+  // 2m+ qq
+  bkgFiles.push_back("minGravqq_comb_withDiscriminants_ME.root");
+  tests.push_back(TVar::QQB_TZZ_4l);
 
-    /*
-    // gg->X
-    TGraph* MELA_check = makeROCcurve("Psmh/(2e-7*Ptwomplus_gg+Psmh)",500,0,1,4,1,3,flavor);
-    TGraph* JHUgen = makeROCcurve("dXsec_HZZ_JHU/(dXsec_HZZ_JHU+0.6*dXsec_TZZ_JHU)",500,0,1,1,2,3,flavor);
-    TGraph* MELA_check_decay = makeROCcurve("Psmh/(Psmh+Ptwomplus_decay*1e-8)",500,0,1,2,1,3,flavor);
-    TGraph* JHUgen_decay = makeROCcurve("dXsec_HZZ_JHU/(dXsec_HZZ_JHU+1e11*dXsec_TZZ_DECAY_JHU)",500,0,1,6,2,3,flavor);
-    */
+  // 1-
+  bkgFiles.push_back("1minus_8-126_ME.root");
+  tests.push_back(TVar::VZZ_4l);
 
-    // qqbar->X 
-    TGraph* MELA_check = makeROCcurve("Psmh/(2e-7*Ptwomplus_qq+Psmh)",500,0,1,4,1,3,flavor);
-    TGraph* JHUgen = makeROCcurve("dXsec_HZZ_JHU/(dXsec_HZZ_JHU+20*dXsec_QQB_TZZ_JHU)",500,0,1,1,2,3,flavor);
-    TGraph* MELA_check_decay = makeROCcurve("Psmh/(Psmh+Ptwomplus_decay*1e-8)",500,0,1,2,1,3,flavor);
-    TGraph* JHUgen_decay = makeROCcurve("dXsec_HZZ_JHU/(dXsec_HZZ_JHU+1e10*dXsec_TZZ_DECAY_JHU)",500,0,1,6,2,3,flavor);
+  // 1+
+  bkgFiles.push_back("1plus_8-126_ME.root");
+  tests.push_back(TVar::AVZZ_4l);
+  
+  for (int test = 0 ; test < bkgFiles.size(); test ++ ) {
 
-    //
-    // for spin 1
-    //
+    TString bkgFile = bkgFiles.at(test);
+    TString testName = TVar::ProcessName(tests.at(test));
     
-    /*
-    // 1-
-    TGraph* MELA_check = makeROCcurve("Psmh/(Psmh+0.005*Poneminus)",500,0,1,4,1,3,flavor);
-    TGraph* JHUgen = makeROCcurve("dXsec_HZZ_JHU/(dXsec_HZZ_JHU+10*dXsec_VZZ_JHU)",500,0,1,1,2,3,flavor);
-    TGraph* MELA_check_decay = makeROCcurve("Psmh/(Psmh+0.0005*Poneminus_decay)",500,0,1,2,1,3,flavor);
-    TGraph* JHUgen_decay = makeROCcurve("dXsec_HZZ_JHU/(dXsec_HZZ_JHU+1e10*dXsec_VZZ_DECAY_JHU)",500,0,1,6,2,3,flavor);
+    TString melaVar = "Psmh/(Psmh+2e-7*Ptwomplus_gg)";
+    TString jhugenVar = "dXsec_HZZ_JHU/(dXsec_HZZ_JHU+dXsec_TZZ_JHU)";
+    TString melaDecayVar = "Psmh/(Psmh+Ptwomplus_decay)";
+    TString jhugenDecayVar = "dXsec_HZZ_JHU/(dXsec_HZZ_JHU+dXsec_TZZ_DECAY_JHU)";
     
-    // 1+
-    TGraph* MELA_check = makeROCcurve("Psmh/(Psmh+0.005*Poneplus)",500,0,1,4,1,3,flavor);
-    TGraph* JHUgen = makeROCcurve("dXsec_HZZ_JHU/(dXsec_HZZ_JHU+10*dXsec_AVZZ_JHU)",500,0,1,1,2,3,flavor);
-    TGraph* MELA_check_decay = makeROCcurve("Psmh/(Psmh+0.0005*Poneplus_decay)",500,0,1,2,1,3,flavor);
-    TGraph* JHUgen_decay = makeROCcurve("dXsec_HZZ_JHU/(dXsec_HZZ_JHU+1e10*dXsec_AVZZ_DECAY_JHU)",500,0,1,6,2,3,flavor);
+    
+    if ( tests.at(test) == TVar::QQB_TZZ_4l ) {
+      melaVar = "Psmh/(Psmh+2e-07*Ptwomplus_qq)";
+      jhugenVar = "dXsec_HZZ_JHU/(dXsec_HZZ_JHU+dXsec_QQB_TZZ_JHU)";
+    }
 
-    */        
 
-    MELA_check->Draw("AC");
-    MELA_check_decay->Draw("sameC");
-    JHUgen->Draw("sameC");
-    JHUgen_decay->Draw("sameC");
-    
-    TLegend* leg = new TLegend(.2,.6,.5,.9);
-    leg->SetFillColor(0);
-    leg->AddEntry(MELA_check,"analytical(prod+decay)","l");
-    leg->AddEntry(MELA_check_decay,"analytical(decay)","l");
-    leg->AddEntry(JHUgen,"JHUgen(prod+decay)","l");
-    leg->AddEntry(JHUgen_decay,"JHUgen(decay)","l");
-    
-    leg->Draw();
+    if (tests.at(test) == TVar::VZZ_4l ) {
+      melaVar = "Psmh/(Psmh+5e-03*Poneminus)";
+      jhugenVar = "dXsec_HZZ_JHU/(dXsec_HZZ_JHU+dXsec_VZZ_JHU)";
+      melaDecayVar = "Psmh/(Psmh+Poneminus_decay)";
+      jhugenDecayVar = "dXsec_HZZ_JHU/(dXsec_HZZ_JHU+dXsec_VZZ_DECAY_JHU)";
+    }
 
-    TString flavortype = "all";
-    if (flavor == 1 ) flavortype = "4e";
-    if (flavor == 2 ) flavortype = "4mu";
-    if (flavor == 3 ) flavortype = "2e2mu";
+    if (tests.at(test) == TVar::AVZZ_4l ) {
+      melaVar = "Psmh/(Psmh+5e-03*Poneplus)";
+      jhugenVar = "dXsec_HZZ_JHU/(dXsec_HZZ_JHU+dXsec_AVZZ_JHU)";
+      melaDecayVar = "Psmh/(Psmh+Poneplus_decay)";
+      jhugenDecayVar = "dXsec_HZZ_JHU/(dXsec_HZZ_JHU+dXsec_AVZZ_DECAY_JHU)";
+    }
     
-    c1->SaveAs(Form("ROCcurve_analytical_vs_JHUgen_%s_%s.eps", fileName, flavortype.Data()));
-    c1->SaveAs(Form("ROCcurve_analytical_vs_JHUgen_%s_%s.png", fileName, flavortype.Data()));
+    for ( int flavor = 1; flavor < 5; flavor ++ ) {
 
-    
-    TFile *file = new TFile(Form("ROCcurve_JHUgen_%s_%s.root", fileName, flavortype.Data()), "RECREATE");
-    file->cd();
-    
-    JHUgen_decay->SetName(Form("JHUGen_%s_%s", fileName, flavortype.Data()));
-    JHUgen_decay->Write();
-    MELA_check_decay->SetName(Form("MELA_%s_%s", fileName, flavortype.Data()));
-    MELA_check_decay->Write();
-    
-    // JHUgen->SetName(Form("JHUGen_%s_%s", fileName, flavortype.Data()));
-    // JHUgen->Write();
-    // MELA_check->SetName(Form("MELA_%s_%s", fileName, flavortype.Data()));
-    // MELA_check->Write();
-    file->Close();
+      TGraph* MELA = makeROCcurve(melaVar,500,0,1,4,1,3,flavor,sigFile,bkgFile,testName);
+      TGraph* JHUgen = makeROCcurve(jhugenVar,500,0,1,1,2,3,flavor,sigFile,bkgFile,testName);
+      TGraph* MELA_decay = makeROCcurve(melaDecayVar,500,0,1,2,1,3,flavor,sigFile,bkgFile,testName);
+      TGraph* JHUgen_decay = makeROCcurve(jhugenDecayVar,500,0,1,6,2,3,flavor,sigFile,bkgFile,testName);
+      
+      MELA->Draw("AC");
+      MELA_decay->Draw("sameC");
+      JHUgen->Draw("sameC");
+      JHUgen_decay->Draw("sameC");
+      
+      TLegend* leg = new TLegend(.2,.6,.5,.9);
+      leg->SetFillColor(0);
+      leg->AddEntry(MELA,"analytical(prod+decay)","l");
+      leg->AddEntry(MELA_decay,"analytical(decay)","l");
+      leg->AddEntry(JHUgen,"JHUgen(prod+decay)","l");
+      leg->AddEntry(JHUgen_decay,"JHUgen(decay)","l");
+      
+      leg->Draw();
 
+      TString flavortype = "all";
+      if (flavor == 1 ) flavortype = "4e";
+      if (flavor == 2 ) flavortype = "4mu";
+      if (flavor == 3 ) flavortype = "2e2mu";
+      
+      c1->SaveAs(Form("plots/ROCcurve_analytical_vs_JHUgen_%s_%s.eps", testName.Data(), flavortype.Data()));
+      c1->SaveAs(Form("plots/ROCcurve_analytical_vs_JHUgen_%s_%s.png", testName.Data(), flavortype.Data()));
+      
+      
+      TFile *file = new TFile(Form("plots/ROCcurve_JHUgen_%s_%s.root", testName.Data(), flavortype.Data()), "RECREATE");
+      file->cd();
+      
+      JHUgen->SetName(Form("JHUGen_%s_%s", testName.Data(), flavortype.Data()));
+      JHUgen->Write();
+      MELA->SetName(Form("MELA_%s_%s", testName.Data(), flavortype.Data()));
+      MELA->Write();
+      
+      JHUgen_decay->SetName(Form("JHUGen_decay_%s_%s", testName.Data(), flavortype.Data()));
+      JHUgen_decay->Write();
+      MELA_decay->SetName(Form("MELA_decay_%s_%s", testName.Data(), flavortype.Data()));
+      MELA_decay->Write();
+
+      file->Close();
+    }
   }
 }

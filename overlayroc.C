@@ -8,23 +8,23 @@ void overlayroc(){
 
   TString flavor="2e2mu";
 
-  TFile *file1 = new TFile(Form("ROCcurve_JHUgen_minGrav_%s.root", flavor.Data()));
+  TFile *file1 = new TFile(Form("plots/ROCcurve_JHUgen_TZZ_2mplus_4l_%s.root", flavor.Data()));
   gROOT->cd();
-  TGraph *g1 = (TGraph*)file1->Get(Form("MELA_minGrav_%s", flavor.Data()));
+  TGraph *g1 = (TGraph*)file1->Get(Form("MELA_decay_TZZ_2mplus_4l_%s", flavor.Data()));
   g1->SetLineColor(kBlue);
   g1->SetLineWidth(2);
-  TGraph *g2 = (TGraph*)file1->Get(Form("JHUGen_minGrav_%s", flavor.Data()));
+  TGraph *g2 = (TGraph*)file1->Get(Form("JHUGen_decay_TZZ_2mplus_4l_%s", flavor.Data()));
   g2->SetLineColor(kRed);
   g2->SetLineWidth(2);
 
-  TFile *file2 = new TFile(Form("ROCcurve_JHUgen_minGravqq_%s.root", flavor.Data()));
+  TFile *file2 = new TFile(Form("plots/ROCcurve_JHUgen_QQB_TZZ_2mplus_4l_%s.root", flavor.Data()));
   gROOT->cd();
 
-  TGraph *g3 = (TGraph*)file2->Get(Form("MELA_minGravqq_%s", flavor.Data()));
+  TGraph *g3 = (TGraph*)file2->Get(Form("MELA_decay_QQB_TZZ_2mplus_4l_%s", flavor.Data()));
   g3->SetLineColor(kMagenta);
   g3->SetLineWidth(2);
 
-  TGraph *g4 = (TGraph*)file2->Get(Form("JHUGen_minGravqq_%s", flavor.Data()));
+  TGraph *g4 = (TGraph*)file2->Get(Form("JHUGen_decay_QQB_TZZ_2mplus_4l_%s", flavor.Data()));
   g4->SetLineColor(kBlack);
   g4->SetLineWidth(2);
 
@@ -43,8 +43,8 @@ void overlayroc(){
   g3->Draw("same");
   g4->Draw("same");
   leg->Draw("same");
-  c1->SaveAs(Form("ROCcurve_analytical_vs_JHUgen_decayonly_%s.png", flavor.Data()));
-  c1->SaveAs(Form("ROCcurve_analytical_vs_JHUgen_decayonly_%s.eps", flavor.Data()));
+  c1->SaveAs(Form("plots/ROCcurve_analytical_vs_JHUgen_decayonly_%s.png", flavor.Data()));
+  c1->SaveAs(Form("plots/ROCcurve_analytical_vs_JHUgen_decayonly_%s.eps", flavor.Data()));
     		
 
   
