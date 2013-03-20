@@ -33,9 +33,10 @@ public:
     GGZZ_4l = 6,
     AVZZ_4l = 7,
     QQB_TZZ_4l = 8,
-    TZZ_DECAY_4l = 9,
-    VZZ_DECAY_4l = 10,
-    AVZZ_DECAY_4l = 11,
+    HDHZZ_4l = 9, // 0h+
+    TZZ_DECAY_4l = 10,
+    VZZ_DECAY_4l = 11,
+    AVZZ_DECAY_4l = 12,
     Null
   };
   //---------------------------------
@@ -52,6 +53,8 @@ public:
       return TString("HZZ_4l");
     else if(temp==TVar::PSHZZ_4l   ) 
       return TString("PSHZZ_4l");
+    else if(temp==TVar::HDHZZ_4l   ) 
+      return TString("HDHZZ_4l");
     else if(temp==TVar::TZZ_4l   ) 
       return TString("TZZ_2mplus_4l");
     else if(temp==TVar::QQB_TZZ_4l   ) 

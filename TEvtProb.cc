@@ -100,7 +100,7 @@ double TEvtProb::XsecCalc(TVar::Process proc, const hzz4l_event_type &hzz4l_even
       //
       // spin 0 
       //
-      if ( proc == TVar::HZZ_4l || proc == TVar::PSHZZ_4l ) {
+      if ( proc == TVar::HZZ_4l || proc == TVar::PSHZZ_4l || proc == TVar::HDHZZ_4l ) {
 	// By default set the Spin 0 couplings for SM case
 	// H->Glu Glu coupling constants x
 	double hggcoupl[3] = {1.0, 0.0, 0.0};  
@@ -112,6 +112,13 @@ double TEvtProb::XsecCalc(TVar::Process proc, const hzz4l_event_type &hzz4l_even
 	  hzzcoupl[2] = 0.0;
 	  hzzcoupl[3] = 1.0;
 	}
+	if ( proc == TVar::HDHZZ_4l ) {
+	  hzzcoupl[0] = 0.0;
+	  hzzcoupl[1] = 1.0;
+	  hzzcoupl[2] = 0.0;
+	  hzzcoupl[3] = 0.0;
+	}
+	//std::cout <<  _hmass << " " << _hwidth << std::endl;
 	msqjk = JHUGenMatEl(proc, &mcfm_event, _hmass, _hwidth, hggcoupl, hzzcoupl);
       }
 

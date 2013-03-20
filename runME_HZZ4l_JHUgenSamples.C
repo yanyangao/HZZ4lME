@@ -326,6 +326,7 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   double dXsec_HZZ_MCFM = 0.;
   double dXsec_HZZ_JHU = 0.;
   double dXsec_PSHZZ_JHU = 0.;
+  double dXsec_HDHZZ_JHU = 0.;
   double dXsec_TZZ_JHU = 0.;
   double dXsec_VZZ_JHU = 0.;
   double dXsec_AVZZ_JHU = 0.;
@@ -341,6 +342,7 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   evt_tree->Branch("dXsec_HZZ_MCFM"  , &dXsec_HZZ_MCFM   ,"dXsec_HZZ_MCFM/D");
   evt_tree->Branch("dXsec_HZZ_JHU"   , &dXsec_HZZ_JHU   ,"dXsec_HZZ_JHU/D");
   evt_tree->Branch("dXsec_PSHZZ_JHU" , &dXsec_PSHZZ_JHU ,"dXsec_PSHZZ_JHU/D");
+  evt_tree->Branch("dXsec_HDHZZ_JHU" , &dXsec_HDHZZ_JHU ,"dXsec_HDHZZ_JHU/D");
   evt_tree->Branch("dXsec_TZZ_JHU"   , &dXsec_TZZ_JHU   ,"dXsec_TZZ_JHU/D");
   evt_tree->Branch("dXsec_VZZ_JHU"   , &dXsec_VZZ_JHU   ,"dXsec_VZZ_JHU/D");
   evt_tree->Branch("dXsec_AVZZ_JHU"  , &dXsec_AVZZ_JHU  ,"dXsec_AVZZ_JHU/D");
@@ -480,6 +482,7 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     dXsec_HZZ_MCFM = 0.;
     dXsec_HZZ_JHU = 0.;
     dXsec_PSHZZ_JHU = 0.;
+    dXsec_HDHZZ_JHU = 0.;
     dXsec_TZZ_JHU = 0.;
     dXsec_VZZ_JHU = 0.;
     dXsec_AVZZ_JHU = 0.;
@@ -589,6 +592,9 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     dXsec_PSHZZ_JHU = Xcal2.XsecCalc(TVar::PSHZZ_4l,hzz4l_event,verbosity);
     pseudoME =  dXsec_HZZ_JHU / ( dXsec_HZZ_JHU + 6*dXsec_PSHZZ_JHU );
     
+    // 0h+
+    dXsec_HDHZZ_JHU = Xcal2.XsecCalc(TVar::HDHZZ_4l,hzz4l_event,verbosity);
+
     // 1-
     dXsec_VZZ_JHU = Xcal2.XsecCalc(TVar::VZZ_4l,hzz4l_event,verbosity);    
     
