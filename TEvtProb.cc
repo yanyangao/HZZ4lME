@@ -102,7 +102,7 @@ double TEvtProb::XsecCalc(TVar::Process proc, const hzz4l_event_type &hzz4l_even
       //
       if ( proc == TVar::HZZ_4l || proc == TVar::PSHZZ_4l || proc == TVar::HDHZZ_4l ) {
 	// By default set the Spin 0 couplings for SM case
-	// H->Glu Glu coupling constants x
+	// H->Glu Glu coupling constants
 	double hggcoupl[3] = {1.0, 0.0, 0.0};  
 	// H->ZZ coupling constants 
 	double hzzcoupl[4] = {1.0, 0.0, 0.0, 0.0}; 
@@ -125,6 +125,7 @@ double TEvtProb::XsecCalc(TVar::Process proc, const hzz4l_event_type &hzz4l_even
       //
       // spin 2 
       // 
+
       if ( proc == TVar::TZZ_4l || proc == TVar::QQB_TZZ_4l || proc == TVar::TZZ_DECAY_4l ) {
 	// Graviton->Glu Glu coupling constants 
 	double Gggcoupl[5] = {1.0, 0.0, 0.0, 0.0, 0.0}; // 2m+
@@ -172,6 +173,7 @@ double TEvtProb::XsecCalc(TVar::Process proc, const hzz4l_event_type &hzz4l_even
       }
     }
 
+
     if(msqjk<=0){ mcfm_event.pswt=0; }
     
     flux=fbGeV2/(mcfm_event.p[0].Energy()*mcfm_event.p[1].Energy())	/(4*W);
@@ -197,9 +199,9 @@ double TEvtProb::XsecCalc(TVar::Process proc, const hzz4l_event_type &hzz4l_even
 // an interface defined in TMCFM.hh
 void TEvtProb::SetHiggsMass(double mass){
     masses_mcfm_.hmass=mass;
-    masses_mcfm_.hwidth=myCSW_->HiggsWidth(0, mass);
+    masses_mcfm_.hwidth=myCSW_->HiggsWidth(0, min(mass,1000.) );
     _hmass = mass;
-    _hwidth = myCSW_->HiggsWidth(0, mass);
+    _hwidth = myCSW_->HiggsWidth(0, min(mass,1000.) );
     /*
     //
     // get higgs width for 125 and 250 GeV
