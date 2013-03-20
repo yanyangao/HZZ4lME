@@ -129,7 +129,7 @@ bool My_masscuts(double s[][12],TVar::Process process){
 
  double minZmassSqr=10*10;
 
- if(process==TVar::ZZ_2e2m || process == TVar::ZZ_4e || process == TVar::GGZZ_4l){
+ if(process==TVar::ZZ_2e2m || process==TVar::ZZ_4e || process==TVar::GGZZ_4l){
    if(s[2][3]< minZmassSqr) return true;
    if(s[4][5]< minZmassSqr) return true;
  }
@@ -191,6 +191,7 @@ double SumMatrixElementPDF(TVar::Process process, mcfm_event_type* mcfm_event,do
   double fx1[nmsq];
   double fx2[nmsq];
   double msq[nmsq][nmsq];
+
   
   //Parton Density Function is always evalualted at pT=0 frame
   //Make sure parton Level Energy fraction is [0,1]
@@ -240,22 +241,26 @@ double SumMatrixElementPDF(TVar::Process process, mcfm_event_type* mcfm_event,do
   
   
   //remove events has small invariant mass
-  if(My_masscuts(s,process)) return 0.0;
+  // if(My_masscuts(s,process)) return 0.0;
   if(My_smalls(s,npart_.npart)) return 0.0;
 
   double msqjk=0;
   double msqgg=0;
-  
-  
+    
   //Calculate Pdf
   //Always pass address through fortran function
   fdist_ (&density_.ih1, &xx[0], &scale_.scale, fx1); 
   fdist_ (&density_.ih2, &xx[1], &scale_.scale, fx2); 
   
-  if( process==TVar::ZZ_2e2m || process==TVar::ZZ_4e )      qqb_zz_  (p4[0],msq[0]);
-  if( process==TVar::GGZZ_4l)    gg_zz_  (p4[0],&msqgg);                        
-  if( process==TVar::HZZ_4l)     qqb_hzz_ (p4[0],msq[0]);
+  if( process==TVar::ZZ_2e2m || process==TVar::ZZ_4e )      qqb_zz_(p4[0],msq[0]);
+  if( process==TVar::HZZ_4l)     qqb_hzz_(p4[0],msq[0]);
+  if( process==TVar::GGZZ_4l)    gg_zz_  (p4[0],&msqgg);                     
   
+  /*
+    // Below code sums over all production parton flavors according to PDF 
+    // This is disabled as we are not using the intial production information
+    // the blow code is fine for the particle produced by single favor of incoming partons
+
   for(int ii=0;ii<nmsq;ii++){
     for(int jj=0;jj<nmsq;jj++){
       
@@ -264,14 +269,21 @@ double SumMatrixElementPDF(TVar::Process process, mcfm_event_type* mcfm_event,do
       //      flavor_msq[jj][ii] = fx1[ii]*fx2[jj]*msq[jj][ii];
 
       flavor_msq[jj][ii] = msq[jj][ii];
-      //      cout<<jj<<ii<<"="<<msq[jj][ii]<<"  ";
+      //cout<<jj<<ii<<"="<<msq[jj][ii]<<"  ";
       msqjk+=flavor_msq[jj][ii];
     }//ii
     //    cout<<"\n";
   }//jj
-
-  if( process==TVar::ZZ_2e2m || process==TVar::ZZ_4e)    msqjk=msq[3][7]+msq[7][3];
-  if( process==TVar::GGZZ_4l) msqjk=msqgg;                                      
+  */
+  // by default assume only gg productions 
+  // FOTRAN convention -5    -4   -3  -2    -1  0 1 2 3 4 5 
+  //     parton flavor bbar cbar sbar ubar dbar g d u s c b
+  // C++ convention     0     1   2    3    4   5 6 7 8 9 10
+  //
+  msqjk=msq[5][5];
+  if( process==TVar::ZZ_2e2m || process == TVar::ZZ_4e) msqjk=msq[3][7]+msq[7][3];
+  // special for the GGZZ 
+  if( process==TVar::GGZZ_4l) msqjk=msqgg;      
   
   (*flux)=fbGeV2/(8*xx[0]*xx[1]*EBEAM*EBEAM);
   
@@ -294,7 +306,7 @@ double JHUGenMatEl(TVar::Process process, mcfm_event_type* mcfm_event, double MR
   MReso = MReso / 100.0;
   GaReso = GaReso /100.0;
   double p4[6][4];
-  double MatElSq;
+  double MatElSq=0;
   int MYIDUP[4];
 
   int NPart = 6; 
@@ -344,7 +356,7 @@ double JHUGenMatEl(TVar::Process process, mcfm_event_type* mcfm_event, double MR
   if ( process == TVar::HZZ_4l || process == TVar::PSHZZ_4l || process == TVar::HDHZZ_4l  ) {
     __modhiggs_MOD_evalamp_gg_h_vv(p4, &MReso,  &GaReso, xggcoupl, xvvcoupl, MYIDUP, &MatElSq);
   }
-  if ( process == TVar::TZZ_4l) {
+  if ( process == TVar::TZZ_4l ) {
     __modgraviton_MOD_evalamp_gg_g_vv(p4, &MReso,  &GaReso, xggcoupl, xvvcoupl, MYIDUP, &MatElSq);
   }
   if ( process == TVar::TZZ_DECAY_4l || process  == TVar::VZZ_DECAY_4l || process == TVar::AVZZ_DECAY_4l ) {
