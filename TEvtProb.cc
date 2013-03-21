@@ -28,6 +28,7 @@ TEvtProb::TEvtProb() {
   myCSW_ = new HiggsCSandWidth("../txtFiles");
 }
 
+
 TEvtProb::~TEvtProb() {
     delete myCSW_;
 }
@@ -93,7 +94,7 @@ double TEvtProb::XsecCalc(TVar::Process proc, const hzz4l_event_type &hzz4l_even
     }
     //event selections in Lab Frame
     double flavor_msq[nmsq][nmsq];
-    double msqjk; 
+    double msqjk=0; 
     if ( _matrixElement == TVar::MCFM ) 
       msqjk = SumMatrixElementPDF(proc, &mcfm_event, flavor_msq, &flux);
     if ( _matrixElement == TVar::JHUGen ) {
