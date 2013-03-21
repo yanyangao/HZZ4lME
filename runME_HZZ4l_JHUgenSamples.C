@@ -68,8 +68,10 @@ void CalculateAnalyticalMELA(float mzz_,float m1_, float m2_,
 			     double &Psmh, 
 			     double &Poneminus, double &Poneplus,
 			     double &Poneminus_decay, double &Poneplus_decay,
-			     double &Ptwomplus_gg, double &Ptwomplus_qq, double &Ptwomplus_decay
+			     double &Ptwomplus_gg, double &Ptwomplus_qq, double &Ptwomplus_decay,
+			     double &Ptwohminus, double &Ptwohplus, double &Ptwobplus
 			     ) {
+  
   
     // - - - - - - - - - - - - - - -
     // calculating the analytical MELA
@@ -86,6 +88,13 @@ void CalculateAnalyticalMELA(float mzz_,float m1_, float m2_,
     RooRealVar phi("phi","phi",-3.2,3.2);
     RooRealVar phi1("phi1","phi1",-3.2,3.2);
     
+
+    checkZorder(m1_,m2_,hs_,h1_,h2_,phi_,phi1_);
+    mzz.setVal(mzz_);  m1.setVal(m1_);   m2.setVal(m2_);
+    hs.setVal(hs_);  h1.setVal(h1_);   h2.setVal(h2_);  
+    phi.setVal(phi_);  phi1.setVal(phi1_); 
+    
+
     // - - - - - - - - - - - - - - - -
     // SM Higgs parameters
     // - - - - - - - - - - - - - - - - 
@@ -113,7 +122,7 @@ void CalculateAnalyticalMELA(float mzz_,float m1_, float m2_,
     // - - - - - - - - - - - - - - - - 
     
     RooXZsZs_5D SMHiggs("SMHiggs","SMHiggs",m1,m2,h1,h2,phi,a1,p1,a2,p2,a3,p3,mZ,gamZ,mzz,R1,R2);
-   
+    Psmh = SMHiggs.getVal();
     
     //
     // Spin One parameters
@@ -123,10 +132,6 @@ void CalculateAnalyticalMELA(float mzz_,float m1_, float m2_,
     RooRealVar g1ValV("g1ValV","g1ValV",1.);
     RooRealVar g2ValV("g2ValV","g2ValV",0.);
 
-    RooRealVar g1ValA("g1ValA","g1ValA",0.);
-    RooRealVar g2ValA("g2ValA","g2ValA",1.);
-
-
     // this is the acceptance term associated with the production angles
     // the default setting is for setting no-acceptance
     RooRealVar aParam("aParam","aParam",0);
@@ -135,31 +140,42 @@ void CalculateAnalyticalMELA(float mzz_,float m1_, float m2_,
 			   g1ValV, g2ValV, 
 			   R1, R2, aParam, mZ, gamZ);
 
+    Poneminus = oneminus.getVal();
+    
+    RooSpinOne_Decay oneminus_decay("oneminus_decay","oneminus_decay", mzz,m1,m2,h1,h2,phi,
+				  g1ValV, g2ValV, 
+				  R1, R2, aParam, mZ, gamZ);
+    Poneminus_decay = oneminus_decay.getVal();
+    
+    // 1+ 
+    RooRealVar g1ValA("g1ValA","g1ValA",0.);
+    RooRealVar g2ValA("g2ValA","g2ValA",1.);
+
+
     RooSpinOne_7D oneplus("oneplus","oneplus", mzz,m1,m2,h1,h2,hs,phi,phi1,
 			   g1ValA, g2ValA, 
 			   R1, R2, aParam, mZ, gamZ);
     
-    // 1- decay
-    RooSpinOne_Decay oneminus_decay("oneminus_decay","oneminus_decay", mzz,m1,m2,h1,h2,phi,
-				  g1ValV, g2ValV, 
-				  R1, R2, aParam, mZ, gamZ);
+    Poneplus = oneplus.getVal();
 
+    // 1+ decay
+    
     RooSpinOne_Decay oneplus_decay("oneplus_decay","oneplus_decay", mzz,m1,m2,h1,h2,phi,
 				  g1ValA, g2ValA, 
 				  R1, R2, aParam, mZ, gamZ);
+
+    Poneplus_decay = oneplus_decay.getVal();
+
 
 
     //
     // Spin 2 parameters
     // 
     
-    RooRealVar fz1gg("fz1gg","fz1gg",0.,0.,1000.);  
-    RooRealVar fz2gg("fz2gg","fz2gg",1.,0.,1000.);
-
-    RooRealVar fz1qq("fz1qq","fz1qq",1.,0.,1000.);  
-    RooRealVar fz2qq("fz2qq","fz2qq",0.,0.,1000.);
-
-
+    
+    RooRealVar fz1("fz1","fz1",0, 0.,1000.);  
+    RooRealVar fz2("fz2","fz2",1, 0.,1000.);
+    
     // - - - - - - - - - - - - - - - -
     // minimal coupling graviton parameters
     // - - - - - - - - - - - - - - - - 
@@ -183,46 +199,117 @@ void CalculateAnalyticalMELA(float mzz_,float m1_, float m2_,
     RooRealVar g9("g9","g9",0.,-1000.,1000.);
     RooRealVar g10("g10","g10",0.,-1000.,1000.);
 
+    // 2m+ 
+    
     RooSpinTwo_7D minGrav("minGrav","minGrav",mzz,m1,m2,hs,h1,h2,phi,phi1,
 			  c1,c2,c3,c4,c5,c6,c7,
 			  useG,
 			  g1,g2,g3,g4,g5,g6,g7,g8,g9,g10,
-			  fz1gg,fz2gg,
+			  fz1,fz2,
 			  R1,R2,
 			  mZ,gamZ);
-    
-    RooSpinTwo_7D minGravqq("minGravqq","minGravqq",mzz,m1,m2,hs,h1,h2,phi,phi1,
-			  c1,c2,c3,c4,c5,c6,c7,
-			  useG,
-			  g1,g2,g3,g4,g5,g6,g7,g8,g9,g10,
-			  fz1qq,fz2qq,
-			  R1,R2,
-			  mZ,gamZ);
+
+    Ptwomplus_gg = minGrav.getVal();
 
     RooSpinTwo_Decay minGrav_decay("minGrav_decay","minGrav_decay",mzz,m1,m2,h1,h2,phi,
 			  c1,c2,c3,c4,c5,c6,c7,
 			  useG,
 			  g1,g2,g3,g4,g5,g6,g7,g8,g9,g10,
-			  fz1gg,fz2gg,
+			  fz1,fz2,
+			  R1,R2,
+			  mZ,gamZ);
+    
+    Ptwomplus_decay = minGrav_decay.getVal();
+
+    // 2m+ (qqbar) 
+    
+    fz1.setVal(1.);
+    fz2.setVal(0.);
+    
+    RooSpinTwo_7D minGravqq("minGravqq","minGravqq",mzz,m1,m2,hs,h1,h2,phi,phi1,
+			  c1,c2,c3,c4,c5,c6,c7,
+			  useG,
+			  g1,g2,g3,g4,g5,g6,g7,g8,g9,g10,
+			  fz1,fz2,
+			  R1,R2,
+			  mZ,gamZ);
+    Ptwomplus_qq = minGravqq.getVal();
+    
+    // 2h-
+    
+    fz1.setVal(0.);
+    fz2.setVal(0.);
+
+    g1.setVal(0.);
+    g2.setVal(0.);
+    g3.setVal(0.);
+    g4.setVal(0.);
+    g5.setVal(0.);
+    g6.setVal(0.);
+    g7.setVal(0.);
+    g8.setVal(1.);
+
+    
+    RooSpinTwo_7D twohminus("twohminus","twohminus",mzz,m1,m2,hs,h1,h2,phi,phi1,
+			  c1,c2,c3,c4,c5,c6,c7,
+			  useG,
+			  g1,g2,g3,g4,g5,g6,g7,g8,g9,g10,
+			  fz1,fz2,
+			  R1,R2,
+			  mZ,gamZ);
+    Ptwohminus = twohminus.getVal();
+
+    // 2h+
+    
+    fz1.setVal(0.);
+    fz2.setVal(0.);
+    
+    g1.setVal(0.);
+    g2.setVal(0.);
+    g3.setVal(0.);
+    g4.setVal(1.);
+    g5.setVal(0.);
+    g6.setVal(0.);
+    g7.setVal(0.);
+    g8.setVal(0.);
+
+    
+    RooSpinTwo_7D twohplus("twohplus","twohplus",mzz,m1,m2,hs,h1,h2,phi,phi1,
+			  c1,c2,c3,c4,c5,c6,c7,
+			  useG,
+			  g1,g2,g3,g4,g5,g6,g7,g8,g9,g10,
+			  fz1,fz2,
 			  R1,R2,
 			  mZ,gamZ);
 
-    //
-    // Fill in the analytical Melas
-    // 
-    checkZorder(m1_,m2_,hs_,h1_,h2_,phi_,phi1_);
-    mzz.setVal(mzz_);  m1.setVal(m1_);   m2.setVal(m2_);
-    hs.setVal(hs_);  h1.setVal(h1_);   h2.setVal(h2_);  
-    phi.setVal(phi_);  phi1.setVal(phi1_);  
+    Ptwohplus  = twohplus.getVal();
+
     
-    Psmh = SMHiggs.getVal();
-    Poneminus = oneminus.getVal();
-    Poneplus  = oneplus.getVal();
-    Poneminus_decay = oneminus_decay.getVal();
-    Poneplus_decay = oneplus_decay.getVal();
-    Ptwomplus_gg = minGrav.getVal();
-    Ptwomplus_qq = minGravqq.getVal();
-    Ptwomplus_decay = minGrav_decay.getVal();
+    // 2b+
+    
+    fz1.setVal(0.);
+    fz2.setVal(1.);
+
+    g1.setVal(0.);
+    g2.setVal(0.);
+    g3.setVal(0.);
+    g4.setVal(0.);
+    g5.setVal(1.);
+    g6.setVal(0.);
+    g7.setVal(0.);
+    g8.setVal(0.);
+    
+    
+    RooSpinTwo_7D twobplus("twobplus","twobplus",mzz,m1,m2,hs,h1,h2,phi,phi1,
+			  c1,c2,c3,c4,c5,c6,c7,
+			  useG,
+			  g1,g2,g3,g4,g5,g6,g7,g8,g9,g10,
+			  fz1,fz2,
+			  R1,R2,
+			  mZ,gamZ);
+    
+    Ptwobplus  = twobplus.getVal();
+    
     /*
     RooAbsReal* minGrav_decay_val = minGrav.createIntegral(RooArgSet(hs,phi1));
     Ptwomplus_decay_andrew = minGrav_decay_val->getVal();
@@ -366,6 +453,7 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   double Psmh_, Poneminus_, Poneplus_;
   double Poneminus_decay_, Poneplus_decay_;
   double Ptwomplus_gg_, Ptwomplus_qq_, Ptwomplus_decay_;
+  double Ptwohminus_, Ptwohplus_, Ptwobplus_;
 
   evt_tree->Branch("Psmh"                , &Psmh_               ,"Psmh/D");
   evt_tree->Branch("Poneminus"           , &Poneminus_          ,"Poneminus/D");
@@ -375,6 +463,9 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   evt_tree->Branch("Ptwomplus_gg"        , &Ptwomplus_gg_       ,"Ptwomplus_gg/D");
   evt_tree->Branch("Ptwomplus_qq"        , &Ptwomplus_qq_       ,"Ptwomplus_qq/D");
   evt_tree->Branch("Ptwomplus_decay"     , &Ptwomplus_decay_    ,"Ptwomplus_decay/D");
+  evt_tree->Branch("Ptwohminus"          , &Ptwohminus_         ,"Ptwohminus/D");
+  evt_tree->Branch("Ptwohplus"           , &Ptwohplus_          ,"Ptwohplus/D");
+  evt_tree->Branch("Ptwobplus"           , &Ptwobplus_          ,"Ptwobplus/D");
 
  
   float m1,m2,h1,h2,hs,phi,phi1,mzz;  
@@ -514,7 +605,8 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     CalculateAnalyticalMELA(mzz, m1, m2, hs, h1, h2, phi, phi1,
 			    Psmh_, Poneminus_, Poneplus_,
 			    Poneminus_decay_, Poneplus_decay_,
-			    Ptwomplus_gg_, Ptwomplus_qq_, Ptwomplus_decay_);
+			    Ptwomplus_gg_, Ptwomplus_qq_, Ptwomplus_decay_,
+			    Ptwohminus_, Ptwohplus_, Ptwobplus_);
 	    
     vector<TLorentzVector> p;
     p=Calculate4Momentum(mzz,m1,m2,acos(hs),acos(h1),acos(h2),phi1,phi);
@@ -673,6 +765,9 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     Ptwomplus_decay_     *= 1e-08;
     Poneplus_decay_      *= 3.7e-04;
     Poneminus_decay_     *= 3.7e-04;
+    Ptwohminus_           *= 0.4;
+    Ptwohplus_           *= 0.4;
+    Ptwobplus_           *= 2.3e-07;
     // ---------------------------------
 
 
