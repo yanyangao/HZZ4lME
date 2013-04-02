@@ -408,7 +408,7 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   evt_tree->SetName("newTree");
   
   // Declare the matrix element related variables to be added to the existing ntuples
-
+  double dXsec_ZZ_DECAY_MCFM = 0.;
   double dXsec_ZZ_MCFM = 0.;
   double dXsec_HZZ_MCFM = 0.;
   double dXsec_HZZ_JHU = 0.;
@@ -428,6 +428,7 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   double pseudoME = 0.;
   double graviME = 0.;
   
+  evt_tree->Branch("dXsec_ZZ_DECAY_MCFM" , &dXsec_ZZ_DECAY_MCFM   ,"dXsec_ZZ_DECAY_MCFM/D");
   evt_tree->Branch("dXsec_ZZ_MCFM"   , &dXsec_ZZ_MCFM   ,"dXsec_ZZ_MCFM/D");
   evt_tree->Branch("dXsec_HZZ_MCFM"  , &dXsec_HZZ_MCFM   ,"dXsec_HZZ_MCFM/D");
   evt_tree->Branch("dXsec_HZZ_JHU"   , &dXsec_HZZ_JHU   ,"dXsec_HZZ_JHU/D");
@@ -559,6 +560,7 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   // Loop All Events
   //==========================================
   
+
   int Ntot = maxevt > ch->GetEntries() ? ch->GetEntries() : maxevt; 
   if ( maxevt < 0. ) Ntot =  ch->GetEntries();
 
@@ -567,10 +569,10 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   if (verbosity >= TVar::INFO) printf("Total number of events = %d\n", Ntot);
   
   for(int ievt = 0; ievt < Ntot; ievt++){
-    if (verbosity >= TVar::INFO && (ievt % 1000 == 0)) 
+    if (verbosity >= TVar::INFO && (ievt % 100 == 0)) 
       std::cout << "Doing Event: " << ievt << std::endl;
     
-    if ( ievt == 43167 ) continue;
+    // if ( ievt == 43167 ) continue;
     
     // 
     // initialise the differential cross-sections
@@ -590,6 +592,7 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     dXsec_PTZZ_2hminus_JHU = 0.;
     dXsec_TZZ_2hplus_JHU = 0.;
     dXsec_TZZ_2bplus_JHU = 0.;
+    dXsec_ZZ_DECAY_MCFM = 0.;
     pseudoME = 0.;
     graviME = 0.;
     
@@ -607,7 +610,8 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
 			    Poneminus_decay_, Poneplus_decay_,
 			    Ptwomplus_gg_, Ptwomplus_qq_, Ptwomplus_decay_,
 			    Ptwohminus_, Ptwohplus_, Ptwobplus_);
-	    
+
+    // set four momenta
     vector<TLorentzVector> p;
     p=Calculate4Momentum(mzz,m1,m2,acos(hs),acos(h1),acos(h2),phi1,phi);
     // p=Calculate4Momentum(mzz,m1,m2,acos(0),acos(h1),acos(h2),0,phi);
@@ -681,6 +685,9 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
       dXsec_ZZ_MCFM = Xcal2.XsecCalc(TVar::ZZ_4e,hzz4l_event,verbosity);
     else 
       dXsec_ZZ_MCFM = Xcal2.XsecCalc(TVar::ZZ_2e2m,hzz4l_event,verbosity);
+
+    // trying to implement the integral
+    
     dXsec_HZZ_MCFM = Xcal2.XsecCalc(TVar::HZZ_4l,hzz4l_event,verbosity);
 
     // calculate X->ZZ using JHUGen
@@ -770,7 +777,49 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     Ptwobplus_           *= 2.3e-07;
     // ---------------------------------
 
+    // 
+    // calculate the last ZZ MCFM decay only MCFM
+    // 
+    
+    int gridsize_hs = 10; 
+    double hs_min = -1.;
+    double hs_max = 1.;
+    double hs_step =( hs_max - hs_min ) / double (gridsize_hs); 
+    
+    int gridsize_phi1 = 10; 
+    double phi1_min = -TMath::Pi();
+    double phi1_max = TMath::Pi();
+    double phi1_step =( phi1_max - phi1_min ) / double (gridsize_phi1); 
+    
+    for ( int i_hs = 0; i_hs < gridsize_hs + 1; i_hs ++ ) {
+      
+      double hs_val = hs_min + i_hs * hs_step; 
+      
+      for ( int i_phi1 = 0; i_phi1 < gridsize_phi1 +1 ; i_phi1 ++ ) {
+	double phi1_val = phi1_min + i_phi1 * phi1_step; 
+	vector<TLorentzVector> p_decay;
+	p_decay=Calculate4Momentum(mzz,m1,m2,acos(hs_val),acos(h1),acos(h2),phi1_val,phi);
+	
+	Z1_minus = p_decay[0];
+	Z1_plus  = p_decay[1];
+	Z2_minus = p_decay[2];
+	Z2_plus  = p_decay[3];
+	
+	hzz4l_event.p[0].SetXYZM(Z1_minus.Px(), Z1_minus.Py(), Z1_minus.Pz(), 0.);
+	hzz4l_event.p[1].SetXYZM(Z1_plus.Px(), Z1_plus.Py(), Z1_plus.Pz(), 0.);
+	hzz4l_event.p[2].SetXYZM(Z2_minus.Px(), Z2_minus.Py(), Z2_minus.Pz(), 0.);
+	hzz4l_event.p[3].SetXYZM(Z2_plus.Px(), Z2_plus.Py(), Z2_plus.Pz(), 0.);
 
+	// calculate the ZZ using MCFM
+	Xcal2.SetMatrixElement(TVar::MCFM);
+	if ( mflavor < 3  )
+	  dXsec_ZZ_DECAY_MCFM += Xcal2.XsecCalc(TVar::ZZ_4e,hzz4l_event,verbosity);
+	else 
+	  dXsec_ZZ_DECAY_MCFM += Xcal2.XsecCalc(TVar::ZZ_2e2m,hzz4l_event,verbosity);
+      }
+    }
+    dXsec_ZZ_DECAY_MCFM =  dXsec_ZZ_DECAY_MCFM /  double ( (gridsize_hs + 1) * (gridsize_phi1 +1 )); 
+    
     evt_tree->Fill();
     
   }//nevent
