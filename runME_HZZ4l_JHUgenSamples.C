@@ -23,9 +23,9 @@
 #include "RooRealVar.h"
 #include "math.h"
 
-typedef ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<double> > LorentzVector; 
+typedef ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<float> > LorentzVector; 
 
-double ERRORthreshold=1.0;
+float ERRORthreshold=1.0;
 using namespace std;
 
 void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt, TVar::VerbosityLevel verbosity);
@@ -65,11 +65,11 @@ void checkZorder(float& z1mass, float& z2mass,
 void CalculateAnalyticalMELA(float mzz_,float m1_, float m2_,
 			     float hs_, float h1_, float h2_, 
 			     float phi_, float phi1_,
-			     double &Psmh, 
-			     double &Poneminus, double &Poneplus,
-			     double &Poneminus_decay, double &Poneplus_decay,
-			     double &Ptwomplus_gg, double &Ptwomplus_qq, double &Ptwomplus_decay,
-			     double &Ptwohminus, double &Ptwohplus, double &Ptwobplus
+			     float &Psmh, 
+			     float &Poneminus, float &Poneplus,
+			     float &Poneminus_decay, float &Poneplus_decay,
+			     float &Ptwomplus_gg, float &Ptwomplus_qq, float &Ptwomplus_decay,
+			     float &Ptwohminus, float &Ptwohplus, float &Ptwobplus
 			     ) {
   
   
@@ -317,14 +317,14 @@ void CalculateAnalyticalMELA(float mzz_,float m1_, float m2_,
 
 }
 
-vector<TLorentzVector> Calculate4Momentum(double Mx,double M1,double M2,double theta,double theta1,double theta2,double Phi1,double Phi)
+vector<TLorentzVector> Calculate4Momentum(float Mx,float M1,float M2,float theta,float theta1,float theta2,float Phi1,float Phi)
 {
-    double phi1,phi2;
+    float phi1,phi2;
     phi1=TMath::Pi()-Phi1;
     phi2=Phi1+Phi;
     
     
-    double gamma1,gamma2,beta1,beta2;
+    float gamma1,gamma2,beta1,beta2;
     
     gamma1=(Mx*Mx+M1*M1-M2*M2)/(2*Mx*M1);
     gamma2=(Mx*Mx-M1*M1+M2*M2)/(2*Mx*M2);
@@ -408,65 +408,65 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   evt_tree->SetName("newTree");
   
   // Declare the matrix element related variables to be added to the existing ntuples
-  double dXsec_ZZ_DECAY_MCFM = 0.;
-  double dXsec_ZZ_MCFM = 0.;
-  double dXsec_HZZ_MCFM = 0.;
-  double dXsec_HZZ_JHU = 0.;
-  double dXsec_PSHZZ_JHU = 0.;
-  double dXsec_HDHZZ_JHU = 0.;
-  double dXsec_TZZ_JHU = 0.;
-  double dXsec_VZZ_JHU = 0.;
-  double dXsec_AVZZ_JHU = 0.;
-  double dXsec_QQB_TZZ_JHU = 0.;
-  double dXsec_TZZ_DECAY_JHU = 0.;
-  double dXsec_VZZ_DECAY_JHU = 0.;
-  double dXsec_AVZZ_DECAY_JHU = 0.;
-  double dXsec_PTZZ_2hminus_JHU = 0.;
-  double dXsec_TZZ_2hplus_JHU = 0.;
-  double dXsec_TZZ_2bplus_JHU = 0.;
+  float dXsec_ZZ_DECAY_MCFM = 0.;
+  float dXsec_ZZ_MCFM = 0.;
+  float dXsec_HZZ_MCFM = 0.;
+  float dXsec_HZZ_JHU = 0.;
+  float dXsec_PSHZZ_JHU = 0.;
+  float dXsec_HDHZZ_JHU = 0.;
+  float dXsec_TZZ_JHU = 0.;
+  float dXsec_VZZ_JHU = 0.;
+  float dXsec_AVZZ_JHU = 0.;
+  float dXsec_QQB_TZZ_JHU = 0.;
+  float dXsec_TZZ_DECAY_JHU = 0.;
+  float dXsec_VZZ_DECAY_JHU = 0.;
+  float dXsec_AVZZ_DECAY_JHU = 0.;
+  float dXsec_PTZZ_2hminus_JHU = 0.;
+  float dXsec_TZZ_2hplus_JHU = 0.;
+  float dXsec_TZZ_2bplus_JHU = 0.;
 
-  double pseudoME = 0.;
-  double graviME = 0.;
+  float pseudoME = 0.;
+  float graviME = 0.;
   
-  evt_tree->Branch("dXsec_ZZ_DECAY_MCFM" , &dXsec_ZZ_DECAY_MCFM   ,"dXsec_ZZ_DECAY_MCFM/D");
-  evt_tree->Branch("dXsec_ZZ_MCFM"   , &dXsec_ZZ_MCFM   ,"dXsec_ZZ_MCFM/D");
-  evt_tree->Branch("dXsec_HZZ_MCFM"  , &dXsec_HZZ_MCFM   ,"dXsec_HZZ_MCFM/D");
-  evt_tree->Branch("dXsec_HZZ_JHU"   , &dXsec_HZZ_JHU   ,"dXsec_HZZ_JHU/D");
-  evt_tree->Branch("dXsec_PSHZZ_JHU" , &dXsec_PSHZZ_JHU ,"dXsec_PSHZZ_JHU/D");
-  evt_tree->Branch("dXsec_HDHZZ_JHU" , &dXsec_HDHZZ_JHU ,"dXsec_HDHZZ_JHU/D");
-  evt_tree->Branch("dXsec_TZZ_JHU"   , &dXsec_TZZ_JHU   ,"dXsec_TZZ_JHU/D");
-  evt_tree->Branch("dXsec_VZZ_JHU"   , &dXsec_VZZ_JHU   ,"dXsec_VZZ_JHU/D");
-  evt_tree->Branch("dXsec_AVZZ_JHU"  , &dXsec_AVZZ_JHU  ,"dXsec_AVZZ_JHU/D");
-  evt_tree->Branch("dXsec_QQB_TZZ_JHU", &dXsec_QQB_TZZ_JHU   ,"dXsec_QQB_TZZ_JHU/D");
-  evt_tree->Branch("dXsec_TZZ_DECAY_JHU", &dXsec_TZZ_DECAY_JHU   ,"dXsec_TZZ_DECAY_JHU/D");
-  evt_tree->Branch("dXsec_VZZ_DECAY_JHU", &dXsec_VZZ_DECAY_JHU   ,"dXsec_VZZ_DECAY_JHU/D");
-  evt_tree->Branch("dXsec_AVZZ_DECAY_JHU", &dXsec_AVZZ_DECAY_JHU   ,"dXsec_AVZZ_DECAY_JHU/D");
-  evt_tree->Branch("dXsec_PTZZ_2hminus_JHU" , &dXsec_PTZZ_2hminus_JHU   ,"dXsec_PTZZ_2hminus_JHU/D");
-  evt_tree->Branch("dXsec_TZZ_2hplus_JHU"   , &dXsec_TZZ_2hplus_JHU     ,"dXsec_TZZ_2hplus_JHU/D");
-  evt_tree->Branch("dXsec_TZZ_2bplus_JHU"   , &dXsec_TZZ_2bplus_JHU     ,"dXsec_TZZ_2bplus_JHU/D");
-  evt_tree->Branch("pseudoME"        , &pseudoME        ,   "pseudoME/D"  );
-  evt_tree->Branch("graviME"         , &graviME         ,   "graviME/D"  );
+  evt_tree->Branch("dXsec_ZZ_DECAY_MCFM" , &dXsec_ZZ_DECAY_MCFM   ,"dXsec_ZZ_DECAY_MCFM/F");
+  evt_tree->Branch("dXsec_ZZ_MCFM"   , &dXsec_ZZ_MCFM   ,"dXsec_ZZ_MCFM/F");
+  evt_tree->Branch("dXsec_HZZ_MCFM"  , &dXsec_HZZ_MCFM   ,"dXsec_HZZ_MCFM/F");
+  evt_tree->Branch("dXsec_HZZ_JHU"   , &dXsec_HZZ_JHU   ,"dXsec_HZZ_JHU/F");
+  evt_tree->Branch("dXsec_PSHZZ_JHU" , &dXsec_PSHZZ_JHU ,"dXsec_PSHZZ_JHU/F");
+  evt_tree->Branch("dXsec_HDHZZ_JHU" , &dXsec_HDHZZ_JHU ,"dXsec_HDHZZ_JHU/F");
+  evt_tree->Branch("dXsec_TZZ_JHU"   , &dXsec_TZZ_JHU   ,"dXsec_TZZ_JHU/F");
+  evt_tree->Branch("dXsec_VZZ_JHU"   , &dXsec_VZZ_JHU   ,"dXsec_VZZ_JHU/F");
+  evt_tree->Branch("dXsec_AVZZ_JHU"  , &dXsec_AVZZ_JHU  ,"dXsec_AVZZ_JHU/F");
+  evt_tree->Branch("dXsec_QQB_TZZ_JHU", &dXsec_QQB_TZZ_JHU   ,"dXsec_QQB_TZZ_JHU/F");
+  evt_tree->Branch("dXsec_TZZ_DECAY_JHU", &dXsec_TZZ_DECAY_JHU   ,"dXsec_TZZ_DECAY_JHU/F");
+  evt_tree->Branch("dXsec_VZZ_DECAY_JHU", &dXsec_VZZ_DECAY_JHU   ,"dXsec_VZZ_DECAY_JHU/F");
+  evt_tree->Branch("dXsec_AVZZ_DECAY_JHU", &dXsec_AVZZ_DECAY_JHU   ,"dXsec_AVZZ_DECAY_JHU/F");
+  evt_tree->Branch("dXsec_PTZZ_2hminus_JHU" , &dXsec_PTZZ_2hminus_JHU   ,"dXsec_PTZZ_2hminus_JHU/F");
+  evt_tree->Branch("dXsec_TZZ_2hplus_JHU"   , &dXsec_TZZ_2hplus_JHU     ,"dXsec_TZZ_2hplus_JHU/F");
+  evt_tree->Branch("dXsec_TZZ_2bplus_JHU"   , &dXsec_TZZ_2bplus_JHU     ,"dXsec_TZZ_2bplus_JHU/F");
+  evt_tree->Branch("pseudoME"        , &pseudoME        ,   "pseudoME/F"  );
+  evt_tree->Branch("graviME"         , &graviME         ,   "graviME/F"  );
 
   
   // 
   // analytical variables
   // 
-  double Psmh_, Poneminus_, Poneplus_;
-  double Poneminus_decay_, Poneplus_decay_;
-  double Ptwomplus_gg_, Ptwomplus_qq_, Ptwomplus_decay_;
-  double Ptwohminus_, Ptwohplus_, Ptwobplus_;
+  float Psmh_, Poneminus_, Poneplus_;
+  float Poneminus_decay_, Poneplus_decay_;
+  float Ptwomplus_gg_, Ptwomplus_qq_, Ptwomplus_decay_;
+  float Ptwohminus_, Ptwohplus_, Ptwobplus_;
 
-  evt_tree->Branch("Psmh"                , &Psmh_               ,"Psmh/D");
-  evt_tree->Branch("Poneminus"           , &Poneminus_          ,"Poneminus/D");
-  evt_tree->Branch("Poneplus"            , &Poneplus_           ,"Poneplus/D");
-  evt_tree->Branch("Poneminus_decay"     , &Poneminus_decay_    ,"Poneminus_decay/D");
-  evt_tree->Branch("Poneplus_decay"      , &Poneplus_decay_     ,"Poneplus_decay/D");
-  evt_tree->Branch("Ptwomplus_gg"        , &Ptwomplus_gg_       ,"Ptwomplus_gg/D");
-  evt_tree->Branch("Ptwomplus_qq"        , &Ptwomplus_qq_       ,"Ptwomplus_qq/D");
-  evt_tree->Branch("Ptwomplus_decay"     , &Ptwomplus_decay_    ,"Ptwomplus_decay/D");
-  evt_tree->Branch("Ptwohminus"          , &Ptwohminus_         ,"Ptwohminus/D");
-  evt_tree->Branch("Ptwohplus"           , &Ptwohplus_          ,"Ptwohplus/D");
-  evt_tree->Branch("Ptwobplus"           , &Ptwobplus_          ,"Ptwobplus/D");
+  evt_tree->Branch("Psmh"                , &Psmh_               ,"Psmh/F");
+  evt_tree->Branch("Poneminus"           , &Poneminus_          ,"Poneminus/F");
+  evt_tree->Branch("Poneplus"            , &Poneplus_           ,"Poneplus/F");
+  evt_tree->Branch("Poneminus_decay"     , &Poneminus_decay_    ,"Poneminus_decay/F");
+  evt_tree->Branch("Poneplus_decay"      , &Poneplus_decay_     ,"Poneplus_decay/F");
+  evt_tree->Branch("Ptwomplus_gg"        , &Ptwomplus_gg_       ,"Ptwomplus_gg/F");
+  evt_tree->Branch("Ptwomplus_qq"        , &Ptwomplus_qq_       ,"Ptwomplus_qq/F");
+  evt_tree->Branch("Ptwomplus_decay"     , &Ptwomplus_decay_    ,"Ptwomplus_decay/F");
+  evt_tree->Branch("Ptwohminus"          , &Ptwohminus_         ,"Ptwohminus/F");
+  evt_tree->Branch("Ptwohplus"           , &Ptwohplus_          ,"Ptwohplus/F");
+  evt_tree->Branch("Ptwobplus"           , &Ptwobplus_          ,"Ptwobplus/F");
 
  
   float m1,m2,h1,h2,hs,phi,phi1,mzz;  
@@ -496,25 +496,25 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
  
 
  // Initialize the branches to use to calculate the differential cross-sections
-  Double_t EL1_ = 0.;
-  Double_t pXL1_ = 0.;
-  Double_t pYL1_ = 0.;
-  Double_t pZL1_ = 0.;
+  Float_t EL1_ = 0.;
+  Float_t pXL1_ = 0.;
+  Float_t pYL1_ = 0.;
+  Float_t pZL1_ = 0.;
 
-  Double_t EL2_ = 0.;
-  Double_t pXL2_ = 0.;
-  Double_t pYL2_ = 0.;
-  Double_t pZL2_ = 0.;
+  Float_t EL2_ = 0.;
+  Float_t pXL2_ = 0.;
+  Float_t pYL2_ = 0.;
+  Float_t pZL2_ = 0.;
   
-  Double_t EL3_ = 0.;
-  Double_t pXL3_ = 0.;
-  Double_t pYL3_ = 0.;
-  Double_t pZL3_ = 0.;
+  Float_t EL3_ = 0.;
+  Float_t pXL3_ = 0.;
+  Float_t pYL3_ = 0.;
+  Float_t pZL3_ = 0.;
 
-  Double_t EL4_ = 0.;
-  Double_t pXL4_ = 0.;
-  Double_t pYL4_ = 0.;
-  Double_t pZL4_ = 0.;
+  Float_t EL4_ = 0.;
+  Float_t pXL4_ = 0.;
+  Float_t pYL4_ = 0.;
+  Float_t pZL4_ = 0.;
 
   if ( ch->GetBranchStatus("EL1") ) 
     ch->SetBranchAddress( "EL1"       , &EL1_      );   
@@ -564,7 +564,7 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   int Ntot = maxevt > ch->GetEntries() ? ch->GetEntries() : maxevt; 
   if ( maxevt < 0. ) Ntot =  ch->GetEntries();
 
-  pair<double,double> prob;
+  pair<float,float> prob;
 
   if (verbosity >= TVar::INFO) printf("Total number of events = %d\n", Ntot);
   
@@ -654,9 +654,9 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     hzz4l_event.p[3].SetXYZM(pXL4_, pYL4_, pZL4_, 0.);
     */
 
-    double z1mass = (hzz4l_event.p[0]+hzz4l_event.p[1]).M();
-    double z2mass = (hzz4l_event.p[2]+hzz4l_event.p[3]).M();
-    double zzmass = (hzz4l_event.p[0]+hzz4l_event.p[1]+hzz4l_event.p[2]+hzz4l_event.p[3]).M();
+    float z1mass = (hzz4l_event.p[0]+hzz4l_event.p[1]).M();
+    float z2mass = (hzz4l_event.p[2]+hzz4l_event.p[3]).M();
+    float zzmass = (hzz4l_event.p[0]+hzz4l_event.p[1]+hzz4l_event.p[2]+hzz4l_event.p[3]).M();
 
     if (verbosity >= TVar::DEBUG) {
       cout << "\n=========================================================\n";
@@ -764,6 +764,7 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     dXsec_PTZZ_2hminus_JHU *= 1e+10;
     dXsec_TZZ_2hplus_JHU   *= 1e+10;
 
+    /*
     // constants for the analytical MELA
     Ptwomplus_gg_        *= 2e-07; 
     Ptwomplus_qq_        *= 2e-07; 
@@ -776,27 +777,28 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     Ptwohplus_           *= 0.4;
     Ptwobplus_           *= 2.3e-07;
     // ---------------------------------
+    */
 
     // 
     // calculate the last ZZ MCFM decay only MCFM
     // 
     
     int gridsize_hs = 10; 
-    double hs_min = -1.;
-    double hs_max = 1.;
-    double hs_step =( hs_max - hs_min ) / double (gridsize_hs); 
+    float hs_min = -1.;
+    float hs_max = 1.;
+    float hs_step =( hs_max - hs_min ) / float (gridsize_hs); 
     
     int gridsize_phi1 = 10; 
-    double phi1_min = -TMath::Pi();
-    double phi1_max = TMath::Pi();
-    double phi1_step =( phi1_max - phi1_min ) / double (gridsize_phi1); 
+    float phi1_min = -TMath::Pi();
+    float phi1_max = TMath::Pi();
+    float phi1_step =( phi1_max - phi1_min ) / float (gridsize_phi1); 
     
     for ( int i_hs = 0; i_hs < gridsize_hs + 1; i_hs ++ ) {
       
-      double hs_val = hs_min + i_hs * hs_step; 
+      float hs_val = hs_min + i_hs * hs_step; 
       
       for ( int i_phi1 = 0; i_phi1 < gridsize_phi1 +1 ; i_phi1 ++ ) {
-	double phi1_val = phi1_min + i_phi1 * phi1_step; 
+	float phi1_val = phi1_min + i_phi1 * phi1_step; 
 	vector<TLorentzVector> p_decay;
 	p_decay=Calculate4Momentum(mzz,m1,m2,acos(hs_val),acos(h1),acos(h2),phi1_val,phi);
 	
@@ -818,7 +820,7 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
 	  dXsec_ZZ_DECAY_MCFM += Xcal2.XsecCalc(TVar::ZZ_2e2m,hzz4l_event,verbosity);
       }
     }
-    dXsec_ZZ_DECAY_MCFM =  dXsec_ZZ_DECAY_MCFM /  double ( (gridsize_hs + 1) * (gridsize_phi1 +1 )); 
+    dXsec_ZZ_DECAY_MCFM =  dXsec_ZZ_DECAY_MCFM /  float ( (gridsize_hs + 1) * (gridsize_phi1 +1 )); 
     
     evt_tree->Fill();
     
