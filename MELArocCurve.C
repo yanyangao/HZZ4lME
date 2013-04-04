@@ -2,17 +2,29 @@
 // Run by root -l -b MELArocCurve.C
 // 
 
+//#include "../interface/TVar.hh"
 #include "TVar.hh"
+
+
+// this flag switches between the samples from 
+// set to true if the files are from CJLST ZZMatrixElement/MELA 
+// set to false if they are from YGao/HZZ4lME/ 
+
+bool fromMELAPackage = false;
 
 TGraph* makeROCcurve(char* drawVar, const int bins, float start, float end,
 		     int lineColor, int lineStyle, int lineWidth, int flavor,
 		     TString sigFile, TString bkgFile, TString testName
 		     ){
 
-  TChain* SMHtree = new TChain("newTree");
+  TString treeName("newTree");
+  
+  if ( fromMELAPackage ) treeName = "SelectedTree";
+
+  TChain* SMHtree = new TChain(treeName);
   SMHtree->Add(sigFile.Data());
 
-  TChain* PStree = new TChain("newTree");
+  TChain* PStree = new TChain(treeName);
   PStree->Add(bkgFile.Data());
   
   TH1F *SMHhisto, *PShisto;
@@ -53,9 +65,10 @@ TGraph* makeROCcurve(char* drawVar, const int bins, float start, float end,
   ROC->SetLineWidth(lineWidth);
   ROC->GetXaxis()->SetTitle("#epsilon_{0^{+}}");
   ROC->GetYaxis()->SetTitle(Form("#epsilon_{%s}", testName.Data()));
+  
   delete SMHtree;
   delete PStree;
-
+  
   return ROC;
 
 }
@@ -65,41 +78,45 @@ void MELArocCurve(){
 
   gROOT->ProcessLine(".L ~/tdrstyle.C");
   tdrstyle();
+
+  TString fileAppendix = "ME";
   
-  TString sigFile = "SMHiggs_comb_withDiscriminants_ME.root";
+  if ( fromMELAPackage ) 
+    fileAppendix = "withProbabilities_ABtest";
+  
+  TString sigFile(Form("SMHiggs_comb_withDiscriminants_%s.root", fileAppendix.Data()));
   
   std::vector<TString> bkgFiles;
   std::vector<int> tests;
-  
-  /*
+
   // 2m+ gg
-  bkgFiles.push_back("minGrav_comb_withDiscriminants_ME.root");
+  bkgFiles.push_back(Form("minGrav_comb_withDiscriminants_%s.root", fileAppendix.Data()));
   tests.push_back(TVar::TZZ_4l);
-  
+
   // 2m+ qq
-  bkgFiles.push_back("minGravqq_comb_withDiscriminants_ME.root");
+  bkgFiles.push_back(Form("minGravqq_comb_withDiscriminants_%s.root", fileAppendix.Data()));
   tests.push_back(TVar::QQB_TZZ_4l);
 
   // 1-
-  bkgFiles.push_back("1minus_8-126_ME.root");
+  bkgFiles.push_back(Form("1minus_8-126_comb_%s.root", fileAppendix.Data()));
   tests.push_back(TVar::VZZ_4l);
 
   // 1+
-  bkgFiles.push_back("1plus_8-126_ME.root");
+  bkgFiles.push_back(Form("1plus_8-126_comb_%s.root", fileAppendix.Data()));
   tests.push_back(TVar::AVZZ_4l);
- 
+
   // 2h- gg
-  bkgFiles.push_back("2hminus_8_126_comb_ME.root");
+  bkgFiles.push_back(Form("2hminus_8_126_comb_%s.root", fileAppendix.Data()));
   tests.push_back(TVar::PTZZ_2hminus_4l);
-  */
 
   // 2h+ gg
-  bkgFiles.push_back("2hplus_8_126_comb_ME.root");
+  bkgFiles.push_back(Form("2hplus_8_126_comb_%s.root", fileAppendix.Data()));
   tests.push_back(TVar::TZZ_2hplus_4l);
 
-  // 2h+ gg
-  bkgFiles.push_back("2bplus_8_126_comb_ME.root");
+  // 2b+ gg
+  bkgFiles.push_back(Form("2bplus_8_126_comb_%s.root", fileAppendix.Data()));
   tests.push_back(TVar::TZZ_2bplus_4l);
+
 
   for (int test = 0 ; test < bkgFiles.size(); test ++ ) {
 
@@ -115,64 +132,103 @@ void MELArocCurve(){
     TString testName = TVar::ProcessName(tests.at(test));
     
     // default for ggX-> 2m+
-    TString melaVar = "Psmh/(Psmh+Ptwomplus_gg)";
+    
+    TString melaVar = "Psmh/(Psmh+Ptwomplus_gg*2e-07)";
     TString jhugenVar = "dXsec_HZZ_JHU/(dXsec_HZZ_JHU+dXsec_TZZ_JHU)";
-    TString melaDecayVar = "Psmh/(Psmh+Ptwomplus_decay)";
+    TString melaDecayVar = "Psmh/(Psmh+Ptwomplus_decay*1e-08)";
     TString jhugenDecayVar = "dXsec_HZZ_JHU/(dXsec_HZZ_JHU+dXsec_TZZ_DECAY_JHU)";
+    
+    if ( fromMELAPackage )  {
+      melaVar = "p0plus_mela_NEW/(p0plus_mela_NEW+p2_mela_NEW*2e-07)";
+      jhugenVar = "p0plus_VAJHU_NEW/(p0plus_VAJHU_NEW+p2_VAJHU_NEW)";
+      melaDecayVar = "p0plus_mela_NEW/(p0plus_mela_NEW+p2_decay_mela_NEW*1e-08)";
+      jhugenDecayVar = "p0plus_VAJHU_NEW/(p0plus_VAJHU_NEW+p2_decay_VAJHU_NEW)";
+    }
     
     // qqbar->2m+
     if ( tests.at(test) == TVar::QQB_TZZ_4l ) {
-      melaVar = "Psmh/(Psmh+Ptwomplus_qq)";
+      melaVar = "Psmh/(Psmh+Ptwomplus_qq*2e-07)";
       jhugenVar = "dXsec_HZZ_JHU/(dXsec_HZZ_JHU+dXsec_QQB_TZZ_JHU)";
+      if ( fromMELAPackage ) {
+	melaVar = "p0plus_mela_NEW/(p0plus_mela_NEW+p2qqb_mela_NEW*2e-07)";
+	jhugenVar = "p0plus_VAJHU_NEW/(p0plus_VAJHU_NEW+p2qqb_VAJHU_NEW)";
+      }
     }
 
     // qqbar-> 1-
     if (tests.at(test) == TVar::VZZ_4l ) {
-      melaVar = "Psmh/(Psmh+Poneminus)";
+      melaVar = "Psmh/(Psmh+Poneminus*5e-03)";
       jhugenVar = "dXsec_HZZ_JHU/(dXsec_HZZ_JHU+dXsec_VZZ_JHU)";
-      melaDecayVar = "Psmh/(Psmh+Poneminus_decay)";
+      melaDecayVar = "Psmh/(Psmh+Poneminus_decay*3.7e-04)";
       jhugenDecayVar = "dXsec_HZZ_JHU/(dXsec_HZZ_JHU+dXsec_VZZ_DECAY_JHU)";
+      if ( fromMELAPackage ) {
+	melaVar = "p0plus_mela_NEW/(p0plus_mela_NEW+p1_mela_NEW*5e-03)";
+	jhugenVar = "p0plus_VAJHU_NEW/(p0plus_VAJHU_NEW+p1_VAJHU_NEW)";
+	melaDecayVar = "p0plus_mela_NEW/(p0plus_mela_NEW+p1_decay_mela_NEW*3.7e-04)";
+	jhugenDecayVar = "p0plus_VAJHU_NEW/(p0plus_VAJHU_NEW+p1_decay_VAJHU_NEW)";
+      }
     }
 
     // qqbar-> 1+
     if (tests.at(test) == TVar::AVZZ_4l ) {
-      melaVar = "Psmh/(Psmh+Poneplus)";
+      melaVar = "Psmh/(Psmh+Poneplus*5e-03)";
       jhugenVar = "dXsec_HZZ_JHU/(dXsec_HZZ_JHU+dXsec_AVZZ_JHU)";
-      melaDecayVar = "Psmh/(Psmh+Poneplus_decay)";
+      melaDecayVar = "Psmh/(Psmh+Poneplus_decay*3.7e-04)";
       jhugenDecayVar = "dXsec_HZZ_JHU/(dXsec_HZZ_JHU+dXsec_AVZZ_DECAY_JHU)";
+      
+      if ( fromMELAPackage ) {
+	melaVar = "p0plus_mela_NEW/(p0plus_mela_NEW+p1plus_mela_NEW*5e-03)";
+	jhugenVar = "p0plus_VAJHU_NEW/(p0plus_VAJHU_NEW+p1plus_VAJHU_NEW)";
+	melaDecayVar = "p0plus_mela_NEW/(p0plus_mela_NEW+p1plus_decay_mela_NEW*3.7e-04)";
+	jhugenDecayVar = "p0plus_VAJHU_NEW/(p0plus_VAJHU_NEW+p1plus_decay_VAJHU_NEW)";
+      }
     }
 
     // gg->2h-
     if (tests.at(test) == TVar::PTZZ_2hminus_4l ) {
-      melaVar = "Psmh/(Psmh+Ptwohminus)";
+      melaVar = "Psmh/(Psmh+Ptwohminus*0.4)";
       jhugenVar = "dXsec_HZZ_JHU/(dXsec_HZZ_JHU+dXsec_PTZZ_2hminus_JHU)";
+      
+      if ( fromMELAPackage ) {
+	melaVar = "p0plus_mela_NEW/(p0plus_mela_NEW+p2hminus_mela_NEW*0.4)";
+	jhugenVar = "p0plus_VAJHU_NEW/(p0plus_VAJHU_NEW+p2hminus_VAJHU_NEW)";
+      }
     }
-
+    
     // gg->2h+
     if (tests.at(test) == TVar::TZZ_2hplus_4l ) {
-      melaVar = "Psmh/(Psmh+Ptwohplus)";
+      melaVar = "Psmh/(Psmh+Ptwohplus*0.4)";
       jhugenVar = "dXsec_HZZ_JHU/(dXsec_HZZ_JHU+dXsec_TZZ_2hplus_JHU)";
+      if ( fromMELAPackage ) {
+	melaVar = "p0plus_mela_NEW/(p0plus_mela_NEW+p2hplus_mela_NEW*0.4)";
+	jhugenVar = "p0plus_VAJHU_NEW/(p0plus_VAJHU_NEW+p2hplus_VAJHU_NEW)";
+      }
     }
 
     // gg->2b+
     if (tests.at(test) == TVar::TZZ_2bplus_4l ) {
-      melaVar = "Psmh/(Psmh+Ptwobplus)";
+      melaVar = "Psmh/(Psmh+Ptwobplus*2.3e-07)";
       jhugenVar = "dXsec_HZZ_JHU/(dXsec_HZZ_JHU+dXsec_TZZ_2bplus_JHU)";
+      if ( fromMELAPackage ) {
+	melaVar = "p0plus_mela_NEW/(p0plus_mela_NEW+p2bplus_mela_NEW*2.3e-07)";
+	jhugenVar = "p0plus_VAJHU_NEW/(p0plus_VAJHU_NEW+p2bplus_VAJHU_NEW)";
+      }
     }
     
-    
-    
-
     for ( int flavor = 1; flavor < 5; flavor ++ ) {
 
-      TGraph* MELA = makeROCcurve(melaVar,500,0,1,4,1,3,flavor,sigFile,bkgFile,testName);
-      TGraph* JHUgen = makeROCcurve(jhugenVar,500,0,1,1,2,3,flavor,sigFile,bkgFile,testName);
+      if ( flavor != 3 ) continue;
+      
+      int nbins = 200;
+      
+      TGraph* MELA = makeROCcurve(melaVar,nbins,0,1,4,1,3,flavor,sigFile,bkgFile,testName);
+      TGraph* JHUgen = makeROCcurve(jhugenVar,nbins,0,1,1,2,3,flavor,sigFile,bkgFile,testName);
       TGraph* MELA_decay; 
       TGraph* JHUgen_decay;
       
       if ( drawdecay) {
-	MELA_decay = makeROCcurve(melaDecayVar,500,0,1,2,1,3,flavor,sigFile,bkgFile,testName);
-	JHUGen_decay = makeROCcurve(jhugenDecayVar,500,0,1,6,2,3,flavor,sigFile,bkgFile,testName);
+	MELA_decay = makeROCcurve(melaDecayVar,nbins,0,1,2,1,3,flavor,sigFile,bkgFile,testName);
+	JHUgen_decay = makeROCcurve(jhugenDecayVar,nbins,0,1,6,2,3,flavor,sigFile,bkgFile,testName);
       }
       MELA->Draw("AC");
       if ( drawdecay ) 
