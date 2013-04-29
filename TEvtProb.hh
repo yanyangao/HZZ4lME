@@ -45,6 +45,7 @@ public:
   //--------------------
   TVar::Process _process;
   TVar::MatrixElement _matrixElement;
+  TVar::Production _production;
   HiggsCSandWidth *myCSW_;
   double _hmass;
   double _hwidth;
@@ -60,9 +61,11 @@ public:
   //----------------------
   void SetProcess(TVar::Process tmp) { _process = tmp; }
   void SetMatrixElement(TVar::MatrixElement tmp){ _matrixElement = tmp; }
+  void SetProduction(TVar::Production tmp){ _production = tmp; }
   double XsecCalc(TVar::Process proc,
-		         const hzz4l_event_type &hzz4l_event,
-			 TVar::VerbosityLevel verbosity);
+		  TVar::Production production,
+		  const hzz4l_event_type &hzz4l_event,
+		  TVar::VerbosityLevel verbosity);
   // this appears to be some kind of 
   // way of setting MCFM parameters through
   // an interface defined in TMCFM.hh

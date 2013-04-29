@@ -91,7 +91,8 @@ void CalculateAnalyticalMELA(float mzz_,float m1_, float m2_,
 
     checkZorder(m1_,m2_,hs_,h1_,h2_,phi_,phi1_);
     mzz.setVal(mzz_);  m1.setVal(m1_);   m2.setVal(m2_);
-    hs.setVal(hs_);  h1.setVal(h1_);   h2.setVal(h2_);  
+    hs.setVal(hs_);   // h1.setVal(h1_);   h2.setVal(h2_);  
+    h1.setVal(-h1_);   h2.setVal(-h2_);  
     phi.setVal(phi_);  phi1.setVal(phi1_); 
     
 
@@ -569,7 +570,7 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   if (verbosity >= TVar::INFO) printf("Total number of events = %d\n", Ntot);
   
   for(int ievt = 0; ievt < Ntot; ievt++){
-    if (verbosity >= TVar::INFO && (ievt % 100 == 0)) 
+    if (verbosity >= TVar::INFO && (ievt % 1000 == 0)) 
       std::cout << "Doing Event: " << ievt << std::endl;
     
     // if ( ievt == 43167 ) continue;
@@ -682,55 +683,55 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     // calculate the ZZ using MCFM
     Xcal2.SetMatrixElement(TVar::MCFM);
     if ( mflavor < 3  )
-      dXsec_ZZ_MCFM = Xcal2.XsecCalc(TVar::ZZ_4e,hzz4l_event,verbosity);
+      dXsec_ZZ_MCFM = Xcal2.XsecCalc(TVar::ZZ_4e, TVar::GG, hzz4l_event,verbosity);
     else 
-      dXsec_ZZ_MCFM = Xcal2.XsecCalc(TVar::ZZ_2e2m,hzz4l_event,verbosity);
+      dXsec_ZZ_MCFM = Xcal2.XsecCalc(TVar::ZZ_2e2m, TVar::GG, hzz4l_event,verbosity);
 
     // trying to implement the integral
     
-    dXsec_HZZ_MCFM = Xcal2.XsecCalc(TVar::HZZ_4l,hzz4l_event,verbosity);
+    dXsec_HZZ_MCFM = Xcal2.XsecCalc(TVar::HZZ_4l, TVar::GG, hzz4l_event,verbosity);
 
     // calculate X->ZZ using JHUGen
     Xcal2.SetMatrixElement(TVar::JHUGen);
     
     // 0+ 
-    dXsec_HZZ_JHU =  Xcal2.XsecCalc(TVar::HZZ_4l,hzz4l_event,verbosity);
+    dXsec_HZZ_JHU =  Xcal2.XsecCalc(TVar::HZZ_4l, TVar::GG, hzz4l_event,verbosity);
 
     // 0-
-    dXsec_PSHZZ_JHU = Xcal2.XsecCalc(TVar::PSHZZ_4l,hzz4l_event,verbosity);
+    dXsec_PSHZZ_JHU = Xcal2.XsecCalc(TVar::PSHZZ_4l, TVar::GG, hzz4l_event,verbosity);
     pseudoME =  dXsec_HZZ_JHU / ( dXsec_HZZ_JHU + 6*dXsec_PSHZZ_JHU );
     
     // 0h+
-    dXsec_HDHZZ_JHU = Xcal2.XsecCalc(TVar::HDHZZ_4l,hzz4l_event,verbosity);
+    dXsec_HDHZZ_JHU = Xcal2.XsecCalc(TVar::HDHZZ_4l, TVar::GG, hzz4l_event,verbosity);
 
     // 1-
-    dXsec_VZZ_JHU = Xcal2.XsecCalc(TVar::VZZ_4l,hzz4l_event,verbosity);    
+    dXsec_VZZ_JHU = Xcal2.XsecCalc(TVar::VZZ_4l, TVar::QQB, hzz4l_event,verbosity);    
     
     // 1+
-    dXsec_AVZZ_JHU = Xcal2.XsecCalc(TVar::AVZZ_4l,hzz4l_event,verbosity);   
+    dXsec_AVZZ_JHU = Xcal2.XsecCalc(TVar::AVZZ_4l, TVar::QQB, hzz4l_event,verbosity);   
 
     // 1- decay only
-    dXsec_VZZ_DECAY_JHU = Xcal2.XsecCalc(TVar::VZZ_DECAY_4l,hzz4l_event,verbosity); 
+    dXsec_VZZ_DECAY_JHU = Xcal2.XsecCalc(TVar::VZZ_4l, TVar::INDEPENDENT, hzz4l_event,verbosity); 
 
     // 1+ decay only 
-    dXsec_AVZZ_DECAY_JHU = Xcal2.XsecCalc(TVar::AVZZ_DECAY_4l,hzz4l_event,verbosity); 
+    dXsec_AVZZ_DECAY_JHU = Xcal2.XsecCalc(TVar::AVZZ_4l, TVar::INDEPENDENT, hzz4l_event,verbosity); 
     
     // 2m+ 
-    dXsec_TZZ_JHU = Xcal2.XsecCalc(TVar::TZZ_4l,hzz4l_event,verbosity);
-    dXsec_QQB_TZZ_JHU = Xcal2.XsecCalc(TVar::QQB_TZZ_4l,hzz4l_event,verbosity);
+    dXsec_TZZ_JHU = Xcal2.XsecCalc(TVar::TZZ_4l, TVar::GG, hzz4l_event,verbosity);
+    dXsec_QQB_TZZ_JHU = Xcal2.XsecCalc(TVar::QQB_TZZ_4l,TVar::QQB, hzz4l_event,verbosity);
     graviME =  dXsec_HZZ_JHU / ( dXsec_HZZ_JHU + 5*dXsec_QQB_TZZ_JHU );
 
     // 2m+ decay
-    dXsec_TZZ_DECAY_JHU = Xcal2.XsecCalc(TVar::TZZ_DECAY_4l,hzz4l_event,verbosity);
+    dXsec_TZZ_DECAY_JHU = Xcal2.XsecCalc(TVar::TZZ_4l, TVar::INDEPENDENT, hzz4l_event,verbosity);
 
     // 2h-
-    dXsec_PTZZ_2hminus_JHU = Xcal2.XsecCalc(TVar::PTZZ_2hminus_4l,hzz4l_event,verbosity);
+    dXsec_PTZZ_2hminus_JHU = Xcal2.XsecCalc(TVar::PTZZ_2hminus_4l, TVar::GG, hzz4l_event,verbosity);
 
     // 2h+
-    dXsec_TZZ_2hplus_JHU = Xcal2.XsecCalc(TVar::TZZ_2hplus_4l,hzz4l_event,verbosity);
+    dXsec_TZZ_2hplus_JHU = Xcal2.XsecCalc(TVar::TZZ_2hplus_4l, TVar::GG, hzz4l_event,verbosity);
 
     // 2b+
-    dXsec_TZZ_2bplus_JHU = Xcal2.XsecCalc(TVar::TZZ_2bplus_4l,hzz4l_event,verbosity);
+    dXsec_TZZ_2bplus_JHU = Xcal2.XsecCalc(TVar::TZZ_2bplus_4l, TVar::GG, hzz4l_event,verbosity);
 
     // use the same constants defined in 
     // http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/UserCode/CJLST/ZZMatrixElement/MELA/src/Mela.cc?revision=1.40&view=markup
@@ -764,7 +765,7 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     dXsec_PTZZ_2hminus_JHU *= 1e+10;
     dXsec_TZZ_2hplus_JHU   *= 1e+10;
 
-    /*
+
     // constants for the analytical MELA
     Ptwomplus_gg_        *= 2e-07; 
     Ptwomplus_qq_        *= 2e-07; 
@@ -777,7 +778,6 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     Ptwohplus_           *= 0.4;
     Ptwobplus_           *= 2.3e-07;
     // ---------------------------------
-    */
 
     // 
     // calculate the last ZZ MCFM decay only MCFM
@@ -815,9 +815,9 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
 	// calculate the ZZ using MCFM
 	Xcal2.SetMatrixElement(TVar::MCFM);
 	if ( mflavor < 3  )
-	  dXsec_ZZ_DECAY_MCFM += Xcal2.XsecCalc(TVar::ZZ_4e,hzz4l_event,verbosity);
+	  dXsec_ZZ_DECAY_MCFM += Xcal2.XsecCalc(TVar::ZZ_4e, TVar::GG, hzz4l_event,verbosity);
 	else 
-	  dXsec_ZZ_DECAY_MCFM += Xcal2.XsecCalc(TVar::ZZ_2e2m,hzz4l_event,verbosity);
+	  dXsec_ZZ_DECAY_MCFM += Xcal2.XsecCalc(TVar::ZZ_2e2m, TVar::GG, hzz4l_event,verbosity);
       }
     }
     dXsec_ZZ_DECAY_MCFM =  dXsec_ZZ_DECAY_MCFM /  float ( (gridsize_hs + 1) * (gridsize_phi1 +1 )); 

@@ -19,16 +19,23 @@ public:
     DEBUG = 2
   };
   enum MatrixElement{
-    MCFM,
-    MadGraph,
-    JHUGen
+    MCFM = 0,
+    MadGraph = 1,
+    JHUGen = 2,
+    ANALYTICAL = 3
   };
+  enum Production{
+    GG = 0,
+    QQB = 1,
+    INDEPENDENT=2
+  };
+
   enum Process{
-    ZZ_2e2m    =0, // eemm
+    ZZ_2e2m  =0, // eemm
     HZZ_4l   =1, // 0+
     PSHZZ_4l =2, // 0-
-    TZZ_4l =3, // spin 2 couplings have to set in TEvtProb.cc
-    VZZ_4l =4, // spin 1 couplings have to set in TEvtProb.cc
+    TZZ_4l =3,   // spin 2 couplings have to set in TEvtProb.cc
+    VZZ_4l =4,   // spin 1 couplings have to set in TEvtProb.cc
     ZZ_4e    =5,
     GGZZ_4l = 6,
     AVZZ_4l = 7,
@@ -40,8 +47,24 @@ public:
     PTZZ_2hminus_4l = 13, // 2h-
     TZZ_2hplus_4l = 14, // 2h+
     TZZ_2bplus_4l = 15, // 2b+
+    SummedBackgrounds = 16, // SuperMela Background standin process.
     Null
   };
+  enum LeptonFlavor{
+    Flavor_Dummy = 0, // legacy code runs on 1/2/3
+    Flavor_4e    = 1,
+    Flavor_4mu   = 2,
+    Flavor_2e2mu = 3    
+  };
+  enum SuperMelaSyst{
+    SMSyst_None      = 0, // nominal value
+    SMSyst_ScaleUp   = 1, //Scale Uncertaintie
+    SMSyst_ScaleDown = 2,
+    SMSyst_ResUp     = 3, // Resolution Uncertainty
+    SMSyst_ResDown   = 4
+  };
+
+
   //---------------------------------
   // Function
   //---------------------------------
@@ -78,6 +101,8 @@ public:
       return TString("TZZ_2hplus_4l");
     else if(temp==TVar::TZZ_2bplus_4l   ) 
       return TString("TZZ_2bplus_4l");
+    else if(temp==TVar::SummedBackgrounds   ) 
+      return TString("SummedBackgrounds");
     else 
       return TString("UnKnown");
   };

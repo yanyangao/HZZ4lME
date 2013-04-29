@@ -299,7 +299,9 @@ double SumMatrixElementPDF(TVar::Process process, mcfm_event_type* mcfm_event,do
 //
 // Test code from Markus to calculate the HZZ cross-section
 // 
-double JHUGenMatEl(TVar::Process process, mcfm_event_type* mcfm_event, double MReso, double GaReso, double *xggcoupl, double *xvvcoupl) 
+double JHUGenMatEl(TVar::Process process, TVar::Production production, mcfm_event_type* mcfm_event, double MReso, double GaReso, 
+		   double Hggcoupl[3][2], double Hvvcoupl[4][2], double Zqqcoupl[2][2], double Zvvcoupl[2][2],
+		   double Gqqcoupl[2][2], double Gggcoupl[5][2], double Gvvcoupl[10][2])
 {
   // input unit = GeV/100 such that 125GeV is 1.25 in the code
   // this needs to be applied for all the p4
@@ -354,12 +356,15 @@ double JHUGenMatEl(TVar::Process process, mcfm_event_type* mcfm_event, double MR
       MYIDUP[3]=-8;
   }
   if ( process == TVar::HZZ_4l || process == TVar::PSHZZ_4l || process == TVar::HDHZZ_4l  ) {
-    __modhiggs_MOD_evalamp_gg_h_vv(p4, &MReso,  &GaReso, xggcoupl, xvvcoupl, MYIDUP, &MatElSq);
+    __modhiggs_MOD_evalamp_gg_h_vv(p4, &MReso,  &GaReso, Hggcoupl, Hvvcoupl, MYIDUP, &MatElSq);
   }
-  if ( process == TVar::TZZ_4l || process == TVar::PTZZ_2hminus_4l || process == TVar::TZZ_2hplus_4l || process == TVar::TZZ_2bplus_4l ) {
-    __modgraviton_MOD_evalamp_gg_g_vv(p4, &MReso,  &GaReso, xggcoupl, xvvcoupl, MYIDUP, &MatElSq);
+  if ( production == TVar::GG ) {
+    if ( process == TVar::TZZ_4l || process == TVar::PTZZ_2hminus_4l || process == TVar::TZZ_2hplus_4l || process == TVar::TZZ_2bplus_4l ) {
+      __modgraviton_MOD_evalamp_gg_g_vv(p4, &MReso,  &GaReso, Gggcoupl, Gvvcoupl, MYIDUP, &MatElSq);
+    }
   }
-  if ( process == TVar::TZZ_DECAY_4l || process  == TVar::VZZ_DECAY_4l || process == TVar::AVZZ_DECAY_4l ) {
+  if ( production == TVar::INDEPENDENT ) {
+
     // special treatment of the 4-vectors
     // From Markus: 
     // Note that the momentum no.2, p(1:4,2), is a dummy which is not used. Momentum no.1,
@@ -385,21 +390,24 @@ double JHUGenMatEl(TVar::Process process, mcfm_event_type* mcfm_event, double MR
       P[ipar][3] = mcfm_event->p[ipar].Pz()/100.;
     }
     
-    if ( process == TVar::TZZ_DECAY_4l ) 
-      __modgraviton_MOD_evalamp_g_vv(P, &MReso,  &GaReso, xvvcoupl, MYIDUP, &MatElSq);
+    if ( process == TVar::TZZ_4l ) 
+      __modgraviton_MOD_evalamp_g_vv(P, &MReso,  &GaReso, Gvvcoupl, MYIDUP, &MatElSq);
 
-    if ( process == TVar::VZZ_DECAY_4l || process == TVar::AVZZ_DECAY_4l )
-      __modzprime_MOD_evalamp_zprime_vv(P, &MReso,  &GaReso, xvvcoupl, MYIDUP, &MatElSq);
+    if ( process == TVar::VZZ_4l || process == TVar::AVZZ_4l )
+      __modzprime_MOD_evalamp_zprime_vv(P, &MReso,  &GaReso, Gvvcoupl, MYIDUP, &MatElSq);
   } 
-  if ( process == TVar::QQB_TZZ_4l ) {
-    // -- YY: note that even if it is called xggcouplings, we are only testing xqq!
-    __modgraviton_MOD_evalamp_qqb_g_vv(p4, &MReso,  &GaReso, xggcoupl, xvvcoupl, MYIDUP, &MatElSq);
+  
+  if ( production == TVar::QQB ) {
+    if ( process == TVar::TZZ_4l ) {
+      // -- YY: note that even if it is called xggcouplings, we are only testing xqq!
+      __modgraviton_MOD_evalamp_qqb_g_vv(p4, &MReso,  &GaReso, Gggcoupl, Gvvcoupl, MYIDUP, &MatElSq);
+    }
+    if ( process == TVar::VZZ_4l || process == TVar::AVZZ_4l ) {
+      // -- YY: note that even if it is called xggcouplings, we are only testing xqq!
+      __modzprime_MOD_evalamp_qqb_zprime_vv(p4, &MReso,  &GaReso, Zqqcoupl, Zvvcoupl, MYIDUP, &MatElSq);
+    }
   }
-  if ( process == TVar::VZZ_4l || process == TVar::AVZZ_4l) {
-    // -- YY: note that even if it is called xggcouplings, we are only testing xqq!
-    __modzprime_MOD_evalamp_qqb_zprime_vv(p4, &MReso,  &GaReso, xggcoupl, xvvcoupl, MYIDUP, &MatElSq);
-  }
-
+  
   /*
   printf("\n ");
   std::cout << "resoance = " << MReso *100. << ", width = " << GaReso*100. << "\n";
@@ -414,7 +422,6 @@ double JHUGenMatEl(TVar::Process process, mcfm_event_type* mcfm_event, double MR
   // 
   double constant = 1.45/pow(10, 8);
   return MatElSq*constant;
-
 }
 
 
