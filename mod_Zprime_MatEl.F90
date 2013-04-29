@@ -18,7 +18,8 @@
      subroutine EvalAmp_qqb_Zprime_VV(p,M_Reso,Ga_Reso,qqcoupl,vvcoupl,MY_IDUP,sum)
       implicit none
       real(dp), intent(out) ::  sum
-      real(dp), intent(in) :: p(4,6),M_Reso,Ga_Reso,qqcoupl(1:2),vvcoupl(1:2)
+      real(dp), intent(in) :: p(4,6),M_Reso,Ga_Reso
+      complex(dp) :: qqcoupl(1:2),vvcoupl(1:2)
       integer, intent(in) :: MY_IDUP(6:9)
       real(dp) :: pin(4,4)
       complex(dp) :: A(2),qL,qR
@@ -151,7 +152,8 @@ enddo
      subroutine calcHelAmp(ordering,p,M_Reso,Ga_Reso,vvcoupl,i1,i3,i4,A)
      implicit none
      integer :: ordering(1:4),i1,i3,i4,l1,l2,l3,l4
-     real(dp) :: p(1:4,1:6),M_Reso,Ga_Reso,vvcoupl(1:2)
+     real(dp) :: p(1:4,1:6),M_Reso,Ga_Reso
+     complex(dp) :: vvcoupl(1:2)
      complex(dp) :: propG, propZ1, propZ2
      real(dp) :: s, pin(4,4)
      complex(dp) :: A(1:1), sp(4,4)
@@ -223,8 +225,8 @@ enddo
 
       subroutine qqZprimeZZampl(p,sp,M_Reso,Ga_Reso,vvcoupl,res)
       implicit none
-      real(dp), intent(in) :: p(4,4),M_Reso,Ga_Reso,vvcoupl(1:2)
-      complex(dp), intent(in) :: sp(4,4)
+      real(dp), intent(in) :: p(4,4),M_Reso,Ga_Reso
+      complex(dp), intent(in) :: sp(4,4),vvcoupl(1:2)
       complex(dp), intent(out) :: res
       complex(dp) :: e1_e2, e1_e3, e1_e4
       complex(dp) :: e2_e3, e2_e4
@@ -242,8 +244,8 @@ enddo
       include "includeVars.F90"
 
 
-      zprime_zz_1 = dcmplx( vvcoupl(1) )
-      zprime_zz_2 = dcmplx( vvcoupl(2) )
+      zprime_zz_1 =  vvcoupl(1) 
+      zprime_zz_2 =  vvcoupl(2) 
 
 
 
@@ -362,7 +364,8 @@ enddo
      subroutine EvalAmp_Zprime_VV(p,M_Reso,Ga_Reso,vvcoupl,MY_IDUP,sum)
       implicit none
       real(dp), intent(out) ::  sum
-      real(dp), intent(in) :: p(4,6),M_Reso,Ga_Reso,vvcoupl(1:2)
+      real(dp), intent(in) :: p(4,6),M_Reso,Ga_Reso
+      complex(dp) :: vvcoupl(1:2)
       integer, intent(in) :: MY_IDUP(6:9)
       real(dp) :: pin(4,4)
       complex(dp) :: A(2)
@@ -491,7 +494,8 @@ enddo
      subroutine calcHelAmp2(ordering,p,M_Reso,Ga_Reso,vvcoupl,i1,i3,i4,A)
      implicit none
      integer :: ordering(1:4),i1,i3,i4,l1,l2,l3,l4
-     real(dp) :: p(1:4,1:6),M_Reso,Ga_Reso,vvcoupl(1:2)
+     real(dp) :: p(1:4,1:6),M_Reso,Ga_Reso
+     complex(dp) :: vvcoupl(1:2)
      complex(dp) :: propZ1, propZ2
      real(dp) :: s, pin(4,4)
      complex(dp) :: A(1:1), sp(4,4)
@@ -539,7 +543,8 @@ enddo
 
       subroutine ZprimeZZampl(p,sp,M_Reso,Ga_Reso,vvcoupl,res)
       implicit none
-      real(dp), intent(in) :: p(4,4),M_Reso,Ga_Reso,vvcoupl(1:2)
+      real(dp), intent(in) :: p(4,4),M_Reso,Ga_Reso
+      complex(dp) :: vvcoupl(1:2)
       complex(dp), intent(in) :: sp(4,4)
       complex(dp), intent(out) :: res
       complex(dp) :: e1_e2, e1_e3, e1_e4
@@ -558,8 +563,8 @@ enddo
       include "includeVars.F90"
 
 
-      zprime_zz_1 = dcmplx( vvcoupl(1) )
-      zprime_zz_2 = dcmplx( vvcoupl(2) )
+      zprime_zz_1 =  vvcoupl(1) 
+      zprime_zz_2 =  vvcoupl(2) 
 
 
 

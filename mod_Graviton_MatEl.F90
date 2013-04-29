@@ -18,7 +18,8 @@
       subroutine EvalAmp_gg_G_VV(p,M_Reso,Ga_Reso,acoupl,bcoupl,MY_IDUP,sum)                         ! modify p -> pp
       implicit none
       real(dp), intent(out) ::  sum
-      real(dp), intent(in) :: p(4,6),M_Reso,Ga_Reso,acoupl(1:5),bcoupl(1:10)
+      real(dp), intent(in) :: p(4,6),M_Reso,Ga_Reso
+      complex(dp) :: acoupl(1:5),bcoupl(1:10)
       integer, intent(in) :: MY_IDUP(6:9)
       complex(dp) :: A(2)
       integer :: i1,i2,i3,i4,ordering(1:4)
@@ -148,7 +149,8 @@ enddo
      subroutine calcHelAmp_gg(ordering,p,M_Reso,Ga_Reso,acoupl,bcoupl,i1,i2,i3,i4,A)
      implicit none
      integer :: ordering(1:4),i1,i2,i3,i4,l1,l2,l3,l4
-     real(dp) :: p(1:4,1:6),M_Reso,Ga_Reso,acoupl(1:5),bcoupl(1:10)
+     real(dp) :: p(1:4,1:6),M_Reso,Ga_Reso
+     complex(dp) :: acoupl(1:5),bcoupl(1:10)
      complex(dp) :: propG, propZ1, propZ2
      real(dp) :: s, pin(4,4)
      complex(dp) :: A(1:1), sp(4,4)
@@ -223,7 +225,8 @@ enddo
      subroutine EvalAmp_qqb_G_VV(p,M_Reso,Ga_Reso,acoupl,bcoupl,MY_IDUP,sum)
       implicit none
       real(dp), intent(out) ::  sum
-      real(dp), intent(in) :: p(4,6),M_Reso,Ga_Reso,acoupl(1:2),bcoupl(1:10)
+      real(dp), intent(in) :: p(4,6),M_Reso,Ga_Reso
+      complex(dp) :: acoupl(1:2),bcoupl(1:10)
       integer, intent(in) :: MY_IDUP(6:9)
       complex(dp) :: A(2)
       integer :: i1,i2,i3,i4,ordering(1:4)
@@ -366,7 +369,8 @@ enddo
      subroutine calcHelAmp_qq(ordering,p,M_Reso,Ga_Reso,acoupl,bcoupl,i1,i3,i4,A)
      implicit none
      integer :: ordering(1:4),i1,i3,i4,l1,l2,l3,l4
-     real(dp) :: p(1:4,1:6),M_Reso,Ga_Reso,acoupl(1:2),bcoupl(1:10)
+     real(dp) :: p(1:4,1:6),M_Reso,Ga_Reso
+     complex(dp) :: acoupl(1:2),bcoupl(1:10)
      complex(dp) :: propG, propZ1, propZ2
      real(dp) :: s, pin(4,4)
      complex(dp) :: A(1:1), sp(4,4)
@@ -433,7 +437,8 @@ enddo
 
       subroutine qqGZZampl(p,sp,M_Reso,Ga_Reso,acoupl,bcoupl,res)
       implicit none
-      real(dp), intent(in) :: p(4,4),M_Reso,Ga_Reso,acoupl(1:2),bcoupl(1:10)
+      real(dp), intent(in) :: p(4,4),M_Reso,Ga_Reso
+      complex(dp) :: acoupl(1:2),bcoupl(1:10)
       complex(dp), intent(in) :: sp(4,4)
       complex(dp), intent(out) :: res
       complex(dp) :: e1_e2, e1_e3, e1_e4
@@ -454,16 +459,16 @@ enddo
       include "includeVars.F90"
 
 
-      b1 = dcmplx(bcoupl(1))
-      b2 = dcmplx(bcoupl(2))
-      b3 = dcmplx(bcoupl(3))
-      b4 = dcmplx(bcoupl(4))
-      b5 = dcmplx(bcoupl(5))
-      b6 = dcmplx(bcoupl(6))
-      b7 = dcmplx(bcoupl(7))
-      b8 = dcmplx(bcoupl(8))
-      b9 = dcmplx(bcoupl(9))
-      b10= dcmplx(bcoupl(10))
+      b1 = bcoupl(1)
+      b2 = bcoupl(2)
+      b3 = bcoupl(3)
+      b4 = bcoupl(4)
+      b5 = bcoupl(5)
+      b6 = bcoupl(6)
+      b7 = bcoupl(7)
+      b8 = bcoupl(8)
+      b9 = bcoupl(9)
+      b10= bcoupl(10)
 
 
 
@@ -607,7 +612,8 @@ enddo
 
       subroutine ggGZZampl(p,sp,M_Reso,Ga_Reso,acoupl,bcoupl,res)
       implicit none
-      real(dp), intent(in) :: p(4,4),M_Reso,Ga_Reso,acoupl(1:5),bcoupl(1:10)
+      real(dp), intent(in) :: p(4,4),M_Reso,Ga_Reso
+      complex(dp) :: acoupl(1:5),bcoupl(1:10)
       complex(dp), intent(in) :: sp(4,4)
       complex(dp), intent(out) :: res
       complex(dp) :: e1_e2, e1_e3, e1_e4
@@ -629,22 +635,22 @@ enddo
       real(dp) :: rr_gam, rr
       include "includeVars.F90"
 
-      a1 = dcmplx(acoupl(1))
-      a2 = dcmplx(acoupl(2))
-      a3 = dcmplx(acoupl(3))
-      a4 = dcmplx(acoupl(4))
-      a5 = dcmplx(acoupl(5))
+      a1 = acoupl(1)
+      a2 = acoupl(2)
+      a3 = acoupl(3)
+      a4 = acoupl(4)
+      a5 = acoupl(5)
 
-      b1 = dcmplx(bcoupl(1))
-      b2 = dcmplx(bcoupl(2))
-      b3 = dcmplx(bcoupl(3))
-      b4 = dcmplx(bcoupl(4))
-      b5 = dcmplx(bcoupl(5))
-      b6 = dcmplx(bcoupl(6))
-      b7 = dcmplx(bcoupl(7))
-      b8 = dcmplx(bcoupl(8))
-      b9 = dcmplx(bcoupl(9))
-      b10= dcmplx(bcoupl(10))
+      b1 = bcoupl(1)
+      b2 = bcoupl(2)
+      b3 = bcoupl(3)
+      b4 = bcoupl(4)
+      b5 = bcoupl(5)
+      b6 = bcoupl(6)
+      b7 = bcoupl(7)
+      b8 = bcoupl(8)
+      b9 = bcoupl(9)
+      b10= bcoupl(10)
 
       new = .true.
 
@@ -1019,7 +1025,8 @@ enddo
      subroutine EvalAmp_G_VV(p,M_Reso,Ga_Reso,bcoupl,MY_IDUP,sum)
       implicit none
       real(dp), intent(out) ::  sum
-      real(dp), intent(in) :: p(4,6),M_Reso,Ga_Reso,bcoupl(1:10)
+      real(dp), intent(in) :: p(4,6),M_Reso,Ga_Reso
+      complex(dp) :: bcoupl(1:10)
       integer, intent(in) :: MY_IDUP(6:9)
       complex(dp) :: A(2)
       integer :: i1,i2,i3,i4,ordering(1:4)
@@ -1158,7 +1165,8 @@ enddo
      subroutine calcHelAmp2(ordering,p,M_Reso,Ga_Reso,bcoupl,i1,i3,i4,A)
      implicit none
      integer :: ordering(1:4),i1,i3,i4,l1,l2,l3,l4,mu,nu
-     real(dp) :: p(1:4,1:6),M_Reso,Ga_Reso,bcoupl(1:10)
+     real(dp) :: p(1:4,1:6),M_Reso,Ga_Reso
+     complex(dp) :: bcoupl(1:10)
      complex(dp) :: propZ1, propZ2
      real(dp) :: s, pin(4,4)
      complex(dp) :: A(1:1), sp(0:4,1:4)
@@ -1224,7 +1232,8 @@ enddo
 
       subroutine GZZampl(p,sp,M_Reso,Ga_Reso,bcoupl,i1,res)
       implicit none
-      real(dp), intent(in) :: p(4,4),M_Reso,Ga_Reso,bcoupl(1:10)
+      real(dp), intent(in) :: p(4,4),M_Reso,Ga_Reso
+      complex(dp) :: bcoupl(1:10)
       complex(dp), intent(in) :: sp(0:4,4)
       integer,intent(in) :: i1
       complex(dp), intent(out) :: res
@@ -1247,16 +1256,16 @@ enddo
       include "includeVars.F90"
 
 
-      b1 = dcmplx(bcoupl(1))
-      b2 = dcmplx(bcoupl(2))
-      b3 = dcmplx(bcoupl(3))
-      b4 = dcmplx(bcoupl(4))
-      b5 = dcmplx(bcoupl(5))
-      b6 = dcmplx(bcoupl(6))
-      b7 = dcmplx(bcoupl(7))
-      b8 = dcmplx(bcoupl(8))
-      b9 = dcmplx(bcoupl(9))
-      b10= dcmplx(bcoupl(10))
+      b1 = bcoupl(1)
+      b2 = bcoupl(2)
+      b3 = bcoupl(3)
+      b4 = bcoupl(4)
+      b5 = bcoupl(5)
+      b6 = bcoupl(6)
+      b7 = bcoupl(7)
+      b8 = bcoupl(8)
+      b9 = bcoupl(9)
+      b10= bcoupl(10)
 
 
 
