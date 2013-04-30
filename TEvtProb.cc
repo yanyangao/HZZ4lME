@@ -170,7 +170,20 @@ double TEvtProb::XsecCalc(TVar::Process proc, TVar::Production production, const
 	Hvvcoupl[2][0] = 0.0;
 	Hvvcoupl[3][0] = 0.0;
       }
-      
+      // 0-mixture complex cp 
+      // g1 = 1 
+      // g2 = g4 = 1 + 2.5 i
+      if ( proc == TVar::HZZ_4l_MIXCP ) {
+	Hvvcoupl[0][0] = 1.0;
+	Hvvcoupl[1][0] = 1.0;
+	Hvvcoupl[2][0] = 0.0;
+	Hvvcoupl[3][0] = 1.0;
+ 
+	Hvvcoupl[0][1] = 0.0;
+	Hvvcoupl[1][1] = 2.5;
+	Hvvcoupl[2][1] = 0.0;
+	Hvvcoupl[3][1] = 2.5;
+      }
       // 2h-
       if ( proc == TVar::PTZZ_2hminus_4l ) {
 	// gg production coupling constants

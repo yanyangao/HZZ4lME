@@ -39,7 +39,11 @@ cvs co -r V00-01-08 -d PDFs UserCode/CJLST/ZZMatrixElement/MELA/src/RooXZsZs_5D.
 cvs co -r V00-01-08 -d PDFs UserCode/CJLST/ZZMatrixElement/MELA/src/RooSpinOne_7D.cc
 cvs co -r V00-01-08 -d PDFs UserCode/CJLST/ZZMatrixElement/MELA/src/RooSpinOne_7D.h
 
-3) Compile code:
+3) Other PDFs
+cvs co -p UserCode/Whitbeck/snowmass2013/src/RooSpinZero_7DComplex.cc  > PDFs/RooSpinZero_7DComplex.cc
+cvs co -p UserCode/Whitbeck/snowmass2013/src/RooSpinZero_7DComplex.h  > PDFs/RooSpinZero_7DComplex.h
+
+4) Compile code:
 
 root -l -n 
 

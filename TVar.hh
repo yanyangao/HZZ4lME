@@ -48,6 +48,7 @@ public:
     TZZ_2hplus_4l = 14, // 2h+
     TZZ_2bplus_4l = 15, // 2b+
     SummedBackgrounds = 16, // SuperMela Background standin process.
+    HZZ_4l_MIXCP = 17,
     Null
   };
   enum LeptonFlavor{
@@ -103,6 +104,8 @@ public:
       return TString("TZZ_2bplus_4l");
     else if(temp==TVar::SummedBackgrounds   ) 
       return TString("SummedBackgrounds");
+    else if(temp==TVar::HZZ_4l_MIXCP   ) 
+      return TString("HZZ_4l_MIXCP");
     else 
       return TString("UnKnown");
   };

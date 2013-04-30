@@ -355,7 +355,7 @@ double JHUGenMatEl(TVar::Process process, TVar::Production production, mcfm_even
       MYIDUP[2]=+8;
       MYIDUP[3]=-8;
   }
-  if ( process == TVar::HZZ_4l || process == TVar::PSHZZ_4l || process == TVar::HDHZZ_4l  ) {
+  if ( process == TVar::HZZ_4l || process == TVar::PSHZZ_4l || process == TVar::HDHZZ_4l || process == TVar::HZZ_4l_MIXCP ) {
     __modhiggs_MOD_evalamp_gg_h_vv(p4, &MReso,  &GaReso, Hggcoupl, Hvvcoupl, MYIDUP, &MatElSq);
   }
   if ( production == TVar::GG ) {

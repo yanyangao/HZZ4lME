@@ -20,6 +20,7 @@
 #include "PDFs/RooSpinOne_7D.h"
 #include "PDFs/RooSpinOne_Decay.h"
 #include "PDFs/RooSpinTwo_Decay.h"
+#include "PDFs/RooSpinZero_7DComplex.h"
 #include "RooRealVar.h"
 #include "math.h"
 
@@ -65,7 +66,7 @@ void checkZorder(float& z1mass, float& z2mass,
 void CalculateAnalyticalMELA(float mzz_,float m1_, float m2_,
 			     float hs_, float h1_, float h2_, 
 			     float phi_, float phi1_,
-			     float &Psmh, 
+			     float &Psmh, float &Pmixcph,
 			     float &Poneminus, float &Poneplus,
 			     float &Poneminus_decay, float &Poneplus_decay,
 			     float &Ptwomplus_gg, float &Ptwomplus_qq, float &Ptwomplus_decay,
@@ -91,8 +92,7 @@ void CalculateAnalyticalMELA(float mzz_,float m1_, float m2_,
 
     checkZorder(m1_,m2_,hs_,h1_,h2_,phi_,phi1_);
     mzz.setVal(mzz_);  m1.setVal(m1_);   m2.setVal(m2_);
-    hs.setVal(hs_);   // h1.setVal(h1_);   h2.setVal(h2_);  
-    h1.setVal(-h1_);   h2.setVal(-h2_);  
+    hs.setVal(hs_);   h1.setVal(h1_);   h2.setVal(h2_);  
     phi.setVal(phi_);  phi1.setVal(phi1_); 
     
 
@@ -118,13 +118,53 @@ void CalculateAnalyticalMELA(float mzz_,float m1_, float m2_,
     RooRealVar R1("R1","R1",.15,0.,1000.);  
     RooRealVar R2("R2","R2",.15,0.,1000.);
     
+    RooRealVar g1("g1","g1",1.,-1000.,1000.);
+    RooRealVar g2("g2","g2",0.,-1000.,1000.);
+    RooRealVar g3("g3","g3",0.,-1000.,1000.);
+    RooRealVar g4("g4","g4",0.,-1000.,1000.);
+
+    RooRealVar g1ValIm("g1ValIm", "g1ValIm", 0, -10, 10);
+    RooRealVar g2ValIm("g2ValIm", "g2ValIm", 0, -10, 10);
+    RooRealVar g3ValIm("g3ValIm", "g3ValIm", 0., -10, 10);
+    RooRealVar g4ValIm("g4ValIm", "g4ValIm", 0, -10, 10);
+    
+    RooRealVar fg2("fg2","f_{g2}",0.,0.,1.0);
+    RooRealVar fg4("fg4","f_{g4}",0.,0.,1.0);
+    RooRealVar phig2("phig2","#phi_{g2}",0.,0.,2*TMath::Pi());
+    RooRealVar phig4("phig4","#phi_{g4}",0.,0.,2*TMath::Pi());
+    
+    // use the parameterization of real and im of the g-couplings
+    int parameterization = 1;
+    
+    
     // - - - - - - - - - - - - - - - -
     // SM Higgs PDF
     // - - - - - - - - - - - - - - - - 
     
-    RooXZsZs_5D SMHiggs("SMHiggs","SMHiggs",m1,m2,h1,h2,phi,a1,p1,a2,p2,a3,p3,mZ,gamZ,mzz,R1,R2);
+    // PDF definition SM Higgs (JP = 0+)
+    RooSpinZero_7DComplex SMHiggs("SMHiggs","SMHiggs",m1,m2,h1,h2,hs,phi,phi1,
+							      a1,p1,a2,p2,a3,p3,
+							      parameterization,
+							      g1,g2,g3,g4,g1ValIm,g2ValIm,g3ValIm,g4ValIm,
+							      fg2,fg4,phig2,phig4,mZ,gamZ,mzz,R1,R2);
     Psmh = SMHiggs.getVal();
     
+    // complex g
+    // g1 = 1, g2 = g4 = 1+2.5i
+    
+    g2.setVal(1.);
+    g2ValIm.setVal(2.5);
+    g4.setVal(1.);
+    g4ValIm.setVal(2.5);
+
+    
+    RooSpinZero_7DComplex Higgsmixcp("Higgsmixcp","Higgsmixcp",m1,m2,h1,h2,hs,phi,phi1,
+							      a1,p1,a2,p2,a3,p3,
+							      parameterization,
+							      g1,g2,g3,g4,g1ValIm,g2ValIm,g3ValIm,g4ValIm,
+							      fg2,fg4,phig2,phig4,mZ,gamZ,mzz,R1,R2);
+    Pmixcph = Higgsmixcp.getVal();
+
     //
     // Spin One parameters
     // 
@@ -180,6 +220,7 @@ void CalculateAnalyticalMELA(float mzz_,float m1_, float m2_,
     // - - - - - - - - - - - - - - - -
     // minimal coupling graviton parameters
     // - - - - - - - - - - - - - - - - 
+    RooRealVar useG("useG","useG",1.,-1000.,1000.);
     RooRealVar c1("c1","c1",1.,-1000.,1000.);
     RooRealVar c2("c2","c2",0.,-1000.,1000.);
     RooRealVar c3("c3","c3",0.,-1000.,1000.);
@@ -188,17 +229,17 @@ void CalculateAnalyticalMELA(float mzz_,float m1_, float m2_,
     RooRealVar c6("c6","c6",0.,-1000.,1000.);
     RooRealVar c7("c7","c7",0.,-1000.,1000.);
 
-    RooRealVar useG("useG","useG",1.,-1000.,1000.);
-    RooRealVar g1("g1","g1",1.,-1000.,1000.);
-    RooRealVar g2("g2","g2",0.,-1000.,1000.);
-    RooRealVar g3("g3","g3",0.,-1000.,1000.);
-    RooRealVar g4("g4","g4",0.,-1000.,1000.);
     RooRealVar g5("g5","g5",1.,-1000.,1000.);
     RooRealVar g6("g6","g6",0.,-1000.,1000.);
     RooRealVar g7("g7","g7",0.,-1000.,1000.);
     RooRealVar g8("g8","g8",0.,-1000.,1000.);
     RooRealVar g9("g9","g9",0.,-1000.,1000.);
     RooRealVar g10("g10","g10",0.,-1000.,1000.);
+
+    g1.setVal(1.);
+    g2.setVal(0.);
+    g3.setVal(0.);
+    g4.setVal(0.);
 
     // 2m+ 
     
@@ -425,9 +466,7 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   float dXsec_PTZZ_2hminus_JHU = 0.;
   float dXsec_TZZ_2hplus_JHU = 0.;
   float dXsec_TZZ_2bplus_JHU = 0.;
-
-  float pseudoME = 0.;
-  float graviME = 0.;
+  float dXsec_HZZ_MIXCP_JHU = 0.;
   
   evt_tree->Branch("dXsec_ZZ_DECAY_MCFM" , &dXsec_ZZ_DECAY_MCFM   ,"dXsec_ZZ_DECAY_MCFM/F");
   evt_tree->Branch("dXsec_ZZ_MCFM"   , &dXsec_ZZ_MCFM   ,"dXsec_ZZ_MCFM/F");
@@ -445,14 +484,13 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   evt_tree->Branch("dXsec_PTZZ_2hminus_JHU" , &dXsec_PTZZ_2hminus_JHU   ,"dXsec_PTZZ_2hminus_JHU/F");
   evt_tree->Branch("dXsec_TZZ_2hplus_JHU"   , &dXsec_TZZ_2hplus_JHU     ,"dXsec_TZZ_2hplus_JHU/F");
   evt_tree->Branch("dXsec_TZZ_2bplus_JHU"   , &dXsec_TZZ_2bplus_JHU     ,"dXsec_TZZ_2bplus_JHU/F");
-  evt_tree->Branch("pseudoME"        , &pseudoME        ,   "pseudoME/F"  );
-  evt_tree->Branch("graviME"         , &graviME         ,   "graviME/F"  );
-
+  evt_tree->Branch("dXsec_HZZ_MIXCP_JHU" , &dXsec_HZZ_MIXCP_JHU ,"dXsec_HZZ_MIXCP_JHU/F");
   
   // 
   // analytical variables
   // 
-  float Psmh_, Poneminus_, Poneplus_;
+  float Psmh_, Pmixcph_;
+  float Poneminus_, Poneplus_;
   float Poneminus_decay_, Poneplus_decay_;
   float Ptwomplus_gg_, Ptwomplus_qq_, Ptwomplus_decay_;
   float Ptwohminus_, Ptwohplus_, Ptwobplus_;
@@ -468,6 +506,7 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   evt_tree->Branch("Ptwohminus"          , &Ptwohminus_         ,"Ptwohminus/F");
   evt_tree->Branch("Ptwohplus"           , &Ptwohplus_          ,"Ptwohplus/F");
   evt_tree->Branch("Ptwobplus"           , &Ptwobplus_          ,"Ptwobplus/F");
+  evt_tree->Branch("Pmixcph"             , &Pmixcph_            ,"Pmixcph/F");
 
  
   float m1,m2,h1,h2,hs,phi,phi1,mzz;  
@@ -594,8 +633,6 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     dXsec_TZZ_2hplus_JHU = 0.;
     dXsec_TZZ_2bplus_JHU = 0.;
     dXsec_ZZ_DECAY_MCFM = 0.;
-    pseudoME = 0.;
-    graviME = 0.;
     
     ch->GetEntry(ievt);           
     
@@ -607,7 +644,8 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     
     // std::cout << "isnan(h2) = " << isnan(h2) << "\n";
     CalculateAnalyticalMELA(mzz, m1, m2, hs, h1, h2, phi, phi1,
-			    Psmh_, Poneminus_, Poneplus_,
+			    Psmh_, Pmixcph_, 
+			    Poneminus_, Poneplus_,
 			    Poneminus_decay_, Poneplus_decay_,
 			    Ptwomplus_gg_, Ptwomplus_qq_, Ptwomplus_decay_,
 			    Ptwohminus_, Ptwohplus_, Ptwobplus_);
@@ -699,10 +737,12 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
 
     // 0-
     dXsec_PSHZZ_JHU = Xcal2.XsecCalc(TVar::PSHZZ_4l, TVar::GG, hzz4l_event,verbosity);
-    pseudoME =  dXsec_HZZ_JHU / ( dXsec_HZZ_JHU + 6*dXsec_PSHZZ_JHU );
     
     // 0h+
     dXsec_HDHZZ_JHU = Xcal2.XsecCalc(TVar::HDHZZ_4l, TVar::GG, hzz4l_event,verbosity);
+
+    // 0 mix cp
+    dXsec_HZZ_MIXCP_JHU = Xcal2.XsecCalc(TVar::HZZ_4l_MIXCP, TVar::GG, hzz4l_event,verbosity);
 
     // 1-
     dXsec_VZZ_JHU = Xcal2.XsecCalc(TVar::VZZ_4l, TVar::QQB, hzz4l_event,verbosity);    
@@ -719,7 +759,6 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     // 2m+ 
     dXsec_TZZ_JHU = Xcal2.XsecCalc(TVar::TZZ_4l, TVar::GG, hzz4l_event,verbosity);
     dXsec_QQB_TZZ_JHU = Xcal2.XsecCalc(TVar::QQB_TZZ_4l,TVar::QQB, hzz4l_event,verbosity);
-    graviME =  dXsec_HZZ_JHU / ( dXsec_HZZ_JHU + 5*dXsec_QQB_TZZ_JHU );
 
     // 2m+ decay
     dXsec_TZZ_DECAY_JHU = Xcal2.XsecCalc(TVar::TZZ_4l, TVar::INDEPENDENT, hzz4l_event,verbosity);
@@ -779,6 +818,7 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     Ptwobplus_           *= 2.3e-07;
     // ---------------------------------
 
+    /*
     // 
     // calculate the last ZZ MCFM decay only MCFM
     // 
@@ -821,7 +861,7 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
       }
     }
     dXsec_ZZ_DECAY_MCFM =  dXsec_ZZ_DECAY_MCFM /  float ( (gridsize_hs + 1) * (gridsize_phi1 +1 )); 
-    
+    */
     evt_tree->Fill();
     
   }//nevent
