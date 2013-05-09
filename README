@@ -40,8 +40,15 @@ cvs co -r V00-01-08 -d PDFs UserCode/CJLST/ZZMatrixElement/MELA/src/RooSpinOne_7
 cvs co -r V00-01-08 -d PDFs UserCode/CJLST/ZZMatrixElement/MELA/src/RooSpinOne_7D.h
 
 3) Other PDFs
+
 cvs co -p UserCode/Whitbeck/snowmass2013/src/RooSpinZero_7DComplex.cc  > PDFs/RooSpinZero_7DComplex.cc
 cvs co -p UserCode/Whitbeck/snowmass2013/src/RooSpinZero_7DComplex.h  > PDFs/RooSpinZero_7DComplex.h
+
+cvs co -p UserCode/ntran/JHUGen/analysis/PDFs/RooSpinOne_Decay.cc  > PDFs/RooSpinOne_Decay.cc 
+cvs co -p UserCode/ntran/JHUGen/analysis/PDFs/RooSpinOne_Decay.h  > PDFs/RooSpinOne_Decay.h
+
+cvs co -p UserCode/ntran/JHUGen/analysis/PDFs/RooSpinTwo_Decay.cc  > PDFs/RooSpinTwo_Decay.cc 
+cvs co -p UserCode/ntran/JHUGen/analysis/PDFs/RooSpinTwo_Decay.h  > PDFs/RooSpinTwo_Decay.h
 
 4) Compile code:
 
