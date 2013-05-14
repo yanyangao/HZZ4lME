@@ -41,7 +41,7 @@ double TEvtProb::XsecCalc(TVar::Process proc, TVar::Production production, const
 			  TVar::VerbosityLevel verbosity){
 
     //Initialize Process
-    SetProcess(proc);
+
     SetProduction(production);
 
     if ( _matrixElement == TVar::MCFM) 
@@ -279,6 +279,50 @@ double TEvtProb::XsecCalc(TVar::Process proc, TVar::Production production, const
 
 }
 
+// Cross-section calculations for H+2j
+double TEvtProb::XsecCalcXJJ(TVar::Process proc, TLorentzVector p4[3], TVar::VerbosityLevel verbosity){
+  
+  // Initialize Process
+  SetProcess(proc);
+  //constants
+  double sqrts = 2.*EBEAM;
+  double W=sqrts*sqrts;
+  
+  double Hggcoupl[3][2];
+	  
+  Hggcoupl[0][0]=1.0;  Hggcoupl[0][1]=0.0;   // first/second number is the real/imaginary part
+  Hggcoupl[1][0]=0.0;  Hggcoupl[1][1]=0.0;  
+  Hggcoupl[2][0]=0.0;  Hggcoupl[2][1]=0.0;    
+
+  // input kinematics 
+  //  !----- p1 and p2 used to get hadronic s
+  //  !----- P(p1)+P(p2) -> j(p3) + j(p4) + H(p5)
+  // p[0] -> p1
+  // p[1] -> p2
+  // p[2] -> p3
+  // p[3] -> p4
+  // p[4] -> p5
+  TLorentzVector p[5];
+  p[2].SetPxPyPzE ( p4[0].Px(), p4[0].Py(), p4[0].Pz(), p4[0].E() );
+  p[3].SetPxPyPzE ( p4[1].Px(), p4[1].Py(), p4[1].Pz(), p4[1].E() );
+  p[4].SetPxPyPzE ( p4[2].Px(), p4[2].Py(), p4[2].Pz(), p4[2].E() );
+
+  // assign the right initial momentum
+  // assumes the events are boosted to have 0 transverse momenta
+  double sysPz= ( p[2] + p[3] + p[4] ).Pz(); 
+  double sysE = ( p[2] + p[3] + p[4] ).Energy(); 
+  double pz0 = (sysE+sysPz)/2.; 
+  double pz1 = -(sysE-sysPz)/2.;
+  p[0].SetPxPyPzE   (0., 0., pz0, TMath::Abs(pz0));
+  p[1].SetPxPyPzE   (0., 0., pz1, TMath::Abs(pz1));
+    
+  
+  // calculate the matrix element squared
+  double dXsec = 0;
+  dXsec = HJJMatEl(proc, p, Hggcoupl, verbosity);
+  
+  return dXsec;
+}
 // this appears to be some kind of 
 // way of setting MCFM parameters through
 // an interface defined in TMCFM.hh

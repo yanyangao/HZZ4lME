@@ -1,4 +1,4 @@
-#include "fstream"
+
 #include "TMath.h"
 #include "TRandom3.h"
 #include "TLorentzVector.h"
@@ -279,7 +279,7 @@ double SumMatrixElementPDF(TVar::Process process, mcfm_event_type* mcfm_event,do
   // FOTRAN convention -5    -4   -3  -2    -1  0 1 2 3 4 5 
   //     parton flavor bbar cbar sbar ubar dbar g d u s c b
   // C++ convention     0     1   2    3    4   5 6 7 8 9 10
-  //
+
   msqjk=msq[5][5];
   if( process==TVar::ZZ_2e2m || process == TVar::ZZ_4e) msqjk=msq[3][7]+msq[7][3];
   // special for the GGZZ 
@@ -425,3 +425,69 @@ double JHUGenMatEl(TVar::Process process, TVar::Production production, mcfm_even
 }
 
 
+
+
+//
+// H+2j ME from Fabrizio Caola
+// 
+
+double  HJJMatEl(TVar::Process process, const TLorentzVector p[5], double Hggcoupl[3][2], TVar::VerbosityLevel verbosity)
+{
+
+  // by default assume only gg productions 
+  // FOTRAN convention -5    -4   -3  -2    -1  0 1 2 3 4 5 
+  //     parton flavor bbar cbar sbar ubar dbar g d u s c b
+  // C++ convention     0     1   2    3    4   5 6 7 8 9 10
+  //2-D matrix is reversed in fortran                                                                                                           
+  // msq[ parton2 ] [ parton1 ]      
+  //      flavor_msq[jj][ii] = fx1[ii]*fx2[jj]*msq[jj][ii];   
+
+  double MatElsq[11][11];
+  for ( int i = 0; i < 11; i++) {
+    for ( int j = 0; j < 11; j++ ) {
+      MatElsq[i][j] = 0;
+    }
+  }
+  
+  double p4[5][4];
+  for (int i = 0; i < 5; i++) {
+    p4[i][0] = p[i].Energy();
+    p4[i][1] = p[i].Px();
+    p4[i][2] = p[i].Py();
+    p4[i][3] = p[i].Pz();
+
+    // use out-going convention for the incoming particles
+    if ( i < 2 ) {
+      for ( int j = 0; j < 4; j++ ) {
+	p4[i][j] = - p4[i][j];
+      }
+    }
+  }
+  
+  if ( process == TVar::HJJNONVBF ) {
+    __modhiggsjj_MOD_evalamp_gg_jjh(p4, Hggcoupl, MatElsq);
+  }
+
+  //    FOTRAN convention    -5    -4   -3   -2   -1    0   1   2   3  4  5
+  //     parton flavor      bbar  cbar  sbar ubar dbar  g   d   u   s  c  b
+  //      C++ convention     0      1    2    3    4    5   6   7   8  9  10
+  /*
+  for(int ii = 0; ii < 11; ii++){
+    for(int jj = 0; jj < 11; jj++){
+      if ( verbosity >= TVar::DEBUG ) {
+	std::cout<< "MatElsq[" << ii << "][" << jj << "]: " << MatElsq[jj][ii] << "\n" ;
+      }
+    }
+  }
+  */
+
+  if ( verbosity >= TVar::DEBUG ) {
+    std::cout << "H+2j matrix elements \n";
+    std::cout<< Form("me2(0,0) in fortran corresponds to MatElsq[5][5] = %.5f, should be %.5f, ratio is %.5f\n", MatElsq[5][5], 6405.27343407426, MatElsq[5][5]/6405.27343407426);
+    std::cout<< Form("me2(0,1) in fortran correspoinds to MatElsq[5][6] = %.5f, should be %.5f, ratio is %.5f\n", MatElsq[6][5],845.743559989465 , MatElsq[6][5]/845.743559989465);
+    std::cout<< Form("me2(1,0) in fortran correspoinds to MatElsq[6][5] = %.5f, should be %.5f, ratio is %.5f\n", MatElsq[5][6], 938.897709852664, MatElsq[5][6]/938.897709852664);
+  }
+
+  return MatElsq[5][5];
+
+}

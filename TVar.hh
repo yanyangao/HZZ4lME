@@ -49,6 +49,7 @@ public:
     TZZ_2bplus_4l = 15, // 2b+
     SummedBackgrounds = 16, // SuperMela Background standin process.
     HZZ_4l_MIXCP = 17,
+    HJJNONVBF = 18,
     Null
   };
   enum LeptonFlavor{
@@ -106,6 +107,8 @@ public:
       return TString("SummedBackgrounds");
     else if(temp==TVar::HZZ_4l_MIXCP   ) 
       return TString("HZZ_4l_MIXCP");
+    else if(temp==TVar::HJJNONVBF ) 
+      return TString("HJJNONVBF");
     else 
       return TString("UnKnown");
   };
@@ -140,6 +143,13 @@ struct hzz4l_event_type{
   double Xsec   [10];
   double XsecErr[10];  
 };
+// in development
+struct xjj_event_type{
+  TLorentzVector p[3]; // p[0] and p[1] for the two jets and p[2] for the resonance X
+  double Xsec   [10];
+  double XsecErr[10];  
+};
+
 struct mcfm_event_type{
   int PdgCode[6];
   TLorentzVector p[6];

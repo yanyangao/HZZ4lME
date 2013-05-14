@@ -20,7 +20,7 @@
 #include "TModHiggsMatEl.hh"
 #include "TModGravitonMatEl.hh"
 #include "TModZprimeMatEl.hh"
-
+#include "TModHiggsjjMatEl.hh"
 
 using namespace std;
 TString DbnEventLepSelName(int i);
@@ -31,4 +31,7 @@ double SumMatrixElementPDF(TVar::Process procees, mcfm_event_type* mcfm_event,do
 double JHUGenMatEl(TVar::Process process, TVar::Production production, mcfm_event_type* mcfm_event, double MReso, double GaReso, 
 		   double Hggcoupl[3][2], double Hvvcoupl[4][2], double Zqqcoupl[2][2], double Zvvcoupl[2][2],
 		   double Gqqcoupl[2][2], double Gggcoupl[5][2], double Gvvcoupl[10][2]);
+double HJJMatEl(TVar::Process process, const TLorentzVector p[5], double Hggcoupl[3][2], TVar::VerbosityLevel verb);
+
+
 #endif
