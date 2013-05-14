@@ -31,6 +31,16 @@ using namespace std;
 
 void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt, TVar::VerbosityLevel verbosity);
 
+float pseudorapidity(float rapidity, float mass, float pt){
+  float psrap;
+  float coeff=0;
+  float expf=0;
+  coeff=sqrt(mass*mass + pt*pt)/(2*pt);
+  expf=(TMath::Exp(2*rapidity)-1)/TMath::Exp(rapidity);
+  psrap=asinh(coeff*expf);
+  return psrap;
+}
+
 void checkZorder(float& z1mass, float& z2mass,
 		 float& costhetastar, float& costheta1,
 		 float& costheta2, float& phi, 
@@ -467,6 +477,7 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   float dXsec_TZZ_2hplus_JHU = 0.;
   float dXsec_TZZ_2bplus_JHU = 0.;
   float dXsec_HZZ_MIXCP_JHU = 0.;
+  float dXsec_HJJ_JHU = 0.;
   
   evt_tree->Branch("dXsec_ZZ_DECAY_MCFM" , &dXsec_ZZ_DECAY_MCFM   ,"dXsec_ZZ_DECAY_MCFM/F");
   evt_tree->Branch("dXsec_ZZ_MCFM"   , &dXsec_ZZ_MCFM   ,"dXsec_ZZ_MCFM/F");
@@ -485,7 +496,8 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   evt_tree->Branch("dXsec_TZZ_2hplus_JHU"   , &dXsec_TZZ_2hplus_JHU     ,"dXsec_TZZ_2hplus_JHU/F");
   evt_tree->Branch("dXsec_TZZ_2bplus_JHU"   , &dXsec_TZZ_2bplus_JHU     ,"dXsec_TZZ_2bplus_JHU/F");
   evt_tree->Branch("dXsec_HZZ_MIXCP_JHU" , &dXsec_HZZ_MIXCP_JHU ,"dXsec_HZZ_MIXCP_JHU/F");
-  
+  evt_tree->Branch("dXsec_HJJ_JHU"   , &dXsec_HJJ_JHU   ,"dXsec_HJJ_JHU/F");
+
   // 
   // analytical variables
   // 
@@ -511,6 +523,15 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
  
   float m1,m2,h1,h2,hs,phi,phi1,mzz;  
   int mflavor = 3; // by default it is ee/mm 
+  vector<double> *JetPt=0;
+  vector<double> *JetEta=0;
+  vector<double> *JetPhi=0;
+  vector<double> *JetMass=0;
+  int NJets = 0;
+  float ZZRapidity = 0.;
+  float ZZPt = 0.;
+  
+
   /*
   ch->SetBranchAddress( "z1mass"        , &m1      );   
   ch->SetBranchAddress( "z2mass"        , &m2      );   
@@ -531,8 +552,21 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   ch->SetBranchAddress( "ZZMass"        , &mzz     );   
   if ( ch->GetBranchStatus("flavortype") ) 
     ch->SetBranchAddress( "flavortype"   , &mflavor);
-
-
+  if ( ch->GetBranchStatus("JetPt") ) 
+    ch->SetBranchAddress( "JetPt"   , &JetPt);
+  if ( ch->GetBranchStatus("JetEta") ) 
+    ch->SetBranchAddress( "JetEta"   , &JetEta);
+  if ( ch->GetBranchStatus("JetPhi") ) 
+    ch->SetBranchAddress( "JetPhi"   , &JetPhi);
+  if ( ch->GetBranchStatus("JetMass") ) 
+    ch->SetBranchAddress( "JetMass"   , &JetMass);
+  if ( ch->GetBranchStatus("NJets") ) 
+    ch->SetBranchAddress( "NJets"   , &NJets);
+  if ( ch->GetBranchStatus("ZZRapidity") ) 
+    ch->SetBranchAddress("ZZRapidity",&ZZRapidity);
+  if ( ch->GetBranchStatus("ZZPt") ) 
+    ch->SetBranchAddress("ZZPt",&ZZPt);
+  
  
 
  // Initialize the branches to use to calculate the differential cross-sections
@@ -633,7 +667,8 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     dXsec_TZZ_2hplus_JHU = 0.;
     dXsec_TZZ_2bplus_JHU = 0.;
     dXsec_ZZ_DECAY_MCFM = 0.;
-    
+    dXsec_HJJ_JHU = 0.;
+
     ch->GetEntry(ievt);           
     
     /*
@@ -772,6 +807,49 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     // 2b+
     dXsec_TZZ_2bplus_JHU = Xcal2.XsecCalc(TVar::TZZ_2bplus_4l, TVar::GG, hzz4l_event,verbosity);
 
+    // H+jj
+    // calculate the p4 of the H + 2jets, boosted to have 0 pT
+
+    bool twojets = false;
+    
+    if ( twojets ) {
+      
+      TLorentzVector p4[3];
+
+      // p4[0] for j1,  p4[1] for j2,  p4[2] for H
+      // reference number 
+      // output is 
+      // MatElsq[5][5]: 6405.27  -> assumed to be gg
+      // MatElsq[5][6]: 845.744  -> assumed to be gd
+      // MatElsq[6][5]: 938.898 -> assumed to be dg
+      p4[0].SetPxPyPzE ( -62.8439254760742, 131.219619750977,  -371.088623046875, 398.590911865234 );
+      p4[1].SetPxPyPzE ( -27.9806289672852, 25.6569690704346,  -14.0767469406128, 40.4888916015625 );
+      p4[2].SetPxPyPzE ( 90.8245544433594, -156.876586914062,  -1550.71716308594, 1566.27209472656 );
+
+      // read those p3 event base
+      /*
+	for (int j=0; j<2; j++ ) {
+	p4[j].SetPtEtaPhiM(JetPt->at(j), JetEta->at(j), JetPhi->at(j), JetMass->at(j)); // set jet to be massless
+	// scale the px/py/pz to have 0 jet mass
+	double energy = p4[j].Energy();
+	double p3sq = sqrt( p4[j].Px()*p4[j].Px() + p4[j].Py()*p4[j].Py() + p4[j].Pz()*p4[j].Pz()); 
+	double ratio = energy / p3sq; 
+	p4[j].SetPxPyPzE ( p4[j].Px()*ratio, p4[j].Py()*ratio, p4[j].Pz()*ratio, energy);
+	p[2].SetPtEtaPhiM( ZZPt, pseudorapidity(ZZRapidity, mzz, ZZPt), TMath::Pi()-(p[0]+p[1]).Phi(), mzz);
+	// need to boost H+2j to have 0 pT
+	}
+      */
+      if ( verbosity >= TVar::DEBUG ) {
+	std::cout << "========================================\n";
+	std::cout << "Printing H+2j information " << "\n";
+	std::cout << "========================================\n";
+	std::cout << Form("Jet 1 (px,py,pz,m) = (%.5f, %.5f, %.5f, %.5f)\n", p[0].Px(), p[0].Py(), p[0].Pz(), p[0].M()); 
+	std::cout << Form("Jet 2 (px,py,pz,m) = (%.5f, %.5f, %.5f, %.f)\n", p[1].Px(), p[1].Py(), p[1].Pz(), p[1].M()); 
+	std::cout << Form("ZZ system (px,py,pz,) = (%.5f, %.5f, %.5f, %.5f)\n", p[2].Px(), p[2].Py(), p[2].Pz(), p[2].M()); 
+      }
+      
+      dXsec_HJJ_JHU = Xcal2.XsecCalcXJJ(TVar::HJJNONVBF, p4, verbosity);
+    }
     // use the same constants defined in 
     // http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/UserCode/CJLST/ZZMatrixElement/MELA/src/Mela.cc?revision=1.40&view=markup
     
@@ -792,19 +870,19 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
       dXsec_TZZ_JHU*=1.4;
       dXsec_QQB_TZZ_JHU*=30;
     }
-
+    
     // 
     // WARNING: tuned on the emu only at this point 
     // 
-
+    
     // constants for JHUGen
     dXsec_TZZ_DECAY_JHU    *= 1.6e+9;
     dXsec_VZZ_DECAY_JHU    *= 1e+10;
     dXsec_AVZZ_DECAY_JHU   *= 1e+10;
     dXsec_PTZZ_2hminus_JHU *= 1e+10;
     dXsec_TZZ_2hplus_JHU   *= 1e+10;
-
-
+    
+    
     // constants for the analytical MELA
     Ptwomplus_gg_        *= 2e-07; 
     Ptwomplus_qq_        *= 2e-07; 
@@ -817,7 +895,7 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     Ptwohplus_           *= 0.4;
     Ptwobplus_           *= 2.3e-07;
     // ---------------------------------
-
+    
     /*
     // 
     // calculate the last ZZ MCFM decay only MCFM
