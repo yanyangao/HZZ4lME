@@ -810,45 +810,52 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     // H+jj
     // calculate the p4 of the H + 2jets, boosted to have 0 pT
 
-    bool twojets = false;
-    
-    if ( twojets ) {
-      
+    double jetptc=0.; 
+    for (int k=0; k<JetPt->size();k++){
+      jetptc=JetPt->at(k);
+      if (jetptc>30.){
+	NJets++;
+      }
+    }
+    if ( NJets > 1 ) {
+      //cout<<"NJets: "<<NJets<<endl;
       TLorentzVector p4[3];
-
-      // p4[0] for j1,  p4[1] for j2,  p4[2] for H
-      // reference number 
-      // output is 
-      // MatElsq[5][5]: 6405.27  -> assumed to be gg
-      // MatElsq[5][6]: 845.744  -> assumed to be gd
-      // MatElsq[6][5]: 938.898 -> assumed to be dg
-      p4[0].SetPxPyPzE ( -62.8439254760742, 131.219619750977,  -371.088623046875, 398.590911865234 );
-      p4[1].SetPxPyPzE ( -27.9806289672852, 25.6569690704346,  -14.0767469406128, 40.4888916015625 );
-      p4[2].SetPxPyPzE ( 90.8245544433594, -156.876586914062,  -1550.71716308594, 1566.27209472656 );
+      TLorentzVector tot;
 
       // read those p3 event base
-      /*
-	for (int j=0; j<2; j++ ) {
+      for (int j=0; j<2; j++ ) {
 	p4[j].SetPtEtaPhiM(JetPt->at(j), JetEta->at(j), JetPhi->at(j), JetMass->at(j)); // set jet to be massless
 	// scale the px/py/pz to have 0 jet mass
 	double energy = p4[j].Energy();
 	double p3sq = sqrt( p4[j].Px()*p4[j].Px() + p4[j].Py()*p4[j].Py() + p4[j].Pz()*p4[j].Pz()); 
 	double ratio = energy / p3sq; 
 	p4[j].SetPxPyPzE ( p4[j].Px()*ratio, p4[j].Py()*ratio, p4[j].Pz()*ratio, energy);
-	p[2].SetPtEtaPhiM( ZZPt, pseudorapidity(ZZRapidity, mzz, ZZPt), TMath::Pi()-(p[0]+p[1]).Phi(), mzz);
-	// need to boost H+2j to have 0 pT
-	}
-      */
+      }
+
+      p4[2].SetPtEtaPhiM( (p4[0]+p4[1]).Pt(), pseudorapidity(ZZRapidity, mzz, (p4[0]+p4[1]).Pt()), (TMath::Pi())+(p4[0]+p4[1]).Phi(), mzz);
+
+      // need to boost H+2j to have 0 pT
+      tot=p4[0]+p4[1]+p4[2];
+      //cout<<tot.Pz()<<" "<<tot.E()<<endl;
+      //TVector3 b3 = -(tot.BoostVector());
+      //p4[0].Boost(b3.X(),b3.Y(),0.);
+      //p4[1].Boost(b3.X(),b3.Y(),0.);
+      //p4[2].Boost(b3.X(),b3.Y(),0.);
+      //tot=p4[0]+p4[1]+p4[2];
+      //cout<<tot.Pz()<<" "<<tot.E()<<endl;
+      //if(p4[0].M()!=0. || p4[1].M()!=0. || tot.Pt()!=0.) cout<<ievt<<" "<<p4[0].M()<<" "<<p4[1].M()<<" "<<tot.Pt()<<endl;
       if ( verbosity >= TVar::DEBUG ) {
 	std::cout << "========================================\n";
 	std::cout << "Printing H+2j information " << "\n";
 	std::cout << "========================================\n";
-	std::cout << Form("Jet 1 (px,py,pz,m) = (%.5f, %.5f, %.5f, %.5f)\n", p[0].Px(), p[0].Py(), p[0].Pz(), p[0].M()); 
-	std::cout << Form("Jet 2 (px,py,pz,m) = (%.5f, %.5f, %.5f, %.f)\n", p[1].Px(), p[1].Py(), p[1].Pz(), p[1].M()); 
-	std::cout << Form("ZZ system (px,py,pz,) = (%.5f, %.5f, %.5f, %.5f)\n", p[2].Px(), p[2].Py(), p[2].Pz(), p[2].M()); 
+	std::cout << Form("Jet 1 (px,py,pz,m) = (%.5f, %.5f, %.5f, %.5f)\n", p4[0].Px(), p4[0].Py(), p4[0].Pz(), p4[0].M()); 
+	std::cout << Form("Jet 2 (px,py,pz,m) = (%.5f, %.5f, %.5f, %.f)\n", p4[1].Px(), p4[1].Py(), p4[1].Pz(), p4[1].M()); 
+	std::cout << Form("ZZ system (px,py,pz,m) = (%.5f, %.5f, %.5f, %.5f)\n", p4[2].Px(), p4[2].Py(), p4[2].Pz(), p4[2].M());
+	//std::cout << (p4[0]+p4[1]+p4[2]).Pt()<<endl;
       }
       
       dXsec_HJJ_JHU = Xcal2.XsecCalcXJJ(TVar::HJJNONVBF, p4, verbosity);
+      if(dXsec_HJJ_JHU==0.) cout<<ievt<<" "<<p4[0].M()<<" "<<p4[1].M()<<" "<<tot.Pt()<<endl;
     }
     // use the same constants defined in 
     // http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/UserCode/CJLST/ZZMatrixElement/MELA/src/Mela.cc?revision=1.40&view=markup
