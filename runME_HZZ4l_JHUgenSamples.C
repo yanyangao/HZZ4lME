@@ -478,7 +478,8 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   float dXsec_TZZ_2bplus_JHU = 0.;
   float dXsec_HZZ_MIXCP_JHU = 0.;
   float dXsec_HJJ_JHU = 0.;
-  
+  float dXsec_HJJVBF_JHU = 0.;
+
   evt_tree->Branch("dXsec_ZZ_DECAY_MCFM" , &dXsec_ZZ_DECAY_MCFM   ,"dXsec_ZZ_DECAY_MCFM/F");
   evt_tree->Branch("dXsec_ZZ_MCFM"   , &dXsec_ZZ_MCFM   ,"dXsec_ZZ_MCFM/F");
   evt_tree->Branch("dXsec_HZZ_MCFM"  , &dXsec_HZZ_MCFM   ,"dXsec_HZZ_MCFM/F");
@@ -497,6 +498,8 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   evt_tree->Branch("dXsec_TZZ_2bplus_JHU"   , &dXsec_TZZ_2bplus_JHU     ,"dXsec_TZZ_2bplus_JHU/F");
   evt_tree->Branch("dXsec_HZZ_MIXCP_JHU" , &dXsec_HZZ_MIXCP_JHU ,"dXsec_HZZ_MIXCP_JHU/F");
   evt_tree->Branch("dXsec_HJJ_JHU"   , &dXsec_HJJ_JHU   ,"dXsec_HJJ_JHU/F");
+  evt_tree->Branch("dXsec_HJJVBF_JHU"   , &dXsec_HJJVBF_JHU   ,"dXsec_HJJVBF_JHU/F");
+
 
   // 
   // analytical variables
@@ -856,6 +859,7 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
       
       dXsec_HJJ_JHU = Xcal2.XsecCalcXJJ(TVar::HJJNONVBF, p4, verbosity);
       if(dXsec_HJJ_JHU==0.) cout<<ievt<<" "<<p4[0].M()<<" "<<p4[1].M()<<" "<<tot.Pt()<<endl;
+      dXsec_HJJVBF_JHU = Xcal2.XsecCalcXJJ(TVar::HJJVBF, p4, verbosity);
     }
     // use the same constants defined in 
     // http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/UserCode/CJLST/ZZMatrixElement/MELA/src/Mela.cc?revision=1.40&view=markup
