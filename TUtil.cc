@@ -468,10 +468,14 @@ double  HJJMatEl(TVar::Process process, const TLorentzVector p[5], double Hggcou
     __modhiggsjj_MOD_evalamp_gg_jjh(p4, Hggcoupl, MatElsq);
   }
 
+  if ( process == TVar::HJJVBF ) {
+    __modhiggsjj_wbf_MOD_evalamp_vbfh(p4, Hggcoupl, MatElsq);
+  }
+
   //    FOTRAN convention    -5    -4   -3   -2   -1    0   1   2   3  4  5
   //     parton flavor      bbar  cbar  sbar ubar dbar  g   d   u   s  c  b
   //      C++ convention     0      1    2    3    4    5   6   7   8  9  10
-  /*
+
   for(int ii = 0; ii < 11; ii++){
     for(int jj = 0; jj < 11; jj++){
       if ( verbosity >= TVar::DEBUG ) {
@@ -479,15 +483,21 @@ double  HJJMatEl(TVar::Process process, const TLorentzVector p[5], double Hggcou
       }
     }
   }
-  */
 
+  /*
   if ( verbosity >= TVar::DEBUG ) {
     std::cout << "H+2j matrix elements \n";
     std::cout<< Form("me2(0,0) in fortran corresponds to MatElsq[5][5] = %.5f, should be %.5f, ratio is %.5f\n", MatElsq[5][5], 6405.27343407426, MatElsq[5][5]/6405.27343407426);
     std::cout<< Form("me2(0,1) in fortran correspoinds to MatElsq[5][6] = %.5f, should be %.5f, ratio is %.5f\n", MatElsq[6][5],845.743559989465 , MatElsq[6][5]/845.743559989465);
     std::cout<< Form("me2(1,0) in fortran correspoinds to MatElsq[6][5] = %.5f, should be %.5f, ratio is %.5f\n", MatElsq[5][6], 938.897709852664, MatElsq[5][6]/938.897709852664);
   }
+  */
+  if ( process == TVar::HJJNONVBF ) {
+    return MatElsq[5][5];
+  }
 
-  return MatElsq[5][5];
+  if ( process == TVar::HJJVBF ) {
+    return MatElsq[6][7]+MatElsq[7][6];
+  }
 
 }

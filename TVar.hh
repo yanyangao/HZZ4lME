@@ -50,6 +50,7 @@ public:
     SummedBackgrounds = 16, // SuperMela Background standin process.
     HZZ_4l_MIXCP = 17,
     HJJNONVBF = 18,
+    HJJVBF = 19,
     Null
   };
   enum LeptonFlavor{
@@ -109,6 +110,8 @@ public:
       return TString("HZZ_4l_MIXCP");
     else if(temp==TVar::HJJNONVBF ) 
       return TString("HJJNONVBF");
+    else if(temp==TVar::HJJVBF ) 
+      return TString("HJJVBF");
     else 
       return TString("UnKnown");
   };

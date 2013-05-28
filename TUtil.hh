@@ -21,6 +21,7 @@
 #include "TModGravitonMatEl.hh"
 #include "TModZprimeMatEl.hh"
 #include "TModHiggsjjMatEl.hh"
+#include "TModHiggsjjWBFMatEl.hh"
 
 using namespace std;
 TString DbnEventLepSelName(int i);
