@@ -431,7 +431,7 @@ double JHUGenMatEl(TVar::Process process, TVar::Production production, mcfm_even
 // H+2j ME from Fabrizio Caola
 // 
 
-double  HJJMatEl(TVar::Process process, const TLorentzVector p[5], double Hggcoupl[3][2], TVar::VerbosityLevel verbosity)
+double  HJJMatEl(TVar::Process process, const TLorentzVector p[5], double Hggcoupl[3][2], double Hvvcoupl[3][2], TVar::VerbosityLevel verbosity)
 {
 
   // by default assume only gg productions 
@@ -441,25 +441,25 @@ double  HJJMatEl(TVar::Process process, const TLorentzVector p[5], double Hggcou
   //2-D matrix is reversed in fortran                                                                                                           
   // msq[ parton2 ] [ parton1 ]      
   //      flavor_msq[jj][ii] = fx1[ii]*fx2[jj]*msq[jj][ii];   
-
   double MatElsq[11][11];
   for ( int i = 0; i < 11; i++) {
     for ( int j = 0; j < 11; j++ ) {
       MatElsq[i][j] = 0;
     }
   }
-  
+  // input unit = GeV/100 such that 125GeV is 1.25 in the code
+  // this needs to be applied for all the p4
   double p4[5][4];
   for (int i = 0; i < 5; i++) {
-    p4[i][0] = p[i].Energy();
-    p4[i][1] = p[i].Px();
-    p4[i][2] = p[i].Py();
-    p4[i][3] = p[i].Pz();
+    p4[i][0] = p[i].Energy()/100.;
+    p4[i][1] = p[i].Px()/100.;
+    p4[i][2] = p[i].Py()/100.;
+    p4[i][3] = p[i].Pz()/100.;
 
     // use out-going convention for the incoming particles
     if ( i < 2 ) {
       for ( int j = 0; j < 4; j++ ) {
-	p4[i][j] = - p4[i][j];
+	p4[i][j] = - p4[i][j]/100.;
       }
     }
   }
@@ -469,7 +469,7 @@ double  HJJMatEl(TVar::Process process, const TLorentzVector p[5], double Hggcou
   }
 
   if ( process == TVar::HJJVBF ) {
-    __modhiggsjj_wbf_MOD_evalamp_vbfh(p4, Hggcoupl, MatElsq);
+    __modhiggsjj_vbf_MOD_evalamp_vbfh(p4, Hvvcoupl, MatElsq);
   }
 
   //    FOTRAN convention    -5    -4   -3   -2   -1    0   1   2   3  4  5
@@ -479,7 +479,7 @@ double  HJJMatEl(TVar::Process process, const TLorentzVector p[5], double Hggcou
   for(int ii = 0; ii < 11; ii++){
     for(int jj = 0; jj < 11; jj++){
       if ( verbosity >= TVar::DEBUG ) {
-	std::cout<< "MatElsq[" << ii << "][" << jj << "]: " << MatElsq[jj][ii] << "\n" ;
+	std::cout<< "MatElsq: " << ii-5 << " " << jj-5 << " " << MatElsq[jj][ii] << "\n" ;
       }
     }
   }
@@ -500,4 +500,5 @@ double  HJJMatEl(TVar::Process process, const TLorentzVector p[5], double Hggcou
     return MatElsq[6][7]+MatElsq[7][6];
   }
 
+  return 0.;
 }

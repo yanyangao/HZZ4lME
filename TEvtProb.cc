@@ -285,14 +285,20 @@ double TEvtProb::XsecCalcXJJ(TVar::Process proc, TLorentzVector p4[3], TVar::Ver
   // Initialize Process
   SetProcess(proc);
   //constants
-  double sqrts = 2.*EBEAM;
-  double W=sqrts*sqrts;
+  //  double sqrts = 2.*EBEAM;
+  //  double W=sqrts*sqrts;
   
   double Hggcoupl[3][2];
 	  
-  Hggcoupl[0][0]=1.0;  Hggcoupl[0][1]=0.0;   // first/second number is the real/imaginary part
-  Hggcoupl[1][0]=0.0;  Hggcoupl[1][1]=0.0;  
+  Hggcoupl[0][0]=0.0;  Hggcoupl[0][1]=0.0;   // first/second number is the real/imaginary part
+  Hggcoupl[1][0]=1.0;  Hggcoupl[1][1]=0.0;  
   Hggcoupl[2][0]=0.0;  Hggcoupl[2][1]=0.0;    
+
+  double Hvvcoupl[3][2];
+	  
+  Hvvcoupl[0][0]=1.0;  Hvvcoupl[0][1]=0.0;   // first/second number is the real/imaginary part
+  Hvvcoupl[1][0]=0.0;  Hvvcoupl[1][1]=0.0;  
+  Hvvcoupl[2][0]=0.0;  Hvvcoupl[2][1]=0.0;    
 
   // input kinematics 
   //  !----- p1 and p2 used to get hadronic s
@@ -319,8 +325,12 @@ double TEvtProb::XsecCalcXJJ(TVar::Process proc, TLorentzVector p4[3], TVar::Ver
   
   // calculate the matrix element squared
   double dXsec = 0;
-  dXsec = HJJMatEl(proc, p, Hggcoupl, verbosity);
-  
+  dXsec = HJJMatEl(proc, p, Hggcoupl, Hvvcoupl, verbosity);
+  if (verbosity >= TVar::DEBUG)
+    {
+      std::cout <<"Process " << TVar::ProcessName(proc) << 
+	" TEvtProb::XsecCalc(): dXsec=" << dXsec << "\n";
+    }
   return dXsec;
 }
 // this appears to be some kind of 
