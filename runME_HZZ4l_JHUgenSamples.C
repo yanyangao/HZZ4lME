@@ -814,16 +814,26 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     // calculate the p4 of the H + 2jets, boosted to have 0 pT
 
     double jetptc=0.; 
-    for (int k=0; k<JetPt->size();k++){
-      jetptc=JetPt->at(k);
-      if (jetptc>30.){
-	NJets++;
+    if ( JetPt != 0 ) {
+      for (unsigned int k=0; k<JetPt->size();k++){
+	jetptc=JetPt->at(k);
+	if (jetptc>30.){
+	  NJets++;
+	}
       }
     }
-    if ( NJets > 1 ) {
-      //cout<<"NJets: "<<NJets<<endl;
+    
+    bool isTwoJets = false;
+    if ( NJets > 1. ) isTwoJets = true;
+    // isTwoJets = true;
+    if ( isTwoJets ) {
       TLorentzVector p4[3];
       TLorentzVector tot;
+      // p4[0] for j1,  p4[1] for j2,  p4[2] for H
+      // Use a phase point from Fabrizio for debugging purpose
+      // p4[0].SetPxPyPzE ( 27.5823249816895,  14.4392414093018,  -140.500213623047, 143.908248901367 );
+      // p4[1].SetPxPyPzE (-60.1952629089355,  167.136901855469,  -53.3071479797363, 185.472000122070 ); 
+      // p4[2].SetPxPyPzE ( 32.6129379272461, -181.576141357422,  -164.720764160156, 277.112670898438 );
 
       // read those p3 event base
       for (int j=0; j<2; j++ ) {
@@ -861,6 +871,7 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
       if(dXsec_HJJ_JHU==0.) cout<<ievt<<" "<<p4[0].M()<<" "<<p4[1].M()<<" "<<tot.Pt()<<endl;
       dXsec_HJJVBF_JHU = Xcal2.XsecCalcXJJ(TVar::HJJVBF, p4, verbosity);
     }
+
     // use the same constants defined in 
     // http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/UserCode/CJLST/ZZMatrixElement/MELA/src/Mela.cc?revision=1.40&view=markup
     
