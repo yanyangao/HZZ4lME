@@ -458,13 +458,13 @@ double  HJJMatEl(TVar::Process process, const TLorentzVector p[5], double Hggcou
   }
   
   if ( process == TVar::HJJNONVBF ) {
-    // return SumMEPDF(p[0], p[1], MatElsq, verbosity);
-    return MatElsq[5][5];
+    return SumMEPDF(p[0], p[1], MatElsq, verbosity);
+    // return MatElsq[5][5];
   }
   
   if ( process == TVar::HJJVBF ) {
-    return MatElsq[6][7]+MatElsq[7][6];
-    //return SumMEPDF(p[0], p[1], MatElsq, verbosity);
+    // return MatElsq[6][7]+MatElsq[7][6];
+    return SumMEPDF(p[0], p[1], MatElsq, verbosity);
   }
 
   return 0.;
