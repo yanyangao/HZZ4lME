@@ -33,6 +33,6 @@ double JHUGenMatEl(TVar::Process process, TVar::Production production, mcfm_even
 		   double Hggcoupl[3][2], double Hvvcoupl[4][2], double Zqqcoupl[2][2], double Zvvcoupl[2][2],
 		   double Gqqcoupl[2][2], double Gggcoupl[5][2], double Gvvcoupl[10][2]);
 double HJJMatEl(TVar::Process process, const TLorentzVector p[5], double Hggcoupl[3][2], double Hvvcoupl[4][2], TVar::VerbosityLevel verb);
-
+double SumMEPDF(const TLorentzVector p0, const TLorentzVector p1, double flavor_msq[nmsq][nmsq],  TVar::VerbosityLevel verbosity);
 
 #endif

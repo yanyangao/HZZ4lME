@@ -23,7 +23,7 @@ void SetEwkCoupligParameters(){
 
 
 void My_choose(TVar::Process process){
- 
+
 //ZZ_4l
 if(process==TVar::ZZ_2e2m || process == TVar::GGZZ_4l  ){ 
  
@@ -188,11 +188,8 @@ double SumMatrixElementPDF(TVar::Process process, mcfm_event_type* mcfm_event,do
 
   int NPart=npart_.npart+2;
   double p4[4][12];
-  double fx1[nmsq];
-  double fx2[nmsq];
   double msq[nmsq][nmsq];
 
-  
   //Parton Density Function is always evalualted at pT=0 frame
   //Make sure parton Level Energy fraction is [0,1]
   //phase space function already makes sure the parton energy fraction between [min,1]
@@ -247,34 +244,10 @@ double SumMatrixElementPDF(TVar::Process process, mcfm_event_type* mcfm_event,do
   double msqjk=0;
   double msqgg=0;
     
-  //Calculate Pdf
-  //Always pass address through fortran function
-  fdist_ (&density_.ih1, &xx[0], &scale_.scale, fx1); 
-  fdist_ (&density_.ih2, &xx[1], &scale_.scale, fx2); 
-  
   if( process==TVar::ZZ_2e2m || process==TVar::ZZ_4e )      qqb_zz_(p4[0],msq[0]);
   if( process==TVar::HZZ_4l)     qqb_hzz_(p4[0],msq[0]);
   if( process==TVar::GGZZ_4l)    gg_zz_  (p4[0],&msqgg);                     
   
-  /*
-    // Below code sums over all production parton flavors according to PDF 
-    // This is disabled as we are not using the intial production information
-    // the blow code is fine for the particle produced by single favor of incoming partons
-
-  for(int ii=0;ii<nmsq;ii++){
-    for(int jj=0;jj<nmsq;jj++){
-      
-      //2-D matrix is reversed in fortran
-      // msq[ parton2 ] [ parton1 ]
-      //      flavor_msq[jj][ii] = fx1[ii]*fx2[jj]*msq[jj][ii];
-
-      flavor_msq[jj][ii] = msq[jj][ii];
-      //cout<<jj<<ii<<"="<<msq[jj][ii]<<"  ";
-      msqjk+=flavor_msq[jj][ii];
-    }//ii
-    //    cout<<"\n";
-  }//jj
-  */
   // by default assume only gg productions 
   // FOTRAN convention -5    -4   -3  -2    -1  0 1 2 3 4 5 
   //     parton flavor bbar cbar sbar ubar dbar g d u s c b
@@ -441,9 +414,9 @@ double  HJJMatEl(TVar::Process process, const TLorentzVector p[5], double Hggcou
   //2-D matrix is reversed in fortran                                                                                                           
   // msq[ parton2 ] [ parton1 ]      
   //      flavor_msq[jj][ii] = fx1[ii]*fx2[jj]*msq[jj][ii];   
-  double MatElsq[11][11];
-  for ( int i = 0; i < 11; i++) {
-    for ( int j = 0; j < 11; j++ ) {
+  double MatElsq[nmsq][nmsq];
+  for ( int i = 0; i < nmsq; i++) {
+    for ( int j = 0; j < nmsq; j++ ) {
       MatElsq[i][j] = 0;
     }
   }
@@ -476,29 +449,70 @@ double  HJJMatEl(TVar::Process process, const TLorentzVector p[5], double Hggcou
   //     parton flavor      bbar  cbar  sbar ubar dbar  g   d   u   s  c  b
   //      C++ convention     0      1    2    3    4    5   6   7   8  9  10
 
-  for(int ii = 0; ii < 11; ii++){
-    for(int jj = 0; jj < 11; jj++){
+  for(int ii = 0; ii < nmsq; ii++){
+    for(int jj = 0; jj < nmsq; jj++){
       if ( verbosity >= TVar::DEBUG ) {
 	std::cout<< "MatElsq: " << ii-5 << " " << jj-5 << " " << MatElsq[jj][ii] << "\n" ;
       }
     }
   }
-
-  /*
-  if ( verbosity >= TVar::DEBUG ) {
-    std::cout << "H+2j matrix elements \n";
-    std::cout<< Form("me2(0,0) in fortran corresponds to MatElsq[5][5] = %.5f, should be %.5f, ratio is %.5f\n", MatElsq[5][5], 6405.27343407426, MatElsq[5][5]/6405.27343407426);
-    std::cout<< Form("me2(0,1) in fortran correspoinds to MatElsq[5][6] = %.5f, should be %.5f, ratio is %.5f\n", MatElsq[6][5],845.743559989465 , MatElsq[6][5]/845.743559989465);
-    std::cout<< Form("me2(1,0) in fortran correspoinds to MatElsq[6][5] = %.5f, should be %.5f, ratio is %.5f\n", MatElsq[5][6], 938.897709852664, MatElsq[5][6]/938.897709852664);
-  }
-  */
+  
   if ( process == TVar::HJJNONVBF ) {
+    // return SumMEPDF(p[0], p[1], MatElsq, verbosity);
     return MatElsq[5][5];
   }
-
+  
   if ( process == TVar::HJJVBF ) {
     return MatElsq[6][7]+MatElsq[7][6];
+    //return SumMEPDF(p[0], p[1], MatElsq, verbosity);
   }
 
   return 0.;
+}
+
+// Below code sums over all production parton flavors according to PDF 
+double SumMEPDF(const TLorentzVector p0, const TLorentzVector p1, double msq[nmsq][nmsq],  TVar::VerbosityLevel verbosity)
+{
+  //Calculate Pdf
+  //Parton Density Function is always evalualted at pT=0 frame
+  //Make sure parton Level Energy fraction is [0,1]
+  //phase space function already makes sure the parton energy fraction between [min,1]
+  //  x0 EBeam =>   <= -x1 EBeam
+  double sysPz=p0.Pz()    + p1.Pz();
+  double sysE =p0.Energy()+ p1.Energy();
+  
+  //Ignore the Pt doesn't make significant effect
+  //double sysPt_sqr=sysPx*sysPx+sysPy*sysPy;
+  //if(sysPt_sqr>=1.0E-10)  sysE=TMath::Sqrt(sysE*sysE-sysPt_sqr);
+  double xx[2]={(sysE+sysPz)/EBEAM/2,(sysE-sysPz)/EBEAM/2};
+  if(xx[0] > 1.0 || xx[0]<=xmin_.xmin) return 0.0;
+  if(xx[1] > 1.0 || xx[1]<=xmin_.xmin) return 0.0;
+  double fx1[nmsq];
+  double fx2[nmsq];
+  //Always pass address through fortran function
+  fdist_ (&density_.ih1, &xx[0], &scale_.scale, fx1); 
+  fdist_ (&density_.ih2, &xx[1], &scale_.scale, fx2); 
+  
+  if ( verbosity >= TVar::DEBUG ) {
+    for ( int i = 0; i < nmsq; i++ ) {
+      std::cout << "fx1[" << i << "]: " <<  fx1[i] << "\t"
+	"fx2[" << i << "]: " <<  fx2[i] << "\n";
+    }
+  }
+  
+  double msqjk(0.);
+  double flavor_msq[nmsq][nmsq];
+  
+  for(int ii=0;ii<nmsq;ii++){
+    for(int jj=0;jj<nmsq;jj++){
+      flavor_msq[jj][ii] = 0.;
+      //2-D matrix is reversed in fortran
+      // msq[ parton2 ] [ parton1 ]
+      flavor_msq[jj][ii] = fx1[ii]*fx2[jj]*msq[jj][ii];
+      msqjk+=flavor_msq[jj][ii];
+    }//ii
+  }//jj
+  
+  return msqjk;
+
 }
