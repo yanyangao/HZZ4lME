@@ -10,19 +10,19 @@ contains
 
   !--- current normalization: a1 = 1 --> SM
 
-  !--- vvcoupl(1) -> a1
-  !--- vvcoupl(2) -> a2
-  !--- vvcoupl(3) -> a3
+  !--- vvcoupl(1) -> g1
+  !--- vvcoupl(2) -> g2
+  !--- vvcoupl(3) -> g3
+  !--- vvcoupl(4) -> g4
 
   !----- p1 and p2 used to get hadronic s
   !----- unphysical kinematics to match Markus notation
   !----- 0 -> P(-p1)+P(-p2) + j(p3) + j(p4) + H(p5)
   subroutine EvalAmp_vbfH(pin,vvcoupl,me2)
     real(dp), intent(in) :: pin(4,5)
-    complex(dp), intent(in) :: vvcoupl(1:3)
+    complex(dp), intent(in) :: vvcoupl(1:4)
     real(dp), intent(out) :: me2(-5:5,-5:5)
-    real(dp) :: xa,xb	
-    real(dp) :: p(4,5)
+    real(dp) :: p(4,5), xa, xb
     real(dp) :: shad,etot,pztot,sqrts
     complex(dp) :: za(4,4), zb(4,4)
     real(dp) :: sprod(4,4)
@@ -61,7 +61,7 @@ contains
   end subroutine EvalAmp_vbfH
 
   subroutine VBF_WW(vvcoupl,za,zb,sprod,me2)
-    complex(dp), intent(in) :: vvcoupl(1:3)
+    complex(dp), intent(in) :: vvcoupl(1:4)
     complex(dp), intent(in) :: za(4,4), zb(4,4)
     real(dp), intent(in) :: sprod(4,4)
     real(dp), intent(out) :: me2(-5:5,-5:5)
@@ -94,7 +94,7 @@ contains
   end subroutine VBF_WW
 
   subroutine VBF_ZZ(vvcoupl,za,zb,sprod,me2)
-    complex(dp), intent(in) :: vvcoupl(1:3)
+    complex(dp), intent(in) :: vvcoupl(1:4)
     complex(dp), intent(in) :: za(4,4), zb(4,4)
     real(dp), intent(in) :: sprod(4,4)
     real(dp), intent(out) :: me2(-5:5,-5:5)
@@ -147,7 +147,7 @@ contains
   ! Notation: 0 -> qbar(p1) q(p2) qbar(p3) q(p4) H
   ! Factored out: (gwsq**2/two * vev * sw**2/cw**2)**2
   subroutine me2_tree_qqqqH_ZZ(vvcoupl,j1,j2,j3,j4,za,zb,sprod,me2_LL, me2_LR)
-    complex(dp), intent(in) :: vvcoupl(1:3)
+    complex(dp), intent(in) :: vvcoupl(1:4)
     complex(dp), intent(in) :: za(4,4), zb(4,4)
     real(dp), intent(in) :: sprod(4,4)
     integer, intent(in) :: j1, j2, j3, j4
@@ -156,6 +156,8 @@ contains
     complex(dp) :: amp(-1:1,-1:1,-1:1,-1:1)
     real(dp) :: q1sq, q2sq, prop1, prop2
     real(dp), parameter :: colf = xn**2
+    complex(dp) :: aacoupl(1:3)
+    real(dp) :: q1q2
 
     me2_LL = zero
     me2_LR = zero
@@ -171,7 +173,14 @@ contains
     prefac = prop1 * prop2
     prefac = prefac**2
 
-    amp = A0Hqqqq(vvcoupl,j1,j2,j3,j4,za,zb,sprod)
+    !-- couplings
+    q1q2 = half * (sprod(j1,j3)+sprod(j1,j4)+sprod(j2,j3)+sprod(j2,j4))
+    
+    aacoupl(1) = vvcoupl(1) + two*q1q2/mzsq * vvcoupl(2) + q1q2**2/Lambda**2/mzsq * vvcoupl(3)
+    aacoupl(2) = -two/mzsq * vvcoupl(2) - q1q2/Lambda**2/mzsq * vvcoupl(3)
+    aacoupl(3) = -two/mzsq * vvcoupl(4)
+
+    amp = A0Hqqqq(aacoupl,j1,j2,j3,j4,za,zb,sprod)
 
     me2_LL = amp(-1,+1,-1,+1)*conjg(amp(-1,+1,-1,+1))
     me2_LR = amp(-1,+1,+1,-1)*conjg(amp(-1,+1,+1,-1))
@@ -187,7 +196,7 @@ contains
   ! Notation: 0 -> qbar(p1) q(p2) qbar(p3) q(p4) H
   ! Factored out: (gwsq**2/two * vev)**2
   subroutine me2_tree_qqqqH_WW(vvcoupl,j1,j2,j3,j4,za,zb,sprod,me2)
-    complex(dp), intent(in) :: vvcoupl(1:3)
+    complex(dp), intent(in) :: vvcoupl(1:4)
     complex(dp), intent(in) :: za(4,4), zb(4,4)
     real(dp), intent(in) :: sprod(4,4)
     integer, intent(in) :: j1, j2, j3, j4
@@ -196,6 +205,8 @@ contains
     complex(dp) :: amp(-1:1,-1:1,-1:1,-1:1)
     real(dp) :: q1sq, q2sq, prop1, prop2
     real(dp), parameter :: colf = xn**2
+    complex(dp) :: aacoupl(1:3)
+    real(dp) :: q1q2
 
     me2 = zero
     rme2 = zero
@@ -209,7 +220,14 @@ contains
     prefac = prop1 * prop2
     prefac = prefac**2
 
-    amp = A0Hqqqq(vvcoupl,j1,j2,j3,j4,za,zb,sprod)
+    !-- couplings
+    q1q2 = half * (sprod(j1,j3)+sprod(j1,j4)+sprod(j2,j3)+sprod(j2,j4))
+    
+    aacoupl(1) = vvcoupl(1) + two*q1q2/mwsq * vvcoupl(2) + q1q2**2/Lambda**2/mwsq * vvcoupl(3)
+    aacoupl(2) = -two/mwsq * vvcoupl(2) - q1q2/Lambda**2/mwsq * vvcoupl(3)
+    aacoupl(3) = -two/mwsq * vvcoupl(4)
+
+    amp = A0Hqqqq(aacoupl,j1,j2,j3,j4,za,zb,sprod)
 
 !------ The W-boson contribution / only one helicity plays a role
     rme2 = rme2 + amp(-1,+1,-1,+1)*conjg(amp(-1,+1,-1,+1))
@@ -225,8 +243,8 @@ contains
 
   ! helicity amplitudes for 0-> q(j1) qbar(j2) q(j3) qbar(j4) (H->a(p4) a(p5))
 
-  function A0Hqqqq(vvcoupl,j1,j2,j3,j4,za,zb,sprod)
-    complex(dp) :: vvcoupl(1:3)
+  function A0Hqqqq(aacoupl,j1,j2,j3,j4,za,zb,sprod)
+    complex(dp) :: aacoupl(1:3)
     integer :: j1,j2,j3,j4
     complex(dp) :: za(4,4), zb(4,4)
     real(dp) :: sprod(4,4)
@@ -242,9 +260,9 @@ contains
 
     q1q2 = half * (sprod(j1,j3)+sprod(j1,j4)+sprod(j2,j3)+sprod(j2,j4))
 
-    a1 = vvcoupl(1)
-    a2 = vvcoupl(2)
-    a3 = vvcoupl(3)
+    a1 = aacoupl(1)
+    a2 = aacoupl(2)
+    a3 = aacoupl(3)
 
     A0Hqqqq(+1,-1,+1,-1) = a1 * zb(j1,j3)*za(j4,j2) &
          + a2 * half * (zab2(j2,j4,j3,j1)*zab2(j4,j2,j1,j3)) &

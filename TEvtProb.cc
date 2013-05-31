@@ -289,16 +289,17 @@ double TEvtProb::XsecCalcXJJ(TVar::Process proc, TLorentzVector p4[3], TVar::Ver
   //  double W=sqrts*sqrts;
   
   double Hggcoupl[3][2];
-	  
-  Hggcoupl[0][0]=0.0;  Hggcoupl[0][1]=0.0;   // first/second number is the real/imaginary part
-  Hggcoupl[1][0]=1.0;  Hggcoupl[1][1]=0.0;  
-  Hggcoupl[2][0]=0.0;  Hggcoupl[2][1]=0.0;    
+  // first/second number is the real/imaginary part	  
+  Hggcoupl[0][0]=1.0;  Hggcoupl[0][1]=0.0; // g2 
+  Hggcoupl[1][0]=0.0;  Hggcoupl[1][1]=0.0; // g3
+  Hggcoupl[2][0]=0.0;  Hggcoupl[2][1]=0.0; // g4  
 
-  double Hvvcoupl[3][2];
-	  
-  Hvvcoupl[0][0]=1.0;  Hvvcoupl[0][1]=0.0;   // first/second number is the real/imaginary part
-  Hvvcoupl[1][0]=0.0;  Hvvcoupl[1][1]=0.0;  
-  Hvvcoupl[2][0]=0.0;  Hvvcoupl[2][1]=0.0;    
+  double Hvvcoupl[4][2];
+  // first/second number is the real/imaginary part
+  Hvvcoupl[0][0]=1.0;  Hvvcoupl[0][1]=0.0; // g1  
+  Hvvcoupl[1][0]=0.0;  Hvvcoupl[1][1]=0.0; // g2 
+  Hvvcoupl[2][0]=0.0;  Hvvcoupl[2][1]=0.0; // g3 
+  Hvvcoupl[3][0]=0.0;  Hvvcoupl[3][1]=0.0; // g4   
 
   // input kinematics 
   //  !----- p1 and p2 used to get hadronic s

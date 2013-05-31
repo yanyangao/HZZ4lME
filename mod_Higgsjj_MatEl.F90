@@ -8,8 +8,10 @@ module modHiggsjj
 
 contains
 
-  !--- ggcoupl(2) -> scalar
-  !--- ggcoupl(3) -> pseudoscalar
+  !--- normalization: g2 = 1 -> SM
+  !--- ggcoupl(1) -> g2
+  !--- ggcoupl(2) -> g3
+  !--- ggcoupl(3) -> g4
 
   !----- p1 and p2 used to get hadronic s
   !----- unphysical kinematics to match Markus notation
@@ -18,8 +20,7 @@ contains
     real(dp), intent(in) :: pin(4,5)
     complex(dp), intent(in) :: ggcoupl(1:3)
     real(dp), intent(out) :: me2(-5:5,-5:5)
-    real(dp) :: xa,xb
-    real(dp) :: p(4,5)
+    real(dp) :: p(4,5), xa, xb
     real(dp) :: shad,etot,pztot,sqrts
     real(dp) :: gg_hgg, gg_hqa, qg_hqg, gq_hqg
     complex(dp) :: za(4,4), zb(4,4)
@@ -77,17 +78,25 @@ contains
     complex(dp) :: aPhi1234(1:2,-1:1,-1:1,-1:1), aPhi1324(1:2,-1:1,-1:1,-1:1)
     real(dp), parameter :: col1 = 8.0_dp * CA**3 * CF
     integer :: i2,i3,i4
+    real(dp) :: q1q2
+    complex(dp) :: cscalar, cpseudo
 
     me2gg = zero
+
+    q1q2 = half * (sprod(j1,j3)+sprod(j1,j4)+sprod(j2,j3)+sprod(j2,j4))
+
+    !-- couplings
+    cscalar = ggcoupl(1) + half * q1q2/Lambda**2 * ggcoupl(2)
+    cpseudo = ggcoupl(3)
 
     aPhi1234 = A0phigggg_pxxx(j1,j2,j3,j4,za,zb,sprod)
     aPhi1324 = A0phigggg_pxxx(j1,j3,j2,j4,za,zb,sprod)
 
-    amp1234(:,:,:) = ggcoupl(2) * (aPhi1234(1,:,:,:) + aPhi1234(2,:,:,:)) + & !-- scalar
-         ggcoupl(3) * (-ci) * (aPhi1234(1,:,:,:) - aPhi1234(2,:,:,:)) !-- pseudoscalar
+    amp1234(:,:,:) = cscalar * (aPhi1234(1,:,:,:) + aPhi1234(2,:,:,:)) + & !-- scalar
+         cpseudo * (-ci) * (aPhi1234(1,:,:,:) - aPhi1234(2,:,:,:)) !-- pseudoscalar
 
-    amp1324(:,:,:) = ggcoupl(2) * (aPhi1324(1,:,:,:) + aPhi1324(2,:,:,:)) + & !-- scalar
-         ggcoupl(3) * (-ci) * (aPhi1324(1,:,:,:) - aPhi1324(2,:,:,:)) !-- pseudoscalar
+    amp1324(:,:,:) = cscalar * (aPhi1324(1,:,:,:) + aPhi1324(2,:,:,:)) + & !-- scalar
+         cpseudo * (-ci) * (aPhi1324(1,:,:,:) - aPhi1324(2,:,:,:)) !-- pseudoscalar
 
     do i2 = -1, 1, 2
        do i3 = -1, 1, 2
@@ -121,17 +130,25 @@ contains
     real(dp), parameter :: colf1 = four * xn * CF**2
     real(dp), parameter :: colf2 = four * xn * CF * (CF - CA/2.0_dp)
     integer :: i3,i4
+    real(dp) :: q1q2
+    complex(dp) :: cscalar, cpseudo
 
     me2q = zero
+
+    q1q2 = half * (sprod(j1,j3)+sprod(j1,j4)+sprod(j2,j3)+sprod(j2,j4))
+
+    !-- couplings
+    cscalar = ggcoupl(1) + half * q1q2/Lambda**2 * ggcoupl(2)
+    cpseudo = ggcoupl(3)
 
     aPhi1234 = A0phiqbqgg_mpxx(j1,j2,j3,j4,za,zb,sprod)
     aPhi1243 = A0phiqbqgg_mpxx(j1,j2,j4,j3,za,zb,sprod)
 
-    amp1234(:,:) = ggcoupl(2) * (aPhi1234(1,:,:) + aPhi1234(2,:,:)) + & !-- scalar
-         ggcoupl(3) * (-ci) * (aPhi1234(1,:,:) - aPhi1234(2,:,:)) !-- pseudoscalar
+    amp1234(:,:) = cscalar * (aPhi1234(1,:,:) + aPhi1234(2,:,:)) + & !-- scalar
+         cpseudo * (-ci) * (aPhi1234(1,:,:) - aPhi1234(2,:,:)) !-- pseudoscalar
 
-    amp1243(:,:) = ggcoupl(2) * (aPhi1243(1,:,:) + aPhi1243(2,:,:)) + & !-- scalar
-         ggcoupl(3) * (-ci) * (aPhi1243(1,:,:) - aPhi1243(2,:,:)) !-- pseudoscalar
+    amp1243(:,:) = cscalar * (aPhi1243(1,:,:) + aPhi1243(2,:,:)) + & !-- scalar
+         cpseudo * (-ci) * (aPhi1243(1,:,:) - aPhi1243(2,:,:)) !-- pseudoscalar
 
     do i3 = -1,1,2
        do i4 = -1,1,2
