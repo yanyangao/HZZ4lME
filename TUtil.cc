@@ -432,7 +432,7 @@ double  HJJMatEl(TVar::Process process, const TLorentzVector p[5], double Hggcou
     // use out-going convention for the incoming particles
     if ( i < 2 ) {
       for ( int j = 0; j < 4; j++ ) {
-	p4[i][j] = - p4[i][j]/100.;
+	p4[i][j] = - p4[i][j];
       }
     }
   }
