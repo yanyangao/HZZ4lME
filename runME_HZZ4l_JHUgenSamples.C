@@ -450,9 +450,13 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   
   TFile* fin = new TFile(inputDir+fileName);
   TString outFileName = outputDir+fileName;
-  outFileName.ReplaceAll(".root","_ME.root");
+  TString outFileNametxt = outputDir+fileName;
+  outFileName.ReplaceAll(".root","_ME_100.root");
+  outFileNametxt.ReplaceAll(".root","_ME_100.txt");
   cout << outFileName <<endl;
   TFile *newfile = new TFile(outFileName,"recreate");
+  ofstream testfile;
+  testfile.open(outFileNametxt);
 
   TTree* ch=(TTree*)fin->Get("SelectedTree"); 
   if (ch==0x0) return; 
@@ -827,28 +831,38 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     if ( NJets > 1. ) isTwoJets = true;
     // isTwoJets = true;
     if ( isTwoJets ) {
+      testfile<<ievt<<endl;
       TLorentzVector p4[3];
       TLorentzVector tot;
-      // p4[0] for j1,  p4[1] for j2,  p4[2] for H
-      // Use a phase point from Fabrizio for debugging purpose
-      // p4[0].SetPxPyPzE ( 27.5823249816895,  14.4392414093018,  -140.500213623047, 143.908248901367 );
-      // p4[1].SetPxPyPzE (-60.1952629089355,  167.136901855469,  -53.3071479797363, 185.472000122070 ); 
-      // p4[2].SetPxPyPzE ( 32.6129379272461, -181.576141357422,  -164.720764160156, 277.112670898438 );
+      //p4[0] for j1,  p4[1] for j2,  p4[2] for H
+      //Use a phase point from Fabrizio
+      //p4[0].SetPxPyPzE ( 27.5823249816895,  14.4392414093018,  -140.500213623047, 143.908248901367 );
+      //p4[1].SetPxPyPzE (-60.1952629089355,  167.136901855469,  -53.3071479797363, 185.472000122070 ); 
+      //p4[2].SetPxPyPzE ( 32.6129379272461, -181.576141357422,  -164.720764160156, 277.112670898438 );
+      //Use a phase point from H+2jets
+      p4[0].SetPxPyPzE ( -0.8631552128081, -30.83936349, 23.63861960335, 38.86638282811 );
+      p4[1].SetPxPyPzE (-3.585547197498, 26.6370897996, 160.4431140716, 162.6787741369);
+      p4[2].SetPxPyPzE (4.448702410306, 4.202273690404, -43.43533635912, 133.6021471948);
+      //Use a phase point from VBF
+      //p4[0].SetPxPyPzE (99.63466518841, 110.898573651, 111.247425322, 186.0149181808);
+      //p4[1].SetPxPyPzE (27.53935748298, -56.08619646628, -334.7410925212, 340.5226522082);
+      //p4[2].SetPxPyPzE (-127.1740226714, -54.81237718468, -142.3794969293, 234.7181055347);
 
       // read those p3 event base
-      for (int j=0; j<2; j++ ) {
+      /*for (int j=0; j<2; j++ ) {
 	p4[j].SetPtEtaPhiM(JetPt->at(j), JetEta->at(j), JetPhi->at(j), JetMass->at(j)); // set jet to be massless
 	// scale the px/py/pz to have 0 jet mass
 	double energy = p4[j].Energy();
 	double p3sq = sqrt( p4[j].Px()*p4[j].Px() + p4[j].Py()*p4[j].Py() + p4[j].Pz()*p4[j].Pz()); 
 	double ratio = energy / p3sq; 
 	p4[j].SetPxPyPzE ( p4[j].Px()*ratio, p4[j].Py()*ratio, p4[j].Pz()*ratio, energy);
+	testfile<<"pJ"<<j<<" "<<std::setprecision(13)<<p4[j].Px()<<" "<<p4[j].Py()<<" "<<p4[j].Pz()<<" "<<p4[j].Energy()<<endl;
       }
 
       p4[2].SetPtEtaPhiM( (p4[0]+p4[1]).Pt(), pseudorapidity(ZZRapidity, mzz, (p4[0]+p4[1]).Pt()), (TMath::Pi())+(p4[0]+p4[1]).Phi(), mzz);
-
+      testfile<<"pH "<<std::setprecision(13)<<p4[2].Px()<<" "<<p4[2].Py()<<" "<<p4[2].Pz()<<" "<<p4[2].Energy()<<endl;
       // need to boost H+2j to have 0 pT
-      tot=p4[0]+p4[1]+p4[2];
+      tot=p4[0]+p4[1]+p4[2];*/
       //cout<<tot.Pz()<<" "<<tot.E()<<endl;
       //TVector3 b3 = -(tot.BoostVector());
       //p4[0].Boost(b3.X(),b3.Y(),0.);
@@ -868,8 +882,10 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
       }
       
       dXsec_HJJ_JHU = Xcal2.XsecCalcXJJ(TVar::HJJNONVBF, p4, verbosity);
+      testfile<<std::setprecision(13)<<dXsec_HJJ_JHU<<endl;
       if(dXsec_HJJ_JHU==0.) cout<<ievt<<" "<<p4[0].M()<<" "<<p4[1].M()<<" "<<tot.Pt()<<endl;
       dXsec_HJJVBF_JHU = Xcal2.XsecCalcXJJ(TVar::HJJVBF, p4, verbosity);
+      testfile<<std::setprecision(13)<<dXsec_HJJVBF_JHU<<endl;
     }
 
     // use the same constants defined in 
