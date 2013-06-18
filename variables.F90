@@ -32,7 +32,9 @@ real(8), parameter :: couplfac_zz = couplfac*2d0*xw/(1d0-xw)
 
 !-- correct coupling for gluon fusion, set to 1 if only ratio needed, 
 !-- use the proper alpha_s and g_s**2 if absolute normalization is needed
-real(8), parameter :: couplfac_ggh = 4.73855664689531059d0 * 10d0**(-5)/GeV !-- gsq*as/(six*pi*vev)
+!real(8), parameter :: couplfac_ggh = 4.73855664689531059E-005/GeV !-- gsq*as/(six*pi*vev)
+!real(8), parameter :: couplfac_ggh = 3.4358474520240733E-005 !--cteq6me
+real(8), parameter :: couplfac_ggh = 4.1502282747116387E-005/GeV !--cteq6l1
 
 real(8), parameter :: mwsq = m_w**2
 real(8), parameter :: mzsq = m_z**2
