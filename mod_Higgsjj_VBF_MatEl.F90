@@ -8,7 +8,7 @@ module modHiggsjj_vbf
 
 contains
 
-  !--- current normalization: a1 = 1 --> SM
+  !--- current normalization: g1 = 1 --> SM
 
   !--- vvcoupl(1) -> g1
   !--- vvcoupl(2) -> g2
@@ -27,6 +27,7 @@ contains
     complex(dp) :: za(4,4), zb(4,4)
     real(dp) :: sprod(4,4)
     real(dp) :: me2_WW(-5:5,-5:5), me2_ZZ(-5:5,-5:5)
+    real(dp) :: pH(4), mhsq
     
     me2 = zero
 
@@ -49,10 +50,13 @@ contains
     p(:,4) = pin(:,4)
     p(:,5) = pin(:,5)
 
+    pH(:) = p(:,5)
+    mhsq = scr(pH,pH)
+
     call spinoru(4,p,za,zb,sprod)
 
-    call VBF_WW(vvcoupl,za,zb,sprod,me2_WW)
-    call VBF_ZZ(vvcoupl,za,zb,sprod,me2_ZZ)
+    call VBF_WW(mhsq,vvcoupl,za,zb,sprod,me2_WW)
+    call VBF_ZZ(mhsq,vvcoupl,za,zb,sprod,me2_ZZ)
 
     me2 = me2_WW + me2_ZZ
     
@@ -60,10 +64,10 @@ contains
 
   end subroutine EvalAmp_vbfH
 
-  subroutine VBF_WW(vvcoupl,za,zb,sprod,me2)
+  subroutine VBF_WW(mhsq,vvcoupl,za,zb,sprod,me2)
     complex(dp), intent(in) :: vvcoupl(1:4)
     complex(dp), intent(in) :: za(4,4), zb(4,4)
-    real(dp), intent(in) :: sprod(4,4)
+    real(dp), intent(in) :: mhsq,sprod(4,4)
     real(dp), intent(out) :: me2(-5:5,-5:5)
     real(dp) :: ud_udh_WW, uub_ddbh_WW
     integer :: j,k
@@ -71,9 +75,8 @@ contains
 
     me2 = zero
 
-    call me2_tree_qqqqH_WW(vvcoupl,1,3,2,4,za,zb,sprod,ud_udh_ww)
-    call me2_tree_qqqqH_WW(vvcoupl,1,3,4,2,za,zb,sprod,uub_ddbh_ww)
-
+    call me2_tree_qqqqH_WW(mhsq,vvcoupl,1,3,2,4,za,zb,sprod,ud_udh_ww)
+    call me2_tree_qqqqH_WW(mhsq,vvcoupl,1,3,4,2,za,zb,sprod,uub_ddbh_ww)
     ud_udh_ww = ud_udh_ww*aveqq * couplfac_ww**2
     uub_ddbh_ww = uub_ddbh_ww*aveqq * couplfac_ww**2
 
@@ -93,10 +96,10 @@ contains
         
   end subroutine VBF_WW
 
-  subroutine VBF_ZZ(vvcoupl,za,zb,sprod,me2)
+  subroutine VBF_ZZ(mhsq,vvcoupl,za,zb,sprod,me2)
     complex(dp), intent(in) :: vvcoupl(1:4)
     complex(dp), intent(in) :: za(4,4), zb(4,4)
-    real(dp), intent(in) :: sprod(4,4)
+    real(dp), intent(in) :: mhsq,sprod(4,4)
     real(dp), intent(out) :: me2(-5:5,-5:5)
     real(dp) :: ud_udh_LL,ud_udh_LR, udb_udbh_LL, udb_udbh_LR
     integer :: j,k
@@ -110,8 +113,8 @@ contains
 
     me2 = zero
 
-    call me2_tree_qqqqH_ZZ(vvcoupl,1,3,2,4,za,zb,sprod,ud_udh_LL,ud_udh_LR)
-    call me2_tree_qqqqH_ZZ(vvcoupl,1,3,4,2,za,zb,sprod,udb_udbh_LL,udb_udbh_LR)
+    call me2_tree_qqqqH_ZZ(mhsq,vvcoupl,1,3,2,4,za,zb,sprod,ud_udh_LL,ud_udh_LR)
+    call me2_tree_qqqqH_ZZ(mhsq,vvcoupl,1,3,4,2,za,zb,sprod,udb_udbh_LL,udb_udbh_LR)
 
     ud_udh_LL = ud_udh_LL * aveqq * couplfac_zz**2
     ud_udh_LR = ud_udh_LR * aveqq * couplfac_zz**2
@@ -146,14 +149,14 @@ contains
 
   ! Notation: 0 -> qbar(p1) q(p2) qbar(p3) q(p4) H
   ! Factored out: (gwsq**2/two * vev * sw**2/cw**2)**2
-  subroutine me2_tree_qqqqH_ZZ(vvcoupl,j1,j2,j3,j4,za,zb,sprod,me2_LL, me2_LR)
+  subroutine me2_tree_qqqqH_ZZ(mhsq,vvcoupl,j1,j2,j3,j4,za,zb,sprod,me2_LL, me2_LR)
     complex(dp), intent(in) :: vvcoupl(1:4)
     complex(dp), intent(in) :: za(4,4), zb(4,4)
-    real(dp), intent(in) :: sprod(4,4)
+    real(dp), intent(in) :: mhsq,sprod(4,4)
     integer, intent(in) :: j1, j2, j3, j4
     real(dp), intent(out) :: me2_LL, me2_LR
     real(dp) :: prefac, rme2
-    complex(dp) :: amp(-1:1,-1:1,-1:1,-1:1)
+    complex(dp) :: amp(-1:1,-1:1)
     real(dp) :: q1sq, q2sq, prop1, prop2
     real(dp), parameter :: colf = xn**2
     complex(dp) :: aacoupl(1:3)
@@ -176,14 +179,14 @@ contains
     !-- couplings
     q1q2 = half * (sprod(j1,j3)+sprod(j1,j4)+sprod(j2,j3)+sprod(j2,j4))
     
-    aacoupl(1) = vvcoupl(1) + two*q1q2/mzsq * vvcoupl(2) + q1q2**2/Lambda**2/mzsq * vvcoupl(3)
-    aacoupl(2) = -two/mzsq * vvcoupl(2) - q1q2/Lambda**2/mzsq * vvcoupl(3)
-    aacoupl(3) = -two/mzsq * vvcoupl(4)
+    aacoupl(1) = vvcoupl(1) * mzsq/mhsq + two*q1q2/mhsq * vvcoupl(2) + q1q2**2/Lambda**2/mhsq * vvcoupl(3)
+    aacoupl(2) = -two * vvcoupl(2) - q1q2/Lambda**2 * vvcoupl(3)
+    aacoupl(3) = -two * vvcoupl(4)
 
-    amp = A0Hqqqq(aacoupl,j1,j2,j3,j4,za,zb,sprod)
+    amp = A0Hqqqq(mhsq,aacoupl,j1,j2,j3,j4,za,zb,sprod)
 
-    me2_LL = amp(-1,+1,-1,+1)*conjg(amp(-1,+1,-1,+1))
-    me2_LR = amp(-1,+1,+1,-1)*conjg(amp(-1,+1,+1,-1))
+    me2_LL = amp(+1,+1)*conjg(amp(+1,+1))
+    me2_LR = amp(-1,+1)*conjg(amp(-1,+1))
 
     me2_LL = me2_LL * prefac * colf
     me2_LR = me2_LR * prefac * colf
@@ -195,14 +198,14 @@ contains
 
   ! Notation: 0 -> qbar(p1) q(p2) qbar(p3) q(p4) H
   ! Factored out: (gwsq**2/two * vev)**2
-  subroutine me2_tree_qqqqH_WW(vvcoupl,j1,j2,j3,j4,za,zb,sprod,me2)
+  subroutine me2_tree_qqqqH_WW(mhsq,vvcoupl,j1,j2,j3,j4,za,zb,sprod,me2)
     complex(dp), intent(in) :: vvcoupl(1:4)
     complex(dp), intent(in) :: za(4,4), zb(4,4)
-    real(dp), intent(in) :: sprod(4,4)
+    real(dp), intent(in) :: mhsq,sprod(4,4)
     integer, intent(in) :: j1, j2, j3, j4
     real(dp), intent(out) :: me2
     real(dp) :: prefac, rme2
-    complex(dp) :: amp(-1:1,-1:1,-1:1,-1:1)
+    complex(dp) :: amp(-1:1,-1:1)
     real(dp) :: q1sq, q2sq, prop1, prop2
     real(dp), parameter :: colf = xn**2
     complex(dp) :: aacoupl(1:3)
@@ -222,15 +225,15 @@ contains
 
     !-- couplings
     q1q2 = half * (sprod(j1,j3)+sprod(j1,j4)+sprod(j2,j3)+sprod(j2,j4))
-    
-    aacoupl(1) = vvcoupl(1) + two*q1q2/mwsq * vvcoupl(2) + q1q2**2/Lambda**2/mwsq * vvcoupl(3)
-    aacoupl(2) = -two/mwsq * vvcoupl(2) - q1q2/Lambda**2/mwsq * vvcoupl(3)
-    aacoupl(3) = -two/mwsq * vvcoupl(4)
 
-    amp = A0Hqqqq(aacoupl,j1,j2,j3,j4,za,zb,sprod)
+    aacoupl(1) = vvcoupl(1) * mwsq/mhsq + two*q1q2/mhsq * vvcoupl(2) + q1q2**2/Lambda**2/mhsq * vvcoupl(3)
+    aacoupl(2) = -two * vvcoupl(2) - q1q2/Lambda**2 * vvcoupl(3)
+    aacoupl(3) = -two * vvcoupl(4)
+    
+    amp = A0Hqqqq(mhsq,aacoupl,j1,j2,j3,j4,za,zb,sprod)
 
 !------ The W-boson contribution / only one helicity plays a role
-    rme2 = rme2 + amp(-1,+1,-1,+1)*conjg(amp(-1,+1,-1,+1))
+    rme2 = rme2 + amp(-1,-1)*conjg(amp(-1,-1))
 
     me2 = rme2 * prefac * colf
 
@@ -241,18 +244,19 @@ contains
 
   !----------------------------------------------------------------------------------------
 
-  ! helicity amplitudes for 0-> q(j1) qbar(j2) q(j3) qbar(j4) (H->a(p4) a(p5))
-
-  function A0Hqqqq(aacoupl,j1,j2,j3,j4,za,zb,sprod)
-    complex(dp) :: aacoupl(1:3)
+    !-- index: helicity (h1,h3) = chirality of the vertex
+  !-- amplitude for H -> q qb Q QB
+  function A0Hqqqq(mhsq,aacoupl,j1,j2,j3,j4,za,zb,sprod)
+    real(dp) :: mhsq
+    complex(8) :: aacoupl(1:3)
     integer :: j1,j2,j3,j4
-    complex(dp) :: za(4,4), zb(4,4)
-    real(dp) :: sprod(4,4)
-    complex(dp) :: A0Hqqqq(-1:1,-1:1,-1:1,-1:1)
+    complex(8) :: za(4,4), zb(4,4)
+    real(8) :: sprod(4,4)
+    complex(8) :: A0Hqqqq(-1:1,-1:1)
     integer :: i,j
-    real(dp) :: q1q2
-    complex(dp) :: a1, a2, a3
-    complex(dp) :: zab2 ! -- <i|p1+p2|j]
+    real(8) :: q1q2
+    complex(8) :: a1, a2, a3
+    complex(8) :: zab2 ! -- <i|p1+p2|j]
 
     zab2(j1,j2,j3,j4) = za(j1,j2)*zb(j2,j4)+za(j1,j3)*zb(j3,j4)
 
@@ -260,26 +264,32 @@ contains
 
     q1q2 = half * (sprod(j1,j3)+sprod(j1,j4)+sprod(j2,j3)+sprod(j2,j4))
 
-    a1 = aacoupl(1)
+    a1 = aacoupl(1) * mhsq
     a2 = aacoupl(2)
     a3 = aacoupl(3)
 
-    A0Hqqqq(+1,-1,+1,-1) = a1 * zb(j1,j3)*za(j4,j2) &
-         + a2 * half * (zab2(j2,j4,j3,j1)*zab2(j4,j2,j1,j3)) &
-         - a3 * ci * (half*zab2(j2,j4,j3,j1)*zab2(j4,j2,j1,j3) + q1q2 * za(j2,j4)*zb(j3,j1))
-    A0Hqqqq(+1,-1,-1,+1) = a1 * zb(j1,j4)*za(j3,j2) &
-         + a2 * half * (zab2(j2,j3,j4,j1)*zab2(j3,j2,j1,j4)) &
-         - a3 * ci * (half*zab2(j2,j3,j4,j1)*zab2(j3,j2,j1,j4) + q1q2 * za(j2,j3)*zb(j4,j1))
-    A0Hqqqq(-1,+1,+1,-1) = a1 * za(j1,j4)*zb(j3,j2) &
-         + a2 * half * (zab2(j1,j4,j3,j2)*zab2(j4,j1,j2,j3)) &
-         - a3 * ci * (half*zab2(j1,j4,j3,j2)*zab2(j4,j1,j2,j3) + q1q2 * za(j1,j4)*zb(j3,j2))
-    A0Hqqqq(-1,+1,-1,+1) = a1 * za(j1,j3)*zb(j4,j2) &
-         + a2 * half * (zab2(j1,j3,j4,j2)*zab2(j3,j1,j2,j4)) &
-         - a3 * ci * (half*zab2(j1,j3,j4,j2)*zab2(j3,j1,j2,j4) + q1q2 * za(j1,j3)*zb(j4,j2))
-    
+    A0Hqqqq(+1,+1) = (a1 -ci * a3 * q1q2) * (zb(j1,j3)*za(j4,j2) * two) &
+         + (a2 + ci * a3) * zab2(j2,j3,j4,j1)*zab2(j4,j1,j2,j3) &
+         -ci * a3 * (two * za(j2,j1)*zb(j1,j3)*za(j4,j3)*zb(j3,j1))
+
+    A0Hqqqq(+1,-1) = (a1 -ci * a3 * q1q2) * (zb(j1,j4)*za(j3,j2) * two) &
+         + (a2 + ci * a3) * zab2(j2,j3,j4,j1)*zab2(j3,j1,j2,j4) &
+         -ci * a3 * (two * za(j2,j1)*zb(j1,j4)*za(j3,j4)*zb(j4,j1))
+
+    A0Hqqqq(-1,+1) = (a1 -ci * a3 * q1q2) * (za(j1,j4)*zb(j3,j2) * two) &
+         + (a2 + ci * a3) * zab2(j1,j3,j4,j2)*zab2(j4,j1,j2,j3) &
+         -ci * a3 * (two * za(j1,j2)*zb(j2,j3)*za(j4,j3)*zb(j3,j2))
+
+    A0Hqqqq(-1,-1) = (a1 -ci * a3 * q1q2) * (za(j1,j3)*zb(j4,j2) * two) &
+         + (a2 + ci * a3) * zab2(j1,j3,j4,j2)*zab2(j3,j1,j2,j4) &
+         -ci * a3 * (two * za(j1,j2)*zb(j2,j4)*za(j3,j4)*zb(j4,j2))
+   
     return
     
   end function A0Hqqqq
+
+  
+
 
   include 'include_functions.f90'
   
