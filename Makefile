@@ -23,7 +23,7 @@ CC = g++
 CFLAGS = -Wall -Wno-unused-function -g -O2 -fPIC -lm -lgfortran $(shell root-config --cflags) $(INCLUDE) $(EXTRACFLAGS)
 
 LINKER = g++
-LINKERFLAGS = $(shell root-config --ldflags) mod_Higgs_MatEl.o mod_Graviton_MatEl.o mod_Zprime_MatEl.o mod_Higgsjj_MatEl.o mod_Higgsjj_VBF_MatEl.o
+LINKERFLAGS = $(shell root-config --ldflags) mod_Higgs_MatEl.o mod_Graviton_MatEl.o mod_Zprime_MatEl.o mod_Higgsjj_MatEl.o mod_HiggsVBF.o
 
 ifeq ($(shell root-config --platform),macosx)
 ifdef CMSSW_RELEASE_BASE
@@ -40,7 +40,7 @@ LIB = libME.so
 
 .PHONY: all help compile clean cms2env
 
-libs: mod_Higgs_MatEl.o mod_Graviton_MatEl.o mod_Zprime_MatEl.o mod_Higgsjj_MatEl.o mod_Higgsjj_VBF_MatEl.o $(LIB)
+libs: mod_Higgs_MatEl.o mod_Graviton_MatEl.o mod_Zprime_MatEl.o mod_Higgsjj_MatEl.o mod_HiggsVBF.o $(LIB)
 
 mod_Higgs_MatEl.o: mod_Higgs_MatEl.F90 includeVars.F90
 	@echo $(fcomp)
@@ -66,11 +66,11 @@ mod_Higgsjj_MatEl.o: mod_Higgsjj_MatEl.F90
 	@echo " compiling mod_Higgsjj_MatEl.F90 with "$(FORTRAN)
 	$(FORTRAN) $(FFLAGS) -c mod_Higgsjj_MatEl.F90 -lm
 
-mod_Higgsjj_VBF_MatEl.o: mod_Higgsjj_VBF_MatEl.F90
+mod_HiggsVBF.o: mod_HiggsVBF.F90
 	@echo $(fcomp)
 	@echo " "
-	@echo " compiling mod_Higgsjj_VBF_MatEl.F90 with "$(FORTRAN)
-	$(FORTRAN) $(FFLAGS) -c mod_Higgsjj_VBF_MatEl.F90  -lm
+	@echo " compiling mod_HiggsVBF.F90 with "$(FORTRAN)
+	$(FORTRAN) $(FFLAGS) -c mod_HiggsVBF.F90  -lm
 
 $(LIB):	$(OBJECTS) 
 	$(QUIET) echo "Linking $(LIB)"; \
