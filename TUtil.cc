@@ -435,14 +435,22 @@ double  HJJMatEl(TVar::Process process, const TLorentzVector p[5], double Hggcou
 	p4[i][j] = - p4[i][j];
       }
     }
+  }      
+  if ( verbosity >= TVar::DEBUG ) {
+    std::cout << "p4[0] = "  << p4[0][0] << ", " <<  p4[0][1] << ", "  <<  p4[0][2] << ", "  <<  p4[0][3] << "\n";   
+    std::cout << "p4[1] = "  << p4[1][0] << ", " <<  p4[1][1] << ", "  <<  p4[1][2] << ", "  <<  p4[1][3] << "\n";   
+    std::cout << "p4[2] = "  << p4[2][0] << ", " <<  p4[2][1] << ", "  <<  p4[2][2] << ", "  <<  p4[2][3] << "\n"; 
+    std::cout << "p4[3] = "  << p4[3][0] << ", " <<  p4[3][1] << ", "  <<  p4[3][2] << ", "  <<  p4[3][3] << "\n";   
+    std::cout << "p4[4] = "  << p4[4][0] << ", " <<  p4[4][1] << ", "  <<  p4[4][2] << ", "  <<  p4[4][3] << "\n";   
   }
+
   
   if ( process == TVar::HJJNONVBF ) {
     __modhiggsjj_MOD_evalamp_gg_jjh(p4, Hggcoupl, MatElsq);
   }
 
   if ( process == TVar::HJJVBF ) {
-    __modhiggsjj_vbf_MOD_evalamp_vbfh(p4, Hvvcoupl, MatElsq);
+    __modhiggsvbf_MOD_evalamp_vbfh(p4, Hvvcoupl, MatElsq);
   }
 
   //    FOTRAN convention    -5    -4   -3   -2   -1    0   1   2   3  4  5
