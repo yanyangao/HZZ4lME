@@ -746,10 +746,10 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
       cout << "\n=========================================================\n";
       cout << "Entry: " << ievt << "\n";
       cout << "Input: ==================================================" <<endl;
-      printf("lep1 p3 = (%4.4f, %4.4f, %4.4f)  lep2 p3 = (%4.4f, %4.4f, %4.4f)\n",
-	     p[0].Px(), p[0].Py(), p[0].Pz(), p[1].Px(), p[1].Py(), p[1].Pz()); 
-      printf("lep3 p3 = (%4.4f, %4.4f, %4.4f)  lep4 p3 = (%4.4f, %4.4f, %4.4f)\n",
-	     p[2].Px(), p[2].Py(), p[2].Pz(), p[3].Px(), p[3].Py(), p[3].Pz()); 
+      printf("lep1 (Px, Py, Pz, E) = (%4.4f, %4.4f, %4.4f, %4.4f)\n",  p[0].Px(), p[0].Py(), p[0].Pz(), p[0].E());
+      printf("lep2 (Px, Py, Pz, E) = (%4.4f, %4.4f, %4.4f, %4.4f)\n",  p[1].Px(), p[1].Py(), p[1].Pz(), p[1].E()); 
+      printf("lep3 (Px, Py, Pz, E) = (%4.4f, %4.4f, %4.4f, %4.4f)\n",  p[2].Px(), p[2].Py(), p[2].Pz(), p[2].E());
+      printf("lep4 (Px, Py, Pz, E) = (%4.4f, %4.4f, %4.4f, %4.4f)\n",  p[3].Px(), p[3].Py(), p[3].Pz(), p[3].E()); 
       std::cout << "ZZ system (pX, pY, pZ, E, mass) = ( " 
 		<< (hzz4l_event.p[0]+hzz4l_event.p[1]+hzz4l_event.p[2]+hzz4l_event.p[3]).Px() << ", "
 		<< (hzz4l_event.p[0]+hzz4l_event.p[1]+hzz4l_event.p[2]+hzz4l_event.p[3]).Py() << ", "
