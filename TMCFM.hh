@@ -153,6 +153,9 @@ extern "C" {
   void qqb_zz_(double* p, double* msq);
   void gen4_(double* r, double* p, double* wt4);  //r(22) p(4,12)
 
+  #define gg_zz_int_ gg_zz_int_
+  void gg_zz_int_(double* p, double* msq);
+
   #define gg_zz_ gg_zz_
   void gg_zz_(double* p, double* msq);
 
@@ -164,6 +167,9 @@ extern "C" {
 
   #define qqb_hzz_ qqb_hzz_
   void qqb_hzz_(double* p, double* msq);
+
+  #define qqb_hzz_tb_ qqb_hzz_tb_
+  void qqb_hzz_tb_(double* p, double* msq);
 
   // For DY
   void gen2_(double* r,double* p,double* pswt);
