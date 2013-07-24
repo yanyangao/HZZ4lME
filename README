@@ -17,7 +17,7 @@ cvs co -d HZZ4lME UserCode/YGao/HZZ4lME
 cvs co -d Higgs/Higgs_CS_and_Width UserCode/Snowball/Higgs/Higgs_CS_and_Width
 cp -r Higgs/Higgs_CS_and_Width/txtFiles .
 cd HZZ4lME/
-cp /afs/cern.ch/user/y/yygao/public/libmcfm.so .
+cp /afs/cern.ch/user/y/yygao/public/libmcfm_6p6.so .
 make
 
 NOTE, when changing the ME input files, such as the includeVars.F90, you need 
@@ -26,6 +26,7 @@ to remake the library, by doing the following.
 make clean   # absolutely needed
 make
 
+Instructions on getting a MCFM library is at the end of this file. 
 
 
 2) check out PDFs from MELA package 
@@ -80,4 +81,22 @@ runME_HZZ4l_JHUgenSamples("/home/ygao/HZZME/","TZZ_2mplus_250_JHU.root","./",100
 root -l -n MELArocCurves.C
 
 
+Instruction on compiling the MCFM library for MCFM 6.6
 
+1. Download MCFM and prepare the install makefile
+
+wget http://mcfm.fnal.gov/mcfm-6.6.tar.gz
+tar -xf MCFM-6.6.tar.gz
+cd MCFM-6.6/
+./Install
+
+2. Modify the following two lines in makefile to allow shared library to be read out
+
+FFLAGS 	= -fno-automatic -fno-f2c -O0 -fPIC -g -I$(INCPATH) -I$(TENSORREDDIR)/Include -Iobj
+F90FLAGS = -fno-automatic -fno-f2c -O2 -fPIC -g -I$(INCPATH) -Iobj -Jobj
+
+3. compile the package and export the libarry
+
+make
+cd obj
+g++ -Wl,-soname,libmcfm_6p6.so -shared -o libmcfm_6p6.so *.o  
