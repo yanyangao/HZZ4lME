@@ -466,6 +466,7 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   // Declare the matrix element related variables to be added to the existing ntuples
   float dXsec_ZZ_DECAY_MCFM = 0.;
   float dXsec_ZZ_MCFM = 0.;
+  float dXsec_GGZZ_MCFM = 0.;
   float dXsec_HZZ_MCFM = 0.;
   float dXsec_HZZ_JHU = 0.;
   float dXsec_PSHZZ_JHU = 0.;
@@ -484,8 +485,9 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
   float dXsec_HJJ_JHU = 0.;
   float dXsec_HJJVBF_JHU = 0.;
 
-  evt_tree->Branch("dXsec_ZZ_DECAY_MCFM" , &dXsec_ZZ_DECAY_MCFM   ,"dXsec_ZZ_DECAY_MCFM/F");
+  evt_tree->Branch("dXsec_ZZ_DECAY_MCFM" , &dXsec_ZZ_DECAY_MCFM,"dXsec_ZZ_DECAY_MCFM/F");
   evt_tree->Branch("dXsec_ZZ_MCFM"   , &dXsec_ZZ_MCFM   ,"dXsec_ZZ_MCFM/F");
+  evt_tree->Branch("dXsec_GGZZ_MCFM" , &dXsec_GGZZ_MCFM ,"dXsec_GGZZ_MCFM/F");
   evt_tree->Branch("dXsec_HZZ_MCFM"  , &dXsec_HZZ_MCFM   ,"dXsec_HZZ_MCFM/F");
   evt_tree->Branch("dXsec_HZZ_JHU"   , &dXsec_HZZ_JHU   ,"dXsec_HZZ_JHU/F");
   evt_tree->Branch("dXsec_PSHZZ_JHU" , &dXsec_PSHZZ_JHU ,"dXsec_PSHZZ_JHU/F");
@@ -659,6 +661,7 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
     // initialise the differential cross-sections
     // 
     dXsec_ZZ_MCFM = 0.;
+    dXsec_GGZZ_MCFM = 0.;
     dXsec_HZZ_MCFM = 0.;
     dXsec_HZZ_JHU = 0.;
     dXsec_PSHZZ_JHU = 0.;
@@ -766,6 +769,7 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
       dXsec_ZZ_MCFM = Xcal2.XsecCalc(TVar::ZZ_4e, TVar::GG, hzz4l_event,verbosity);
     else 
       dXsec_ZZ_MCFM = Xcal2.XsecCalc(TVar::ZZ_2e2m, TVar::GG, hzz4l_event,verbosity);
+    dXsec_GGZZ_MCFM = Xcal2.XsecCalc(TVar::GGZZ_4l, TVar::GG, hzz4l_event,verbosity);
 
     // trying to implement the integral
     
@@ -840,13 +844,23 @@ void xseccalc(TString inputDir, TString fileName, TString outputDir, int maxevt,
       //p4[1].SetPxPyPzE (-60.1952629089355,  167.136901855469,  -53.3071479797363, 185.472000122070 ); 
       //p4[2].SetPxPyPzE ( 32.6129379272461, -181.576141357422,  -164.720764160156, 277.112670898438 );
       //Use a phase point from H+2jets
-      p4[0].SetPxPyPzE ( -0.8631552128081, -30.83936349, 23.63861960335, 38.86638282811 );
-      p4[1].SetPxPyPzE (-3.585547197498, 26.6370897996, 160.4431140716, 162.6787741369);
-      p4[2].SetPxPyPzE (4.448702410306, 4.202273690404, -43.43533635912, 133.6021471948);
+      //p4[0].SetPxPyPzE ( -0.8631552128081, -30.83936349, 23.63861960335, 38.86638282811 );
+      //p4[1].SetPxPyPzE (-3.585547197498, 26.6370897996, 160.4431140716, 162.6787741369);
+      //p4[2].SetPxPyPzE (4.448702410306, 4.202273690404, -43.43533635912, 133.6021471948);
       //Use a phase point from VBF
       //p4[0].SetPxPyPzE (99.63466518841, 110.898573651, 111.247425322, 186.0149181808);
       //p4[1].SetPxPyPzE (27.53935748298, -56.08619646628, -334.7410925212, 340.5226522082);
       //p4[2].SetPxPyPzE (-127.1740226714, -54.81237718468, -142.3794969293, 234.7181055347);
+      // use a phase space from Markus                                                                          
+      p4[0].SetPxPyPzE( 3.3575180561872444, 0.68440486224675223, -0.0490610220658908303, 3.4269147198283938);   
+      p4[1].SetPxPyPzE( 1.2689634103814822, 0.60252128195920029, -6.4004704411152327, 6.5528102291833976);      
+      p4[2].SetPxPyPzE(-4.6264814665687268, -1.2869261442059525, -2.8152865302540238, 5.7073591010706917);      
+                                                                                                                
+      for ( int i = 0; i < 4 ; i++) {                                                                           
+        p4[0][i]*= 100.;                                                                                        
+        p4[1][i]*= 100.;                                                                                        
+        p4[2][i]*= 100.;                                                                                        
+      }                                                                                            
 
       // read those p3 event base
       /*for (int j=0; j<2; j++ ) {
