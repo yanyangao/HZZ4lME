@@ -125,8 +125,8 @@ extern "C" {
   //##############
   // Initialization
   //##############
-  #define mcfm_init_ mcfm_init_
-  void   mcfm_init_();
+  // #define mcfm_init_ mcfm_init_
+  void   mcfm_init_(char * inputfile, char* workdir);
   void   chooser_();
   void   coupling_();
   
