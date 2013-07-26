@@ -5,6 +5,17 @@
 ## and ROC curves.
 ############################
 
+UPDATE:
+
+** git instruction for checking out the HZZ4lME, 
+** currently all the other files needed are stil in cvs..
+
+cmsrel CMSSW_5_2_5
+cd CMSSW_5_2_5/src/
+cmsenv
+git clone https://github.com/yanyangao/HZZ4lME.git
+
+CVS instructions:
 
 1. Check out and compile the package
 
