@@ -493,14 +493,21 @@ double SumMEPDF(const TLorentzVector p0, const TLorentzVector p1, double msq[nms
   //double sysPt_sqr=sysPx*sysPx+sysPy*sysPy;
   //if(sysPt_sqr>=1.0E-10)  sysE=TMath::Sqrt(sysE*sysE-sysPt_sqr);
   double xx[2]={(sysE+sysPz)/EBEAM/2,(sysE-sysPz)/EBEAM/2};
+
+  if ( verbosity >= TVar::DEBUG ) {
+    std::cout << "xx[1]: " << xx[1] << "\t xx[2] = " << xx[2] << "\n";
+  }
+
+
   if(xx[0] > 1.0 || xx[0]<=xmin_.xmin) return 0.0;
   if(xx[1] > 1.0 || xx[1]<=xmin_.xmin) return 0.0;
   double fx1[nmsq];
   double fx2[nmsq];
+
   //Always pass address through fortran function
   fdist_ (&density_.ih1, &xx[0], &scale_.scale, fx1); 
   fdist_ (&density_.ih2, &xx[1], &scale_.scale, fx2); 
-  
+
   if ( verbosity >= TVar::DEBUG ) {
     for ( int i = 0; i < nmsq; i++ ) {
       std::cout << "fx1[" << i << "]: " <<  fx1[i] << "\t"
