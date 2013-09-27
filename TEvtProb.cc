@@ -301,6 +301,19 @@ double TEvtProb::XsecCalcXJJ(TVar::Process proc, TLorentzVector p4[3], TVar::Ver
   Hvvcoupl[2][0]=0.0;  Hvvcoupl[2][1]=0.0; // g3 
   Hvvcoupl[3][0]=0.0;  Hvvcoupl[3][1]=0.0; // g4   
 
+  if ( proc == TVar::PSHJJNONVBF ) {
+    Hggcoupl[0][0] = 0.0;
+    Hggcoupl[1][0] = 0.0;
+    Hggcoupl[2][0] = 1.0;
+  }
+
+  if ( proc == TVar::PSHJJVBF ) {
+    Hvvcoupl[0][0] = 0.0;
+    Hvvcoupl[1][0] = 0.0;
+    Hvvcoupl[2][0] = 0.0;
+    Hvvcoupl[3][0] = 1.0;
+  }
+
   // input kinematics 
   //  !----- p1 and p2 used to get hadronic s
   //  !----- P(p1)+P(p2) -> j(p3) + j(p4) + H(p5)

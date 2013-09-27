@@ -156,6 +156,9 @@ extern "C" {
   #define gg_zz_int_ gg_zz_int_
   void gg_zz_int_(double* p, double* msq);
 
+  #define gg_zz_int_freenorm_ gg_zz_int_freenorm_
+  void gg_zz_int_freenorm_(double* p, double hcoupl[2], double *msq); 
+
   #define gg_zz_ gg_zz_
   void gg_zz_(double* p, double* msq);
 

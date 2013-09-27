@@ -103,7 +103,8 @@ if(process==TVar::ZZ_2e2m || process == TVar::GGZZ_4l  ){
      nqcdjets_.nqcdjets=0;
 
      bveg1_mcfm_.ndim=10;
-     masses_mcfm_.mb=0;
+     //masses_mcfm_.mb=0;
+     masses_mcfm_.mb=4.75;
 
      breit_.n2=1;
      breit_.n3=1;
@@ -245,7 +246,14 @@ double SumMatrixElementPDF(TVar::Process process, mcfm_event_type* mcfm_event,do
   double msqgg=0;
     
   if( process==TVar::ZZ_2e2m || process==TVar::ZZ_4e )      qqb_zz_(p4[0],msq[0]);
-  if( process==TVar::HZZ_4l)     qqb_hzz_(p4[0],msq[0]);
+  //if( process==TVar::HZZ_4l)     qqb_hzz_(p4[0],msq[0]);
+  // the subroutine for the calculations including the interfenrence
+  // ME =  sig + inter (sign, bkg)
+  // 1161 '  f(p1)+f(p2) --> H(--> Z^0(mu^-(p3)+mu^+(p4)) + Z^0(e^-(p5)+e^+(p6)) [including gg->ZZ intf.]' 'L'
+  double couplingtest[2];
+  couplingtest[0]=0.9;
+  couplingtest[1]=0.0;
+  if( process==TVar::HZZ_4l)     gg_zz_int_freenorm_(p4[0],couplingtest,msq[0]);
   if( process==TVar::GGZZ_4l)    gg_zz_  (p4[0],&msqgg);                     
   
   // by default assume only gg productions 
@@ -404,7 +412,7 @@ double JHUGenMatEl(TVar::Process process, TVar::Production production, mcfm_even
 // H+2j ME from Fabrizio Caola
 // 
 
-double  HJJMatEl(TVar::Process process, const TLorentzVector p[5], double Hggcoupl[3][2], double Hvvcoupl[3][2], TVar::VerbosityLevel verbosity)
+double HJJMatEl(TVar::Process process, const TLorentzVector p[5], double Hggcoupl[3][2], double Hvvcoupl[4][2], TVar::VerbosityLevel verbosity)
 {
 
   // by default assume only gg productions 
@@ -445,12 +453,12 @@ double  HJJMatEl(TVar::Process process, const TLorentzVector p[5], double Hggcou
   }
 
   
-  if ( process == TVar::HJJNONVBF ) {
-    __modhiggsjj_MOD_evalamp_gg_jjh(p4, Hggcoupl, MatElsq);
+  if ( process == TVar::HJJNONVBF || process == TVar::PSHJJNONVBF ) {
+    __modhiggsjj_MOD_evalamp_sbfh(p4, Hggcoupl, MatElsq);
   }
 
-  if ( process == TVar::HJJVBF ) {
-    __modhiggsvbf_MOD_evalamp_vbfh(p4, Hvvcoupl, MatElsq);
+  if ( process == TVar::HJJVBF || process == TVar::PSHJJVBF ) {
+    __modhiggsjj_MOD_evalamp_wbfh(p4, Hvvcoupl, MatElsq);
   }
 
   //    FOTRAN convention    -5    -4   -3   -2   -1    0   1   2   3  4  5
@@ -465,13 +473,13 @@ double  HJJMatEl(TVar::Process process, const TLorentzVector p[5], double Hggcou
     }
   }
   
-  if ( process == TVar::HJJNONVBF ) {
+  if ( process == TVar::HJJNONVBF || process == TVar::PSHJJNONVBF ) {
     return SumMEPDF(p[0], p[1], MatElsq, verbosity);
-    // return MatElsq[5][5];
+    //return MatElsq[5][5];
   }
   
-  if ( process == TVar::HJJVBF ) {
-    // return MatElsq[6][7]+MatElsq[7][6];
+  if ( process == TVar::HJJVBF || process == TVar::PSHJJVBF ) {
+    //return MatElsq[6][7]+MatElsq[7][6];
     return SumMEPDF(p[0], p[1], MatElsq, verbosity);
   }
 

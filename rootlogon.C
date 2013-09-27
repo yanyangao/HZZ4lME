@@ -12,4 +12,5 @@
   gROOT->ProcessLine(".L PDFs/RooSpinOne_Decay.cc+");
   gROOT->ProcessLine(".L PDFs/RooSpinTwo_Decay.cc+");
   gROOT->ProcessLine(".L PDFs/RooSpinZero_7DComplex.cc+");
+  gROOT->ProcessLine(".L PDFs/RooSpinZero_3D_ZH_pp.cc++");
 }

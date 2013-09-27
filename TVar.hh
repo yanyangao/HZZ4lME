@@ -5,7 +5,7 @@
 #include "TH2F.h"
 #include "TH1F.h"
 
-#define EBEAM 4000.00
+#define EBEAM 7000.00
 #define fbGeV2 0.389379E12
 #define smallnumber 1e-15
 #define sixteen_2Pi_to_8 3.88650230418250561e+07
@@ -51,6 +51,8 @@ public:
     HZZ_4l_MIXCP = 17,
     HJJNONVBF = 18,
     HJJVBF = 19,
+    PSHJJNONVBF = 20,
+    PSHJJVBF = 21,
     Null
   };
   enum LeptonFlavor{
